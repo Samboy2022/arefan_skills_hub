@@ -1,0 +1,81 @@
+"use client";
+
+import { Search, Bell, Moon, Sun, LogOut } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+
+export function TenantNavbar() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <header className="fixed right-0 top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm px-6 ml-20 md:ml-64 transition-all duration-300">
+      {/* Search */}
+      <div className="flex-1 max-w-md">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search students, classes..."
+            className="pl-10 bg-muted"
+          />
+        </div>
+      </div>
+
+      {/* Right Actions */}
+      <div className="flex items-center gap-4 ml-auto">
+        {/* Notifications */}
+        <button className="relative rounded-lg p-2 hover:bg-muted transition-colors">
+          <Bell className="h-5 w-5 text-muted-foreground" />
+          <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+        </button>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="rounded-lg p-2 hover:bg-muted transition-colors"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5 text-muted-foreground" />
+          ) : (
+            <Moon className="h-5 w-5 text-muted-foreground" />
+          )}
+        </button>
+
+        {/* Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-muted transition-colors">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-blue-600"></div>
+              <div className="hidden sm:block text-left">
+                <p className="text-sm font-medium text-foreground">Admin User</p>
+                <p className="text-xs text-muted-foreground">Principal</p>
+              </div>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium text-foreground">Admin User</p>
+              <p className="text-xs text-muted-foreground">admin@school.com</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+            <DropdownMenuItem>Change Password</DropdownMenuItem>
+            <DropdownMenuItem>School Settings</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950">
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  );
+}
