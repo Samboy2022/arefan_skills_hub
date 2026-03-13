@@ -161,7 +161,6 @@ export function Sidebar() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">Super Admin</p>
-                <p className="text-xs text-muted-foreground">v0.1.0</p>
               </div>
             </div>
           </div>
