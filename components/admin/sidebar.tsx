@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -50,7 +51,6 @@ export function Sidebar() {
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold leading-none">LMS Platform</span>
-                <span className="text-xs text-muted-foreground">Super Admin</span>
               </div>
             </div>
           )}
@@ -152,19 +152,49 @@ export function Sidebar() {
           </ScrollArea>
         </div>
 
-        {/* Footer Info */}
-        {!isCollapsed && (
-          <div className="border-t p-4 bg-muted/30">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-sm font-bold text-primary">SA</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">Super Admin</p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Logout Button */}
+        <div className="border-t p-3">
+          {isCollapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => {
+                    // Add logout logic here
+                    window.location.href = '/login'
+                  }}
+                  className="flex items-center justify-center h-11 w-full rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                >
+                  <Image
+                    src="https://img.icons8.com/color/48/logout-rounded.png"
+                    alt="Logout"
+                    width={20}
+                    height={20}
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="ml-2">
+                <p className="font-medium">Logout</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <button
+              onClick={() => {
+                // Add logout logic here
+                window.location.href = '/login'
+              }}
+              className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
+            >
+              <Image
+                src="https://img.icons8.com/color/48/logout-rounded.png"
+                alt="Logout"
+                width={20}
+                height={20}
+                className="flex-shrink-0"
+              />
+              <span className="text-sm font-medium flex-1 text-left">Logout</span>
+            </button>
+          )}
+        </div>
       </aside>
     </TooltipProvider>
   )

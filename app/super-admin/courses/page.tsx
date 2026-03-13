@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import { useState } from 'react'
-import { Eye, Search, BookOpen, TrendingUp, DollarSign } from 'lucide-react'
+import { Eye, Search, BookOpen, TrendingUp, DollarSign, Users } from 'lucide-react'
 import { PageHeader } from '@/components/admin/page-header'
 import { DataTable } from '@/components/admin/data-table'
 import { Button } from '@/components/ui/button'
@@ -278,115 +278,140 @@ export default function CoursesPage() {
 
       {/* Course Detail Dialog */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Course Details</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-2xl font-bold">Course Details</DialogTitle>
+            <DialogDescription className="text-base">
               Comprehensive information about this course
             </DialogDescription>
           </DialogHeader>
 
           {selectedCourse && (
-            <div className="space-y-6 py-4">
+            <div className="space-y-6">
               {/* Course Header */}
-              <div className="bg-gradient-to-br from-primary/10 to-blue-50 dark:from-primary/5 dark:to-blue-900/10 rounded-lg p-6">
-                <h3 className="text-xl font-bold mb-2">{selectedCourse.title}</h3>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedCourse.title}</h3>
+                    <p className="text-gray-600 mb-3">{selectedCourse.description}</p>
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <span>Instructor: {selectedCourse.instructor}</span>
+                      <span>•</span>
+                      <span>Duration: {selectedCourse.duration}</span>
+                      <span>•</span>
+                      <span>Created: {format(new Date(selectedCourse.createdAt), 'MMM dd, yyyy')}</span>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className="bg-white dark:bg-gray-900">
+                  <Badge variant="outline" className="bg-white border-blue-200 text-blue-800 font-medium">
                     {selectedCourse.category}
                   </Badge>
-                  <Badge variant="outline" className="bg-white dark:bg-gray-900">
+                  <Badge variant="outline" className="bg-white border-purple-200 text-purple-800 font-medium">
                     {selectedCourse.level}
                   </Badge>
                   <Badge
                     variant="outline"
                     className={
                       selectedCourse.status === 'published'
-                        ? 'bg-green-100 text-green-800 border-green-200'
-                        : 'bg-gray-100 text-gray-800 border-gray-200'
+                        ? 'bg-green-50 text-green-800 border-green-200 font-medium'
+                        : 'bg-gray-50 text-gray-800 border-gray-200 font-medium'
                     }
                   >
-                    {selectedCourse.status}
+                    {selectedCourse.status === 'published' ? 'Published' : 'Draft'}
                   </Badge>
                 </div>
               </div>
 
               {/* Course Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold">{selectedCourse.enrollments}</div>
-                    <div className="text-xs text-muted-foreground">Enrollments</div>
+                <Card className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Enrollments</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-2xl font-bold">{selectedCourse.enrollments.toLocaleString()}</span>
+                        </div>
+                      </div>
+                      <div className="ml-3 rounded-lg p-2 bg-blue-100 text-blue-700">
+                        <Users className="h-4 w-4" />
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold">{selectedCourse.completionRate}%</div>
-                    <div className="text-xs text-muted-foreground">Completion</div>
+                <Card className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Completion</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-2xl font-bold">{selectedCourse.completionRate}%</span>
+                        </div>
+                      </div>
+                      <div className="ml-3 rounded-lg p-2 bg-green-100 text-green-700">
+                        <TrendingUp className="h-4 w-4" />
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold">{selectedCourse.rating}</div>
-                    <div className="text-xs text-muted-foreground">Rating</div>
+                <Card className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Rating</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-2xl font-bold">{selectedCourse.rating}</span>
+                        </div>
+                      </div>
+                      <div className="ml-3 rounded-lg p-2 bg-yellow-100 text-yellow-700">
+                        <BookOpen className="h-4 w-4" />
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold">â‚¦{(selectedCourse.revenue / 1000).toFixed(0)}K</div>
-                    <div className="text-xs text-muted-foreground">Revenue</div>
+                <Card className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Revenue</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-2xl font-bold">₦{(selectedCourse.revenue / 1000).toFixed(0)}K</span>
+                        </div>
+                      </div>
+                      <div className="ml-3 rounded-lg p-2 bg-purple-100 text-purple-700">
+                        <DollarSign className="h-4 w-4" />
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Course Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Course Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Description</label>
-                    <p className="text-sm mt-1">{selectedCourse.description}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Instructor</label>
-                      <p className="text-sm mt-1 font-medium">{selectedCourse.instructor}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Duration</label>
-                      <p className="text-sm mt-1 font-medium">{selectedCourse.duration}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Created</label>
-                    <p className="text-sm mt-1">{format(new Date(selectedCourse.createdAt), 'MMMM dd, yyyy')}</p>
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Tenant Information */}
-              <Card className="border-2 border-primary/20 bg-primary/5">
-                <CardHeader>
-                  <CardTitle className="text-lg">Primary Tenant (School)</CardTitle>
-                  <CardDescription>Institution that uploaded this course</CardDescription>
+              <Card className="border-2 border-blue-200 bg-blue-50/50 hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl">Primary Institution</CardTitle>
+                  <CardDescription className="text-base">
+                    Institution that created and manages this course
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
+                  <div className="flex items-center gap-6">
+                    <Avatar className="h-20 w-20 border-4 border-white shadow-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-2xl font-bold">
                         {selectedCourse.tenantName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-lg">{selectedCourse.tenantName}</h4>
-                      <p className="text-sm text-muted-foreground">
+                      <h4 className="font-bold text-xl text-gray-900 mb-2">{selectedCourse.tenantName}</h4>
+                      <p className="text-gray-600 mb-3">
                         Course creator and primary administrator
                       </p>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="outline">Verified Institution</Badge>
-                        <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+                      <div className="flex gap-3">
+                        <Badge variant="outline" className="bg-white border-blue-200 text-blue-800 font-medium">
+                          Verified Institution
+                        </Badge>
+                        <Badge variant="outline" className="bg-green-50 text-green-800 border-green-200 font-medium">
                           Active
                         </Badge>
                       </div>
@@ -394,6 +419,16 @@ export default function CoursesPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button variant="outline" onClick={() => setIsDetailOpen(false)} className="h-10">
+                  Close
+                </Button>
+                <Button className="h-10">
+                  View Analytics
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>

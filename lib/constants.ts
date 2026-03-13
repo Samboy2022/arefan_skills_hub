@@ -1,26 +1,25 @@
+import { type ComponentType } from 'react'
 import {
-  LayoutDashboard,
-  Building2,
-  CreditCard,
-  BarChart3,
-  Wallet,
-  Users,
-  BookOpen,
-  Palette,
-  Shield,
-  Settings,
-  Lock,
-  Headphones,
-  Zap,
-  Bell,
-  FileText,
-  type LucideIcon,
-} from 'lucide-react'
+  DashboardIcon,
+  TenantsIcon,
+  BillingIcon,
+  AnalyticsIcon,
+  TransactionsIcon,
+  UsersIcon,
+  CoursesIcon,
+  BrandingIcon,
+  RolesIcon,
+  SettingsIcon,
+  SecurityIcon,
+  SupportIcon,
+  ModulesIcon,
+  AuditLogsIcon,
+} from '@/components/admin/colored-icons'
 
 export interface NavItem {
   title: string
   href: string
-  icon: LucideIcon
+  icon: ComponentType<{ className?: string }>
   section: string
   badge?: string
 }
@@ -29,85 +28,85 @@ export const navItems: NavItem[] = [
   {
     title: 'Dashboard',
     href: '/super-admin',
-    icon: LayoutDashboard,
+    icon: DashboardIcon,
     section: 'Main',
   },
   {
     title: 'Tenants',
     href: '/super-admin/tenants',
-    icon: Building2,
+    icon: TenantsIcon,
     section: 'Management',
   },
   {
     title: 'Subscriptions & Billing',
     href: '/super-admin/billing',
-    icon: CreditCard,
+    icon: BillingIcon,
     section: 'Management',
   },
   {
     title: 'Analytics',
     href: '/super-admin/analytics',
-    icon: BarChart3,
+    icon: AnalyticsIcon,
     section: 'Analytics',
   },
   {
     title: 'Transactions',
     href: '/super-admin/transactions',
-    icon: Wallet,
+    icon: TransactionsIcon,
     section: 'Analytics',
   },
   {
     title: 'Users',
     href: '/super-admin/users',
-    icon: Users,
+    icon: UsersIcon,
     section: 'Management',
   },
   {
     title: 'Courses',
     href: '/super-admin/courses',
-    icon: BookOpen,
+    icon: CoursesIcon,
     section: 'Management',
   },
   {
     title: 'Branding & CMS',
     href: '/super-admin/branding',
-    icon: Palette,
+    icon: BrandingIcon,
     section: 'Configuration',
   },
   {
     title: 'Roles & Permissions',
     href: '/super-admin/roles',
-    icon: Shield,
+    icon: RolesIcon,
     section: 'Configuration',
   },
   {
     title: 'Settings',
     href: '/super-admin/settings',
-    icon: Settings,
+    icon: SettingsIcon,
     section: 'System',
   },
   {
     title: 'Security',
     href: '/super-admin/security',
-    icon: Lock,
+    icon: SecurityIcon,
     section: 'System',
   },
   {
     title: 'Support & Tickets',
     href: '/super-admin/support',
-    icon: Headphones,
+    icon: SupportIcon,
     section: 'Support',
   },
   {
     title: 'Modules',
     href: '/super-admin/modules',
-    icon: Zap,
+    icon: ModulesIcon,
     section: 'Configuration',
   },
   {
     title: 'Audit Logs',
     href: '/super-admin/audit-logs',
-    icon: FileText,
+    icon: AuditLogsIcon,
     section: 'System',
   },
 ]
