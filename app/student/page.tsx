@@ -1,4 +1,3 @@
-import { BookOpen, Clock, AlertCircle, CheckCircle, Bell } from "lucide-react";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,8 @@ import { PageHeader } from "@/components/student/page-header";
 import { StudentKPICard } from "@/components/student/kpi-card";
 import { cn } from "@/lib/utils";
 import { STUDENT_COURSES, STUDENT_ASSIGNMENTS, COURSE_ANNOUNCEMENTS, SCHEDULE_EVENTS } from "@/lib/student-mock-data";
+import { CoursesIcon, AlertCircleIcon, ClockIcon, BellIcon } from "@/components/shared/colored-icons";
+import { Clock, AlertCircle } from "lucide-react";
 
 export default function StudentDashboard() {
   const totalCourses = STUDENT_COURSES.length;
@@ -27,28 +28,28 @@ export default function StudentDashboard() {
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-4 mb-8">
         <StudentKPICard
-          icon={BookOpen}
+          icon={(props) => <CoursesIcon {...props} color="22C55E" />}
           label="Active Courses"
           value={totalCourses}
           subtext="Currently enrolled"
           variant="default"
         />
         <StudentKPICard
-          icon={AlertCircle}
+          icon={(props) => <AlertCircleIcon {...props} color="facc15" />}
           label="Due Soon"
           value={dueSoon}
           subtext="Next 7 days"
           variant="warning"
         />
         <StudentKPICard
-          icon={Clock}
+          icon={(props) => <ClockIcon {...props} color="22C55E" />}
           label="Under Review"
           value={pendingReview}
           subtext="Waiting for grading"
           variant="default"
         />
         <StudentKPICard
-          icon={Bell}
+          icon={(props) => <BellIcon {...props} color="ef4444" />}
           label="Announcements"
           value={unreadAnnouncements}
           subtext="Unread updates"
@@ -63,10 +64,10 @@ export default function StudentDashboard() {
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Upcoming Event</h3>
             {upcomingEvent ? (
-              <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-start gap-4 p-4 bg-brand/5 rounded-lg border border-brand/20">
                 <div className="flex-shrink-0">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-200">
-                    <Clock className="h-6 w-6 text-blue-700" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-brand/10">
+                    <Clock className="h-6 w-6 text-brand" />
                   </div>
                 </div>
                 <div className="flex-1">
@@ -116,7 +117,7 @@ export default function StudentDashboard() {
                   "p-3 rounded-lg border text-sm",
                   announcement.is_read
                     ? "border-border bg-background"
-                    : "border-blue-200 bg-blue-50"
+                    : "border-brand/20 bg-brand/5"
                 )}
               >
                 <p className="font-medium line-clamp-2">{announcement.title}</p>
@@ -164,8 +165,8 @@ export default function StudentDashboard() {
               </div>
 
               {course.due_assignments > 0 && (
-                <div className="mt-3 p-2 bg-yellow-50 rounded border border-yellow-200">
-                  <p className="text-xs text-yellow-700">
+                <div className="mt-3 p-2 bg-amber-50 rounded border border-amber-200">
+                  <p className="text-xs text-amber-700">
                     {course.due_assignments} assignment{course.due_assignments !== 1 ? "s" : ""} due
                   </p>
                 </div>

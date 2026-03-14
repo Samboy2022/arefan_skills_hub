@@ -1,19 +1,21 @@
 import {
-  LayoutDashboard,
-  BookOpen,
-  FileText,
-  ClipboardList,
-  BarChart3,
-  Users,
-  MessageSquare,
-  Megaphone,
-  Settings,
-  Calendar,
-  Trophy,
-  FolderOpen,
-  GraduationCap,
-  Clock,
-} from "lucide-react";
+  DashboardIcon,
+  CoursesIcon as BookOpen,
+  CurriculumIcon as GraduationCap,
+  LessonsIcon as FileText,
+  AssignmentsIcon as ClipboardList,
+  TrophyIcon as Trophy,
+  StudentsIcon as Users,
+  GradesIcon as BarChart3,
+  MessageIcon as MessageSquare,
+  AnnouncementsIcon as Megaphone,
+  ScheduleIcon as Calendar,
+  ResourcesIcon as FolderOpen,
+  SettingsIcon as Settings,
+} from "@/components/shared/colored-icons";
+
+// Map them to the names used in the object if needed, or just update the objects.
+// Let's just update the objects.
 
 export const INSTRUCTOR_NAV_ITEMS = [
   {
@@ -22,7 +24,7 @@ export const INSTRUCTOR_NAV_ITEMS = [
       {
         label: "Dashboard",
         href: "/instructor",
-        icon: LayoutDashboard,
+        icon: DashboardIcon,
         tooltip: "Overview and quick stats",
       },
       {

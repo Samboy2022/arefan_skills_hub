@@ -23,10 +23,10 @@ export function StudentKPICard({
   variant = "default",
 }: KPICardProps) {
   const variantStyles = {
-    default: "bg-blue-50 text-blue-700 border-blue-200",
-    success: "bg-green-50 text-green-700 border-green-200",
-    warning: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    danger: "bg-red-50 text-red-700 border-red-200",
+    default: "bg-white border-border border-t-brand/40 border-t-2 shadow-sm",
+    success: "bg-brand/5 border-brand/20 border-t-brand border-t-2 shadow-sm",
+    warning: "bg-amber-50/30 border-amber-200 border-t-amber-500 border-t-2 shadow-sm",
+    danger: "bg-red-50/30 border-red-200 border-t-red-500 border-t-2 shadow-sm",
   };
 
   return (

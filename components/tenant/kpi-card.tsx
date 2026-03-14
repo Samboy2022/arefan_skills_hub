@@ -11,11 +11,11 @@ interface KPICardProps {
 }
 
 const colorClasses = {
-  blue: "bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
-  green: "bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400",
-  orange: "bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400",
-  red: "bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400",
-  purple: "bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400",
+  blue: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+  green: "bg-brand-light/30 text-brand-dark dark:bg-brand/10 dark:text-brand",
+  orange: "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+  red: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+  purple: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
 };
 
 export function KPICard({

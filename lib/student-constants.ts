@@ -1,18 +1,18 @@
 import {
-  BookOpen,
-  FileText,
-  BarChart3,
-  MessageSquare,
-  Calendar,
-  Settings,
-  Bell,
-  Download,
-  User,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Zap,
-} from "lucide-react";
+  GradesIcon as BarChart3,
+  CoursesIcon as BookOpen,
+  LessonsIcon as FileText,
+  CheckCircleIcon as CheckCircle,
+  ZapIcon as Zap,
+  GradesIcon as Grades,
+  ClockIcon as Clock,
+  MessageIcon as MessageSquare,
+  BellIcon as Bell,
+  DownloadIcon as Download,
+  ScheduleIcon as Calendar,
+  SettingsIcon as Settings,
+  UserIcon as User,
+} from "@/components/shared/colored-icons";
 
 export const STUDENT_NAV_ITEMS = [
   {
@@ -61,7 +61,7 @@ export const STUDENT_NAV_ITEMS = [
       {
         label: "Grades",
         href: "/student/grades",
-        icon: BarChart3,
+        icon: Grades,
         tooltip: "View Grades",
       },
       {

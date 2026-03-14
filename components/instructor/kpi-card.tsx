@@ -12,10 +12,10 @@ interface KPICardProps {
 }
 
 const variantStyles = {
-  default: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800",
-  success: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800",
-  warning: "bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-950 dark:to-yellow-900 border-yellow-200 dark:border-yellow-800",
-  danger: "bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 border-red-200 dark:border-red-800",
+  default: "bg-white border-border border-t-brand/40 border-t-2 shadow-sm transition-all hover:shadow-md",
+  success: "bg-brand/5 border-brand/20 border-t-brand border-t-2 shadow-sm transition-all hover:shadow-md",
+  warning: "bg-amber-50/30 border-amber-200 border-t-amber-500 border-t-2 shadow-sm transition-all hover:shadow-md",
+  danger: "bg-red-50/30 border-red-200 border-t-red-500 border-t-2 shadow-sm transition-all hover:shadow-md",
 };
 
 const iconColors = {

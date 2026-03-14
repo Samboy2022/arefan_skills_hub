@@ -26,6 +26,11 @@ export function TenantSidebar() {
   }, []);
 
   const isActive = (href: string) => {
+    // Exact match for the dashboard
+    if (href === "/school-admin") {
+      return pathname === "/school-admin";
+    }
+    // For other pages, check exact match or sub-routes
     return pathname === href || pathname.startsWith(href + "/");
   };
 
@@ -33,20 +38,20 @@ export function TenantSidebar() {
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen border-r border-border bg-background transition-all duration-300 flex flex-col",
+          "fixed left-0 top-0 z-40 h-screen border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 flex flex-col",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
         {/* Logo / Header */}
-        <div className="h-16 border-b border-border flex items-center justify-center px-4 shrink-0">
+        <div className="h-16 border-b border-sidebar-border flex items-center px-4 shrink-0 transition-all duration-300">
           {isCollapsed ? (
-            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center">
-              <span className="text-sm font-bold text-white">SA</span>
+            <div className="flex items-center justify-center w-full">
+              <img src="/placeholder-logo.svg" alt="Logo" className="h-8 w-8" />
             </div>
           ) : (
             <div className="flex items-center gap-3 w-full">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center flex-shrink-0">
-                <span className="text-sm font-bold text-white">SA</span>
+              <div className="flex items-center justify-center h-9 w-9 bg-brand/10 rounded-lg shrink-0">
+                <img src="/placeholder-logo.svg" alt="Logo" className="h-6 w-6" />
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-bold leading-none truncate">School Admin</span>
@@ -95,12 +100,12 @@ export function TenantSidebar() {
                                   className={cn(
                                     "relative flex items-center justify-center h-11 rounded-lg transition-all duration-200",
                                     active
-                                      ? "bg-primary/10 text-primary"
-                                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                      ? "bg-brand/10 text-brand"
+                                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                                   )}
                                 >
                                   {active && (
-                                    <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-primary" />
+                                    <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-brand" />
                                   )}
                                   <Icon className="h-5 w-5" />
                                 </div>
@@ -119,12 +124,12 @@ export function TenantSidebar() {
                             className={cn(
                               "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative",
                               active
-                                ? "bg-primary/10 text-primary"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                ? "bg-brand/10 text-brand"
+                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                             )}
                           >
                             {active && (
-                              <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-primary" />
+                              <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-brand" />
                             )}
                             <Icon className="h-5 w-5 flex-shrink-0" />
                             <span className="text-sm font-medium flex-1">{item.label}</span>

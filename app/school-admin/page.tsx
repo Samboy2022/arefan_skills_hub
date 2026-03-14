@@ -1,6 +1,3 @@
-"use client";
-
-import { Users, BookOpen, DollarSign, ClipboardList, Award, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { PageHeader } from "@/components/tenant/page-header";
 import { KPICard } from "@/components/tenant/kpi-card";
@@ -15,6 +12,7 @@ import { mockDashboardMetrics, mockStudents, mockCommunications } from "@/lib/te
 import { mockRevenueData, mockTenantGrowthData, mockStudentDistribution, mockTopTenantsData } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { StudentsIcon, CoursesIcon, CurriculumIcon, AwardIcon, TransactionsIcon, AlertCircleIcon } from "@/components/shared/colored-icons";
 
 export default function SchoolAdminDashboard() {
   const metrics = mockDashboardMetrics;
@@ -33,7 +31,7 @@ export default function SchoolAdminDashboard() {
           title="Total Students"
           value={metrics.totalStudents.toLocaleString()}
           hint="Enrolled students across classes"
-          icon={Users}
+          icon={(props) => <StudentsIcon {...props} color="0369a1" />}
           trend={5.2}
           color="blue"
         />
@@ -41,7 +39,7 @@ export default function SchoolAdminDashboard() {
           title="Total Faculty"
           value={metrics.totalFaculty.toLocaleString()}
           hint="Active teaching staff"
-          icon={Users}
+          icon={(props) => <StudentsIcon {...props} color="22C55E" />}
           trend={2}
           color="green"
         />
@@ -49,7 +47,7 @@ export default function SchoolAdminDashboard() {
           title="Active Classes"
           value={metrics.activeClasses.toLocaleString()}
           hint="Currently ongoing classes"
-          icon={BookOpen}
+          icon={(props) => <CoursesIcon {...props} color="a855f7" />}
           trend={0}
           color="purple"
         />
@@ -57,7 +55,7 @@ export default function SchoolAdminDashboard() {
           title="Total Courses"
           value={metrics.totalCourses.toLocaleString()}
           hint="Published and active courses"
-          icon={ClipboardList}
+          icon={(props) => <CurriculumIcon {...props} color="f97316" />}
           trend={8}
           color="orange"
         />
@@ -65,7 +63,7 @@ export default function SchoolAdminDashboard() {
           title="Avg Attendance"
           value={`${metrics.averageAttendance}%`}
           hint="Throughout the school"
-          icon={Award}
+          icon={(props) => <AwardIcon {...props} color="22C55E" />}
           trend={3}
           color="green"
         />
@@ -73,7 +71,7 @@ export default function SchoolAdminDashboard() {
           title="Pending Fees"
           value={metrics.pendingFees.toLocaleString()}
           hint="Needs follow-up soon"
-          icon={DollarSign}
+          icon={(props) => <TransactionsIcon {...props} color="ef4444" />}
           trend={-2}
           color="red"
         />
@@ -120,7 +118,7 @@ export default function SchoolAdminDashboard() {
       {/* Main Content Grid for Tables and Info */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Students Table (Uses DataTable) */}
-        <Card className="lg:col-span-2 border border-border hover:shadow-md transition-shadow flex flex-col">
+        <Card className="lg:col-span-2 border border-border border-t-brand/40 border-t-4 hover:shadow-md transition-shadow flex flex-col overflow-hidden">
           <div className="flex flex-wrap items-start justify-between gap-3 border-b px-6 py-4">
             <div>
               <h3 className="text-base font-semibold">Recent Students</h3>
@@ -158,8 +156,8 @@ export default function SchoolAdminDashboard() {
                   accessor: 'status',
                   cell: (value) => {
                     const colors: Record<string, string> = {
-                      Active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-                      Inactive: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+                      Active: 'bg-brand/10 text-brand-dark dark:bg-brand/20 dark:text-brand',
+                      Inactive: 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400',
                     }
                     return (
                       <span
@@ -179,7 +177,7 @@ export default function SchoolAdminDashboard() {
 
         <div className="space-y-6 flex flex-col">
           {/* Announcements */}
-          <Card className="border border-border hover:shadow-md transition-shadow p-6">
+          <Card className="border border-border border-t-amber-500/40 border-t-4 hover:shadow-md transition-shadow p-6">
             <h3 className="text-base font-semibold mb-4 text-foreground">Announcements</h3>
             <div className="space-y-4">
               {mockCommunications.slice(0, 3).map((announcement) => (
@@ -203,7 +201,7 @@ export default function SchoolAdminDashboard() {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="border border-border hover:shadow-md transition-shadow p-6">
+          <Card className="border border-border border-l-brand/40 border-l-4 hover:shadow-md transition-shadow p-6">
             <h3 className="text-base font-semibold mb-4 text-foreground">Quick Actions</h3>
             <div className="grid grid-cols-2 gap-3">
               <Link href="/school-admin/students">

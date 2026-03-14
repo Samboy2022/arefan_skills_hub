@@ -9,10 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSidebar } from "@/components/student/sidebar-context";
 
 export function StudentNavbar() {
+  const { isCollapsed } = useSidebar();
+
   return (
-    <nav className="fixed top-0 left-64 right-0 z-30 border-b border-border bg-background">
+    <nav 
+      className={`fixed top-0 right-0 z-30 border-b border-border bg-background transition-all duration-300 ${
+        isCollapsed ? 'left-28' : 'left-64'
+      }`}
+    >
       <div className="flex h-16 items-center justify-between px-6">
         {/* Search Bar */}
         <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 md:max-w-md">

@@ -1,18 +1,18 @@
 import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  FileText,
-  BarChart3,
-  DollarSign,
-  Settings,
-  Bell,
-  Shield,
-  Inbox,
-  Clock,
-  Award,
-  Smartphone,
-} from "lucide-react";
+  DashboardIcon as LayoutDashboard,
+  StudentsIcon as Users,
+  CoursesIcon as BookOpen,
+  LessonsIcon as FileText,
+  GradesIcon as BarChart3,
+  TransactionsIcon as DollarSign,
+  SettingsIcon as Settings,
+  BellIcon as Bell,
+  RolesIcon as Shield,
+  MessageIcon as Inbox,
+  ClockIcon as Clock,
+  AwardIcon as Award,
+  SmartphoneIcon as Smartphone,
+} from "@/components/shared/colored-icons";
 
 export const TENANT_NAV_ITEMS = [
   {

@@ -11,6 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 
 export function TenantNavbar() {
   const { theme, setTheme } = useTheme();
@@ -51,8 +56,11 @@ export function TenantNavbar() {
         {/* Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-lg px-3 py-1.5 hover:bg-muted transition-colors">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-blue-600"></div>
+            <button className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors">
+              <Avatar className="h-8 w-8 border border-border">
+                <AvatarImage src="/placeholder-user.jpg" alt="Admin User" />
+                <AvatarFallback className="bg-brand text-white text-xs font-bold">AU</AvatarFallback>
+              </Avatar>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-foreground">Admin User</p>
                 <p className="text-xs text-muted-foreground">Principal</p>

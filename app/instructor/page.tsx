@@ -1,8 +1,8 @@
-import { Users, BookOpen, Clock, FileText } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { KPICard } from "@/components/instructor/kpi-card";
 import { Button } from "@/components/ui/button";
 import { MOCK_INSTRUCTOR_COURSES, MOCK_ASSIGNMENTS, MOCK_STUDENTS } from "@/lib/instructor-mock-data";
+import { CoursesIcon, StudentsIcon, LessonsIcon, ClockIcon } from "@/components/shared/colored-icons";
 
 export default function InstructorDashboard() {
   const totalStudents = MOCK_STUDENTS.length;
@@ -27,7 +27,7 @@ export default function InstructorDashboard() {
           value={activeCourses}
           description={`${totalEnrollments} total students`}
           variant="default"
-          icon={<BookOpen className="h-6 w-6" />}
+          icon={<CoursesIcon className="h-6 w-6" color="22C55E" />}
         />
         <KPICard
           title="Total Students"
@@ -36,14 +36,14 @@ export default function InstructorDashboard() {
           change={12}
           isPositive={true}
           variant="success"
-          icon={<Users className="h-6 w-6" />}
+          icon={<StudentsIcon className="h-6 w-6" color="22C55E" />}
         />
         <KPICard
           title="Pending Assignments"
           value={pendingAssignments}
           description="To be reviewed"
           variant="warning"
-          icon={<FileText className="h-6 w-6" />}
+          icon={<LessonsIcon className="h-6 w-6" color="22C55E" />}
         />
         <KPICard
           title="Avg Response Time"
@@ -52,7 +52,7 @@ export default function InstructorDashboard() {
           change={-8}
           isPositive={true}
           variant="default"
-          icon={<Clock className="h-6 w-6" />}
+          icon={<ClockIcon className="h-6 w-6" color="22C55E" />}
         />
       </div>
 
@@ -125,12 +125,12 @@ export default function InstructorDashboard() {
       <div className="rounded-lg border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4">Latest Announcements</h2>
         <div className="space-y-3">
-          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
+          <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30">
             <p className="font-medium text-sm text-foreground">Welcome to CS101</p>
             <p className="text-sm text-muted-foreground mt-1">Let's have a great semester together!</p>
             <p className="text-xs text-muted-foreground mt-2">Posted on Jan 15, 2024</p>
           </div>
-          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800">
+          <div className="p-4 rounded-lg bg-brand/5 dark:bg-brand/10 border border-brand/20 dark:border-brand/30">
             <p className="font-medium text-sm text-foreground">Assignment 1 Posted</p>
             <p className="text-sm text-muted-foreground mt-1">Assignment 1 is now available. Due on February 15th.</p>
             <p className="text-xs text-muted-foreground mt-2">Posted on Feb 1, 2024</p>
