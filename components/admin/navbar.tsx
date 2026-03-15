@@ -113,7 +113,7 @@ export function AdminNavbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-20 right-0 z-50 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/80 transition-all duration-300 md:left-64">
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       {/* Search */}
       <div className="flex-1 max-w-2xl">
         <div className="relative">

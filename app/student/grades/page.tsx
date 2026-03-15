@@ -1,6 +1,9 @@
+"use client";
+
 import { BarChart3, TrendingUp, Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/student/page-header";
+import { StudentKPICard } from "@/components/student/kpi-card";
 import { STUDENT_GRADES } from "@/lib/student-mock-data";
 
 const GRADE_SCALE = {
@@ -67,25 +70,29 @@ export default function GradesPage() {
 
       {/* Overall Summary */}
       <div className="grid gap-4 md:grid-cols-3 mb-8">
-        <Card className="p-6 text-center border-green-200 bg-green-50">
-          <Award className="h-8 w-8 mx-auto text-green-600 mb-2" />
-          <p className="text-sm text-green-700 mb-2">Overall GPA</p>
-          <p className="text-3xl font-bold text-green-600">{overallGPA}</p>
-        </Card>
-        <Card className="p-6 text-center border-blue-200 bg-blue-50">
-          <BarChart3 className="h-8 w-8 mx-auto text-blue-600 mb-2" />
-          <p className="text-sm text-blue-700 mb-2">Average Grade</p>
-          <p className="text-3xl font-bold text-blue-600">
-            {Math.round(
-              STUDENT_GRADES.reduce((sum, c) => sum + c.final_grade, 0) / STUDENT_GRADES.length
-            )}%
-          </p>
-        </Card>
-        <Card className="p-6 text-center border-purple-200 bg-purple-50">
-          <TrendingUp className="h-8 w-8 mx-auto text-purple-600 mb-2" />
-          <p className="text-sm text-purple-700 mb-2">Courses</p>
-          <p className="text-3xl font-bold text-purple-600">{STUDENT_GRADES.length}</p>
-        </Card>
+        <StudentKPICard
+          title="Overall GPA"
+          value={overallGPA}
+          icon={Award}
+          variant="success"
+          trend={2.5}
+          hint="Excellent performance"
+        />
+        <StudentKPICard
+          title="Average Grade"
+          value={`${Math.round(STUDENT_GRADES.reduce((sum, c) => sum + c.final_grade, 0) / STUDENT_GRADES.length)}%`}
+          icon={BarChart3}
+          variant="default"
+          trend={1.2}
+          hint="Across all courses"
+        />
+        <StudentKPICard
+          title="Courses"
+          value={STUDENT_GRADES.length}
+          icon={TrendingUp}
+          variant="purple"
+          hint="Total enrolled"
+        />
       </div>
 
       {/* Grade Scale Reference */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
@@ -14,6 +14,7 @@ import { useSidebar } from "@/components/student/sidebar-context";
 export function StudentSidebar() {
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -25,6 +26,16 @@ export function StudentSidebar() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, [setIsCollapsed]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <aside className="fixed left-0 top-0 z-40 h-screen border-r border-sidebar-border bg-sidebar w-64" />
+    );
+  }
 
   const isActive = (href: string) => {
     // Exact match for the dashboard

@@ -16,7 +16,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
         }`}
       >
         <StudentNavbar />
-        <main className="flex-1 mt-16 p-6">
+        <main className="flex-1 p-6">
           {children}
         </main>
       </div>

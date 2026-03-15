@@ -12,11 +12,22 @@ export type StudentCourse = {
   gpa: number;
   due_assignments: number;
   unread_announcements: number;
+  instructor_avatar: string;
+};
+
+export type StudentModule = {
+  id: string;
+  course_id: string;
+  title: string;
+  week_number: number;
+  description: string;
+  order: number;
 };
 
 export type StudentLesson = {
   id: string;
   course_id: string;
+  module_id: string;
   title: string;
   description: string;
   type: "video" | "document" | "quiz" | "assignment";
@@ -25,6 +36,7 @@ export type StudentLesson = {
   completed: boolean;
   completed_at: string | null;
   order: number;
+  video_url?: string;
 };
 
 export type StudentAssignment = {

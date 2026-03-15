@@ -21,7 +21,7 @@ export function TenantNavbar() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="fixed right-0 top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm px-6 ml-20 md:ml-64 transition-all duration-300">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm px-6">
       {/* Search */}
       <div className="flex-1 max-w-md">
         <div className="relative">

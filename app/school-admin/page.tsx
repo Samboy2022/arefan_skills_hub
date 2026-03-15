@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import { PageHeader } from "@/components/tenant/page-header";
 import { KPICard } from "@/components/tenant/kpi-card";
@@ -12,7 +14,7 @@ import { mockDashboardMetrics, mockStudents, mockCommunications } from "@/lib/te
 import { mockRevenueData, mockTenantGrowthData, mockStudentDistribution, mockTopTenantsData } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { StudentsIcon, CoursesIcon, CurriculumIcon, AwardIcon, TransactionsIcon, AlertCircleIcon } from "@/components/shared/colored-icons";
+import { StudentsIcon, FacultyIcon, CoursesIcon, CurriculumIcon, AwardIcon, TransactionsIcon, AlertCircleIcon } from "@/components/shared/colored-icons";
 
 export default function SchoolAdminDashboard() {
   const metrics = mockDashboardMetrics;
@@ -39,7 +41,7 @@ export default function SchoolAdminDashboard() {
           title="Total Faculty"
           value={metrics.totalFaculty.toLocaleString()}
           hint="Active teaching staff"
-          icon={(props) => <StudentsIcon {...props} color="22C55E" />}
+          icon={(props) => <FacultyIcon {...props} color="22C55E" />}
           trend={2}
           color="green"
         />
@@ -184,7 +186,7 @@ export default function SchoolAdminDashboard() {
                 <div key={announcement.id} className="pb-3 border-b border-border last:border-b-0">
                   <div className="flex gap-3 items-start">
                     <div className="rounded-full p-1.5 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 mt-0.5 flex-shrink-0">
-                      <AlertCircle className="h-4 w-4" />
+                      <AlertCircleIcon className="h-4 w-4" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-foreground">

@@ -1,6 +1,9 @@
+"use client";
+
 import { CheckCircle, Clock, BookOpen, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/student/page-header";
+import { StudentKPICard } from "@/components/student/kpi-card";
 import { STUDENT_PROGRESS } from "@/lib/student-mock-data";
 
 export default function ProgressPage() {
@@ -35,30 +38,36 @@ export default function ProgressPage() {
 
       {/* Quick Stats */}
       <div className="grid gap-4 md:grid-cols-4 mb-8">
-        <Card className="p-4">
-          <BookOpen className="h-6 w-6 text-blue-600 mb-2" />
-          <p className="text-sm text-muted-foreground mb-1">Lessons Done</p>
-          <p className="text-2xl font-bold">
-            {totalLessonsCompleted}/{totalLessons}
-          </p>
-        </Card>
-        <Card className="p-4">
-          <CheckCircle className="h-6 w-6 text-green-600 mb-2" />
-          <p className="text-sm text-muted-foreground mb-1">Assignments Done</p>
-          <p className="text-2xl font-bold">
-            {totalAssignmentsCompleted}/{totalAssignments}
-          </p>
-        </Card>
-        <Card className="p-4">
-          <Zap className="h-6 w-6 text-yellow-600 mb-2" />
-          <p className="text-sm text-muted-foreground mb-1">Courses</p>
-          <p className="text-2xl font-bold">{STUDENT_PROGRESS.length}</p>
-        </Card>
-        <Card className="p-4">
-          <Clock className="h-6 w-6 text-purple-600 mb-2" />
-          <p className="text-sm text-muted-foreground mb-1">Last Activity</p>
-          <p className="text-lg font-semibold">Today</p>
-        </Card>
+        <StudentKPICard
+          title="Lessons Done"
+          value={`${totalLessonsCompleted}/${totalLessons}`}
+          icon={BookOpen}
+          variant="default"
+          trend={8}
+          hint="Course materials"
+        />
+        <StudentKPICard
+          title="Assignments Done"
+          value={`${totalAssignmentsCompleted}/${totalAssignments}`}
+          icon={CheckCircle}
+          variant="success"
+          trend={15}
+          hint="Submitted tasks"
+        />
+        <StudentKPICard
+          title="Courses"
+          value={STUDENT_PROGRESS.length}
+          icon={Zap}
+          variant="warning"
+          hint="Active learning"
+        />
+        <StudentKPICard
+          title="Last Activity"
+          value="Today"
+          icon={Clock}
+          variant="purple"
+          hint="Current engagement"
+        />
       </div>
 
       {/* Course-by-Course Progress */}

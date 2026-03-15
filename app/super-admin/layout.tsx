@@ -12,14 +12,16 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-background">
-      <AdminNavbar />
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
-      <main className="pt-16 pl-20 transition-all duration-300 md:pl-64">
-        <div className="p-6">
-          {children}
-        </div>
-      </main>
+      <div className="flex-1 ml-20 md:ml-64 transition-all duration-300">
+        <AdminNavbar />
+        <main>
+          <div className="p-6">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

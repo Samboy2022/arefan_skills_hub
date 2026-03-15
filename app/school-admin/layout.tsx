@@ -7,11 +7,11 @@ export default function SchoolAdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-background">
       <TenantSidebar />
-      <div className="flex-1 md:ml-64 ml-20 transition-all duration-300">
+      <div className="flex-1 ml-20 md:ml-64 transition-all duration-300">
         <TenantNavbar />
-        <main className="pt-20 pb-6 px-6">
+        <main className="pb-6 px-6">
           {children}
         </main>
       </div>

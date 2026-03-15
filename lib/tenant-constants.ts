@@ -1,6 +1,8 @@
 import {
   DashboardIcon as LayoutDashboard,
   StudentsIcon as Users,
+  ClassesIcon as Classes,
+  FacultyIcon as Faculty,
   CoursesIcon as BookOpen,
   LessonsIcon as FileText,
   GradesIcon as BarChart3,
@@ -27,7 +29,7 @@ export const TENANT_NAV_ITEMS = [
       {
         label: "Classes",
         href: "/school-admin/classes",
-        icon: Users,
+        icon: Classes,
         tooltip: "Manage Classes",
       },
       {
@@ -39,7 +41,7 @@ export const TENANT_NAV_ITEMS = [
       {
         label: "Faculty & Staff",
         href: "/school-admin/faculty",
-        icon: Users,
+        icon: Faculty,
         tooltip: "Staff Directory",
       },
     ],

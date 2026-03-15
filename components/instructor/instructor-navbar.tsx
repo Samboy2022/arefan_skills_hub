@@ -16,9 +16,9 @@ export function InstructorNavbar() {
   const { isCollapsed, toggleSidebar } = useSidebar();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      {/* Navbar container with dynamic sidebar offset */}
-      <div className={`${isCollapsed ? 'ml-20' : 'ml-64'} px-6 py-3 flex items-center justify-between gap-4 transition-all duration-300`}>
+    <nav className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Navbar container */}
+      <div className="px-6 py-3 flex items-center justify-between gap-4">
         {/* Left: Toggle button and Search */}
         <div className="flex items-center gap-4 flex-1">
           <Button
@@ -38,15 +38,6 @@ export function InstructorNavbar() {
               className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground"
             />
           </div>
-        </div>
-        {/* Left: Search */}
-        <div className="flex-1 flex items-center gap-2 bg-muted rounded-lg px-3 py-2 max-w-md">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search courses, students, assignments..."
-            className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground"
-          />
         </div>
 
         {/* Right: Actions */}

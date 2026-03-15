@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Bell, Search, Settings, LogOut, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,27 +13,48 @@ import {
 import { useSidebar } from "@/components/student/sidebar-context";
 
 export function StudentNavbar() {
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, toggleSidebar } = useSidebar();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <nav className="sticky top-0 z-30 border-b border-border bg-background">
+        <div className="flex h-16 items-center justify-between px-6" />
+      </nav>
+    );
+  }
 
   return (
-    <nav 
-      className={`fixed top-0 right-0 z-30 border-b border-border bg-background transition-all duration-300 ${
-        isCollapsed ? 'left-28' : 'left-64'
-      }`}
-    >
+    <nav className="sticky top-0 z-30 border-b border-border bg-background">
       <div className="flex h-16 items-center justify-between px-6">
-        {/* Search Bar */}
-        <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 md:max-w-md">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search courses, assignments..."
-            className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
-          />
+        {/* Left: Toggle button and Search */}
+        <div className="flex items-center gap-4 flex-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSidebar}
+            className="h-9 w-9 p-0 text-foreground hover:bg-muted"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+          
+          {/* Search Bar */}
+          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2 md:max-w-md">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search courses, assignments..."
+              className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+            />
+          </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-2">
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

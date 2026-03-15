@@ -5,6 +5,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 interface SidebarContextType {
   isCollapsed: boolean
   setIsCollapsed: (collapsed: boolean) => void
+  toggleSidebar: () => void
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
@@ -23,8 +24,10 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed)
+
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
+    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggleSidebar }}>
       {children}
     </SidebarContext.Provider>
   )
