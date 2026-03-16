@@ -11,11 +11,11 @@ import { STUDENT_ASSIGNMENTS, STUDENT_COURSES } from "@/lib/student-mock-data";
 import Link from "next/link";
 
 const ASSIGNMENT_STATUS_COLORS: Record<string, string> = {
-  pending: "border-yellow-200 bg-yellow-50 text-yellow-700",
-  submitted: "border-blue-200 bg-blue-50 text-blue-700",
-  graded: "border-green-200 bg-green-50 text-green-700",
-  late: "border-orange-200 bg-orange-50 text-orange-700",
-  missing: "border-red-200 bg-red-50 text-red-700",
+  pending: "border-primary/20 bg-primary/10 text-primary",
+  submitted: "border-blue-500/20 bg-blue-500/10 text-blue-600",
+  graded: "border-green-500/20 bg-green-500/10 text-green-600",
+  late: "border-orange-500/20 bg-orange-500/10 text-orange-600",
+  missing: "border-red-500/20 bg-red-500/10 text-red-600",
 };
 
 const getStatusColor = (status: string): string => {
@@ -171,9 +171,9 @@ export default function AssignmentsPage() {
       </div>
 
       <div className="w-full xl:w-[70vw] max-w-full">
-        <Card className="overflow-hidden border border-border bg-card shadow-sm">
+        <Card className="overflow-hidden border border-border rounded-md bg-card shadow-none">
           {/* Table Header */}
-          <div className="hidden sm:flex items-center px-4 py-3 bg-muted/30 border-b text-xs font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="hidden sm:flex items-center px-4 py-3 bg-muted/40 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
             <div className="flex-1">Assignment Details</div>
             <div className="w-[130px]">Due Date</div>
             <div className="w-[140px]">Status</div>

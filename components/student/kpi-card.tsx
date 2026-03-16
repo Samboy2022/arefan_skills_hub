@@ -47,7 +47,7 @@ export function StudentKPICard({
   const subtextTone = isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400";
 
   return (
-    <Card className={cn("p-3 hover:shadow-md transition-shadow border bg-card", borderTone)}>
+    <Card className={cn("p-4 shadow-none border border-border bg-card")}>
       <div className="flex items-center gap-3">
         <div className={cn("rounded-md p-2 shrink-0", iconTone)}>
           <Icon className="h-4 w-4" />

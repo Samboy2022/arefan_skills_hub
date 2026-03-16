@@ -56,19 +56,19 @@ export default function MessagesPage() {
         description="Communicate with instructors and classmates"
       />
 
-      <div className="flex-1 flex overflow-hidden border rounded-xl bg-card shadow-sm mt-4">
+      <div className="flex-1 flex overflow-hidden border border-border rounded-md bg-card shadow-none mt-4">
         {/* Conversations Sidebar */}
         <div className={cn(
-          "w-full md:w-80 border-r flex flex-col bg-muted/10 transition-all",
+          "w-full md:w-80 border-r border-border flex flex-col bg-muted/10 transition-all",
           showMobileChat ? "hidden md:flex" : "flex"
         )}>
-          <div className="p-4 border-b bg-background/50">
+          <div className="p-4 border-b bg-background/30">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search messages..."
-                className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border bg-background/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full pl-9 pr-4 py-2 text-sm rounded-md border border-border bg-background/50 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
               />
             </div>
           </div>
@@ -79,23 +79,25 @@ export default function MessagesPage() {
                 key={conv.id}
                 onClick={() => handleSelectConversation(conv.id)}
                 className={cn(
-                  "w-full p-4 flex gap-3 text-left border-b last:border-0 transition-colors hover:bg-muted/50",
-                  activeConversationId === conv.id ? "bg-muted shadow-inner" : ""
+                  "w-full p-4 flex gap-3 text-left border-b border-border/50 last:border-0 transition-colors hover:bg-muted/30",
+                  activeConversationId === conv.id ? "bg-muted/50" : ""
                 )}
               >
                 <div className="relative">
-                  <Avatar className="h-10 w-10 border">
+                  <Avatar className="h-10 w-10 border border-border shadow-none">
                     <AvatarImage src={conv.lastMessage.sender_avatar} />
-                    <AvatarFallback>{conv.lastMessage.sender_name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                      {conv.lastMessage.sender_name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                   {conv.unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-brand rounded-full border-2 border-background" />
+                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 bg-primary rounded-full border-2 border-background" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-0.5">
-                    <p className="font-bold text-sm truncate">{conv.lastMessage.sender_name}</p>
-                    <span className="text-[10px] text-muted-foreground">
+                    <p className="font-semibold text-sm truncate text-foreground">{conv.lastMessage.sender_name}</p>
+                    <span className="text-[10px] text-muted-foreground font-medium">
                       {format(new Date(conv.lastMessage.timestamp), 'HH:mm')}
                     </span>
                   </div>
@@ -119,26 +121,31 @@ export default function MessagesPage() {
           {activeConversation ? (
             <>
               {/* Header */}
-              <div className="p-4 border-b flex items-center justify-between bg-muted/5">
+              <div className="p-4 border-b border-border flex items-center justify-between bg-muted/5">
                 <div className="flex items-center gap-3">
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="md:hidden h-8 w-8 -ml-1 text-muted-foreground hover:bg-muted" 
+                    className="md:hidden h-8 w-8 -ml-1 text-muted-foreground hover:bg-muted/50" 
                     onClick={() => setShowMobileChat(false)}
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
-                  <Avatar className="h-9 w-9 border">
+                  <Avatar className="h-9 w-9 border border-border shadow-none">
                     <AvatarImage src={activeConversation.lastMessage.sender_avatar} />
-                    <AvatarFallback>{activeConversation.lastMessage.sender_name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                      {activeConversation.lastMessage.sender_name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-bold text-sm leading-none">{activeConversation.lastMessage.sender_name}</h4>
-                    <span className="text-[10px] text-green-600 font-bold uppercase tracking-wider mt-1 block">Online</span>
+                    <h4 className="font-bold text-sm leading-none text-foreground">{activeConversation.lastMessage.sender_name}</h4>
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <span className="h-1.5 w-1.5 bg-green-500 rounded-full"></span>
+                      <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Online</span>
+                    </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:bg-muted/50">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </div>
@@ -150,18 +157,18 @@ export default function MessagesPage() {
                   return (
                     <div key={msg.id} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
                       <div className={cn(
-                        "max-w-[70%] space-y-1",
-                        isMe ? "items-end" : "items-start"
+                        "max-w-[75%] space-y-1.5",
+                        isMe ? "items-end text-right" : "items-start"
                       )}>
                         <div className={cn(
-                          "px-4 py-2.5 rounded-2xl text-sm shadow-sm border",
+                          "px-4 py-2.5 rounded-lg text-sm border shadow-none",
                           isMe 
-                            ? "bg-brand text-white border-brand rounded-tr-none" 
-                            : "bg-background text-foreground border-border rounded-tl-none"
+                            ? "bg-primary text-primary-foreground border-primary" 
+                            : "bg-card text-foreground border-border"
                         )}>
                           {msg.content}
                         </div>
-                        <p className="text-[10px] text-muted-foreground px-1">
+                        <p className="text-[10px] text-muted-foreground font-medium px-1">
                           {format(new Date(msg.timestamp), 'MMM dd, HH:mm')}
                         </p>
                       </div>
@@ -171,24 +178,30 @@ export default function MessagesPage() {
               </div>
 
               {/* Input Area */}
-              <div className="p-4 border-t bg-muted/5">
-                <form onSubmit={handleSendMessage} className="flex gap-2 items-center">
-                  <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground rounded-full">
+              <div className="p-4 border-t border-border bg-background">
+                <form onSubmit={handleSendMessage} className="flex gap-2 items-end">
+                  <Button type="button" variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-muted/50 rounded-md">
                     <Paperclip className="h-4 w-4" />
                   </Button>
                   <div className="relative flex-1">
-                    <input
-                      type="text"
+                    <textarea
+                      rows={1}
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}
                       placeholder="Type a professional message..."
-                      className="w-full pl-4 pr-10 py-2.5 text-sm rounded-full border bg-background focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
+                      className="w-full pl-4 pr-10 py-2.5 text-sm rounded-md border border-border bg-muted/5 focus:outline-none focus:ring-1 focus:ring-primary/30 shadow-none resize-none min-h-[42px] max-h-[120px]"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage(e as any);
+                        }
+                      }}
                     />
-                    <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground rounded-full">
+                    <Button type="button" variant="ghost" size="icon" className="absolute right-1 bottom-1.5 h-7 w-7 text-muted-foreground hover:bg-muted/50 rounded-md">
                       <Smile className="h-4 w-4" />
                     </Button>
                   </div>
-                  <Button type="submit" size="icon" disabled={!messageInput.trim()} className="h-10 w-10 rounded-full shadow-md">
+                  <Button type="submit" size="icon" disabled={!messageInput.trim()} className="h-10 w-10 rounded-md shadow-none shrink-0 bg-primary text-primary-foreground hover:bg-primary/90">
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>
@@ -196,12 +209,12 @@ export default function MessagesPage() {
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-10 bg-muted/5">
-              <div className="p-6 rounded-full bg-muted/20 mb-4">
-                <MessageSquare className="h-12 w-12 text-muted-foreground/50" />
+              <div className="p-6 rounded-md bg-muted/20 mb-4 border border-border/50">
+                <MessageSquare className="h-10 w-10 text-muted-foreground/40" />
               </div>
-              <h3 className="font-bold text-lg">Your Inbox</h3>
-              <p className="text-sm text-muted-foreground max-w-xs mt-2">
-                Select a conversation from the sidebar to view the message history and start chatting.
+              <h3 className="font-bold text-lg text-foreground">Your Inbox</h3>
+              <p className="text-sm text-muted-foreground max-w-xs mt-2 leading-relaxed">
+                Select a conversation from the sidebar to view the message history and start chatting with your peers and instructors.
               </p>
             </div>
           )}

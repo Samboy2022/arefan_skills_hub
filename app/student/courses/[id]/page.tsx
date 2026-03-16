@@ -8,26 +8,22 @@ import { EnrollmentCard } from '@/components/student/courses/EnrollmentCard';
 
 // Simulated fetch function
 async function fetchCourse(id: string) {
-  // In a real app, this would fetch from an API or database
   return {
     id,
     title: 'Advanced Full-Stack Web Development',
     short_description: 'Master React, Next.js, Node.js, and PostgreSQL by building real-world applications.',
-    description: '<p>This comprehensive course takes you from basics to advanced patterns in modern web development. You will learn how to build scalable, production-ready applications...</p>',
+    description: '<p>This comprehensive course takes you from basics to advanced patterns in modern web development. You will learn how to build scalable, production-ready applications focusing on best practices.</p><p>By the end of this course, you will be able to structure complex UI components, manage state effectively, and connect seamlessly to backend services.</p>',
     thumbnail_url: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80',
     rating: 4.8,
     reviews_count: 1245,
     enrolled_students_count: 8540,
     updated_at: new Date().toISOString(),
-    category: { name: 'Programming' },
+    category: { name: 'Computer Science' },
     level: 'intermediate',
     language: 'english',
     duration_hours: 42,
     lessons_count: 156,
     is_certificate_enabled: true,
-    price: 49900,
-    currency: '₦',
-    original_price: 99900,
     user_progress: 15, // Simulate a user who has started
     first_lesson_id: 1,
     last_accessed_lesson_id: 5,
@@ -83,132 +79,132 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
     notFound();
   }
   
-  // Hardcode enrollment status for demonstration
+  // Assume enrolled for student view
   const isEnrolled = true;
   
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
-      {/* Course Hero Section */}
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Full-width Hero Banner */}
       <CourseHero 
         course={course} 
         isEnrolled={isEnrolled}
       />
       
-      {/* Course Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Course Overview */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <h2 className="text-2xl font-bold">What You'll Learn</h2>
-            </CardHeader>
-            <CardContent>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {course.learning_outcomes.map((outcome, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{outcome}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+      {/* Constrained layout for content */}
+      <div className="max-w-6xl mx-auto w-full px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           
-          {/* Course Description */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <h2 className="text-xl font-bold">About This Course</h2>
-            </CardHeader>
-            <CardContent>
+          {/* Main Content Column (Left) */}
+          <div className="lg:col-span-2 space-y-10">
+            
+            {/* What You'll Learn */}
+            <section>
+              <h2 className="text-xl font-bold text-foreground mb-4">What You'll Learn</h2>
+              <Card className="border border-border shadow-none rounded-md bg-card">
+                <CardContent className="p-6">
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
+                    {course.learning_outcomes.map((outcome, index) => (
+                      <li key={index} className="flex items-start">
+                        <CheckCircle2 className="w-5 h-5 text-primary mr-3 shrink-0 mt-0.5" />
+                        <span className="text-sm text-muted-foreground leading-relaxed">{outcome}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </section>
+            
+            {/* About This Course */}
+            <section>
+              <h2 className="text-xl font-bold text-foreground mb-4">About This Course</h2>
               <div 
-                className="prose max-w-none text-gray-700"
+                className="prose prose-sm max-w-none text-muted-foreground prose-p:leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: course.description }}
               />
-            </CardContent>
-          </Card>
+            </section>
+            
+            {/* Course Curriculum */}
+            <section>
+              <h2 className="text-xl font-bold text-foreground mb-4">Course Curriculum</h2>
+              <Card className="border border-border shadow-none rounded-md bg-card overflow-hidden">
+                <CourseCurriculum 
+                  course={course} 
+                  isEnrolled={isEnrolled}
+                  curriculum={course.curriculum}
+                />
+              </Card>
+            </section>
+            
+            {/* Instructor Info */}
+            <section>
+              <h2 className="text-xl font-bold text-foreground mb-4">Instructor</h2>
+              <Card className="border border-border shadow-none rounded-md bg-muted/30">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl shrink-0">
+                      {course.instructor.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground text-lg">{course.instructor.name}</h3>
+                      <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{course.instructor.bio}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+          </div>
           
-          {/* Course Curriculum */}
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <h2 className="text-xl font-bold">Course Curriculum</h2>
-            </CardHeader>
-            <CardContent>
-              <CourseCurriculum 
+          {/* Sidebar Column (Right) */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 space-y-6">
+              
+              {/* Action / Resume Card */}
+              <EnrollmentCard 
                 course={course} 
                 isEnrolled={isEnrolled}
-                curriculum={course.curriculum}
               />
-            </CardContent>
-          </Card>
-          
-          {/* Instructor Info */}
-          <Card className="border-0 shadow-sm bg-blue-50/50">
-            <CardHeader>
-              <h2 className="text-xl font-bold text-gray-900">Your Instructor</h2>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-start gap-4">
-                <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl flex-shrink-0">
-                  {course.instructor.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">{course.instructor.name}</h3>
-                  <p className="text-gray-600 mt-1">{course.instructor.bio}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24 space-y-6">
-            {/* Enrollment Card */}
-            <EnrollmentCard 
-              course={course} 
-              isEnrolled={isEnrolled}
-            />
-            
-            {/* Course Info */}
-            <Card className="border-0 shadow-sm">
-              <CardHeader className="pb-4 border-b border-gray-100">
-                <h3 className="font-bold text-lg">Course Info</h3>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-4">
-                <div className="flex items-center text-gray-700">
-                  <Clock className="w-5 h-5 mr-3 text-gray-400" />
-                  <span className="font-medium text-gray-900">{course.duration_hours} hours</span>
-                  <span className="text-gray-500 ml-1">total length</span>
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <BookOpen className="w-5 h-5 mr-3 text-gray-400" />
-                  <span className="font-medium text-gray-900">{course.lessons_count}</span>
-                  <span className="text-gray-500 ml-1">lessons</span>
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <Users className="w-5 h-5 mr-3 text-gray-400" />
-                  <span className="font-medium text-gray-900">{course.enrolled_students_count.toLocaleString()}</span>
-                  <span className="text-gray-500 ml-1">students</span>
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <BarChart className="w-5 h-5 mr-3 text-gray-400" />
-                  <span className="capitalize font-medium text-gray-900">{course.level}</span>
-                  <span className="text-gray-500 ml-1">level</span>
-                </div>
-                <div className="flex items-center text-gray-700">
-                  <Globe className="w-5 h-5 mr-3 text-gray-400" />
-                  <span className="capitalize font-medium text-gray-900">{course.language}</span>
-                </div>
-                {course.is_certificate_enabled && (
-                  <div className="flex items-center text-gray-700">
-                    <Award className="w-5 h-5 mr-3 text-emerald-500" />
-                    <span className="font-medium text-gray-900">Certificate of completion</span>
+              
+              {/* Course Meta Info Card */}
+              <Card className="border border-border shadow-none rounded-md bg-card">
+                <CardHeader className="pb-4 border-b border-border/50 px-6 pt-6">
+                  <h3 className="font-semibold text-foreground">Course Info</h3>
+                </CardHeader>
+                <CardContent className="space-y-4 px-6 py-5">
+                  <div className="flex items-center text-sm">
+                    <Clock className="w-4 h-4 mr-3 text-muted-foreground" />
+                    <span className="font-medium text-foreground">{course.duration_hours} hours</span>
+                    <span className="text-muted-foreground ml-1">total length</span>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                  <div className="flex items-center text-sm">
+                    <BookOpen className="w-4 h-4 mr-3 text-muted-foreground" />
+                    <span className="font-medium text-foreground">{course.lessons_count}</span>
+                    <span className="text-muted-foreground ml-1">lessons</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <Users className="w-4 h-4 mr-3 text-muted-foreground" />
+                    <span className="font-medium text-foreground">{course.enrolled_students_count.toLocaleString()}</span>
+                    <span className="text-muted-foreground ml-1">students</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <BarChart className="w-4 h-4 mr-3 text-muted-foreground" />
+                    <span className="capitalize font-medium text-foreground">{course.level}</span>
+                    <span className="text-muted-foreground ml-1">level</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <Globe className="w-4 h-4 mr-3 text-muted-foreground" />
+                    <span className="capitalize font-medium text-foreground">{course.language}</span>
+                  </div>
+                  {course.is_certificate_enabled && (
+                    <div className="flex items-center text-sm">
+                      <Award className="w-4 h-4 mr-3 text-primary" />
+                      <span className="font-medium text-foreground">Certificate of completion</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
+          
         </div>
       </div>
     </div>

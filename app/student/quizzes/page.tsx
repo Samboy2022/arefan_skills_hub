@@ -11,13 +11,12 @@ import { STUDENT_QUIZZES } from "@/lib/student-mock-data";
 const getTypeColor = (type: string) => {
   switch (type) {
     case "graded":
-      return "bg-red-50 border-red-200 text-red-700";
+      return "bg-red-500/10 text-red-600 border border-red-500/20";
     case "practice":
-      return "bg-blue-50 border-blue-200 text-blue-700";
+      return "bg-primary/10 text-primary border border-primary/20";
     case "ungraded":
-      return "bg-gray-50 border-gray-200 text-gray-700";
     default:
-      return "bg-gray-50 border-gray-200 text-gray-700";
+      return "bg-muted text-muted-foreground border border-border";
   }
 };
 
@@ -60,14 +59,14 @@ export default function QuizzesPage() {
   };
 
   const renderQuizCard = (quiz: typeof STUDENT_QUIZZES[0]) => (
-    <Card key={quiz.id} className="overflow-hidden hover:shadow-xl transition-all border-none shadow-sm flex flex-col h-full bg-card group">
-      <div className={cn("h-1.5 w-full", quiz.status === 'submitted' ? 'bg-green-500' : quiz.status === 'in_progress' ? 'bg-blue-500' : 'bg-gray-300')} />
+    <Card key={quiz.id} className="overflow-hidden border border-border shadow-none rounded-md transition-colors hover:border-primary/50 bg-card flex flex-col h-full group">
+      <div className={cn("h-1.5 w-full", quiz.status === 'submitted' ? 'bg-green-500' : quiz.status === 'in_progress' ? 'bg-primary' : 'bg-muted')} />
       <div className="p-5 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-4">
-          <div className={cn("p-2 rounded-lg bg-muted text-foreground")}>
+          <div className={cn("p-2 rounded-md bg-muted text-foreground")}>
             {getStatusIcon(quiz.status)}
           </div>
-          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border", getTypeColor(quiz.type))}>
+          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm", getTypeColor(quiz.type))}>
             {getTypeLabel(quiz.type)}
           </span>
         </div>

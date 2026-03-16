@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/student/page-header";
 import { StudentKPICard } from "@/components/student/kpi-card";
 import { STUDENT_GRADES } from "@/lib/student-mock-data";
+import { cn } from "@/lib/utils";
 
 const GRADE_SCALE = {
   A: { min: 90, max: 100 },
@@ -18,17 +19,17 @@ const getGradeColor = (grade: string) => {
   const firstChar = grade.charAt(0);
   switch (firstChar) {
     case "A":
-      return "text-green-600 bg-green-50 border-green-200";
+      return "text-green-600 border-green-200 bg-green-500/5";
     case "B":
-      return "text-blue-600 bg-blue-50 border-blue-200";
+      return "text-blue-600 border-blue-200 bg-primary/5";
     case "C":
-      return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      return "text-yellow-600 border-yellow-200 bg-yellow-500/5";
     case "D":
-      return "text-orange-600 bg-orange-50 border-orange-200";
+      return "text-orange-600 border-orange-200 bg-orange-500/5";
     case "F":
-      return "text-red-600 bg-red-50 border-red-200";
+      return "text-red-600 border-red-200 bg-red-500/5";
     default:
-      return "text-gray-600 bg-gray-50 border-gray-200";
+      return "text-muted-foreground border-border bg-muted/20";
   }
 };
 
@@ -96,27 +97,24 @@ export default function GradesPage() {
       </div>
 
       {/* Grade Scale Reference */}
-      <Card className="p-6 mb-8">
-        <h3 className="text-lg font-semibold mb-4">Grade Scale Reference</h3>
-        <div className="grid grid-cols-5 gap-2">
+      <Card className="p-6 mb-8 border border-border shadow-none rounded-md bg-card">
+        <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground mb-6">Grade Scale Reference</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {Object.entries(GRADE_SCALE).map(([letter, { min, max }]) => (
             <div
               key={letter}
-              className={`p-4 rounded text-center border ${
-                letter === "A"
-                  ? "bg-green-50 border-green-200"
-                  : letter === "B"
-                  ? "bg-blue-50 border-blue-200"
-                  : letter === "C"
-                  ? "bg-yellow-50 border-yellow-200"
-                  : letter === "D"
-                  ? "bg-orange-50 border-orange-200"
-                  : "bg-red-50 border-red-200"
-              }`}
+              className="p-4 rounded-md text-center border border-border bg-muted/5 flex flex-col items-center justify-center transition-colors hover:bg-muted/10"
             >
-              <p className="text-lg font-bold">{letter}</p>
-              <p className="text-xs text-muted-foreground">
-                {min}-{max}%
+              <p className={cn(
+                "text-2xl font-bold mb-1",
+                letter === "A" ? "text-green-600"
+                  : letter === "B" ? "text-primary"
+                  : letter === "C" ? "text-amber-600"
+                  : letter === "D" ? "text-orange-600"
+                  : "text-red-600"
+              )}>{letter}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
+                {min}—{max}%
               </p>
             </div>
           ))}
@@ -124,56 +122,63 @@ export default function GradesPage() {
       </Card>
 
       {/* Course Grades */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Course Grades Breakdown</h2>
+      <div className="space-y-6">
+        <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3">
+          <Award className="h-4 w-4" />
+          Academic Record Breakdown
+        </h2>
+        
         <div className="space-y-4">
           {STUDENT_GRADES.map(grade => (
-            <Card key={grade.course_id} className="p-6">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <p className="font-semibold text-lg">{grade.course_name}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Final Grade: {grade.final_grade}%
-                  </p>
+            <Card key={grade.course_id} className="border border-border shadow-none rounded-md bg-card overflow-hidden">
+              <div className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                  <div className="space-y-1">
+                    <p className="font-bold text-xl text-foreground leading-tight">{grade.course_name}</p>
+                    <div className="flex items-center gap-3 mt-2">
+                       <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Final Average:</span>
+                       <span className="text-base font-bold text-foreground">{grade.final_grade}%</span>
+                    </div>
+                  </div>
+                  <div className={cn(
+                    "px-6 py-4 rounded-md border text-center min-w-[120px] transition-all",
+                    getGradeColor(grade.letter_grade).split(' ').map(c => c.includes('bg-') ? 'bg-background' : c).join(' ') // Flatten backgrounds
+                  )}>
+                    <p className="text-3xl font-black leading-none">{grade.letter_grade}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold mt-2 opacity-80">{getGradeDescription(grade.letter_grade)}</p>
+                  </div>
                 </div>
-                <div className={`px-4 py-2 rounded border text-center ${getGradeColor(grade.letter_grade)}`}>
-                  <p className="text-2xl font-bold">{grade.letter_grade}</p>
-                  <p className="text-xs mt-1">{getGradeDescription(grade.letter_grade)}</p>
+
+                {/* Grade Components */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {[
+                    { label: "Assignments", val: grade.assignments_grade, color: "bg-blue-500" },
+                    { label: "Quizzes", val: grade.quizzes_grade, color: "bg-primary" },
+                    { label: "Participation", val: grade.participation_grade, color: "bg-green-500" }
+                  ].map((comp) => (
+                    <div key={comp.label} className="p-4 bg-muted/20 border border-border/50 rounded-md">
+                      <div className="flex justify-between items-end mb-3">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{comp.label}</p>
+                        <p className="text-xl font-bold leading-none">{comp.val}</p>
+                      </div>
+                      <div className="h-1.5 bg-background rounded-full overflow-hidden border border-border/20">
+                        <div
+                          className={cn("h-full transition-all duration-500", comp.color)}
+                          style={{ width: `${comp.val}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              {/* Grade Components */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="p-4 bg-muted rounded">
-                  <p className="text-sm text-muted-foreground mb-2">Assignments</p>
-                  <p className="text-3xl font-bold">{grade.assignments_grade}</p>
-                  <div className="mt-2 h-2 bg-background rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-500"
-                      style={{ width: `${grade.assignments_grade}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="p-4 bg-muted rounded">
-                  <p className="text-sm text-muted-foreground mb-2">Quizzes</p>
-                  <p className="text-3xl font-bold">{grade.quizzes_grade}</p>
-                  <div className="mt-2 h-2 bg-background rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-purple-500"
-                      style={{ width: `${grade.quizzes_grade}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="p-4 bg-muted rounded">
-                  <p className="text-sm text-muted-foreground mb-2">Participation</p>
-                  <p className="text-3xl font-bold">{grade.participation_grade}</p>
-                  <div className="mt-2 h-2 bg-background rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-green-500"
-                      style={{ width: `${grade.participation_grade}%` }}
-                    ></div>
-                  </div>
-                </div>
+              
+              <div className="px-6 py-3 bg-muted/5 border-t border-border flex items-center justify-between">
+                <button className="text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">
+                  View Detailed Feedback
+                </button>
+                <button className="text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">
+                  Download transcript section
+                </button>
               </div>
             </Card>
           ))}

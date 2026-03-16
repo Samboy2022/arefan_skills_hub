@@ -39,7 +39,7 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Instructions & Submission */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="p-6">
+          <Card className="p-6 border border-border shadow-none rounded-md bg-card">
             <h3 className="text-lg font-semibold mb-4">Instructions</h3>
             <div className="prose prose-sm max-w-none text-muted-foreground">
               <p>{assignment.description}</p>
@@ -49,14 +49,14 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
               </p>
             </div>
             
-            <div className="mt-8 pt-6 border-t font-medium">
-              <h4 className="text-sm mb-3">Reference Materials</h4>
+            <div className="mt-8 pt-6 border-t border-border font-medium">
+              <h4 className="text-sm mb-3 text-foreground">Reference Materials</h4>
               <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" className="h-8">
+                <Button variant="outline" size="sm" className="h-8 shadow-none border-border">
                   <FileText className="h-3.5 w-3.5 mr-2" />
                   Guidelines.pdf
                 </Button>
-                <Button variant="outline" size="sm" className="h-8">
+                <Button variant="outline" size="sm" className="h-8 shadow-none border-border">
                   <ExternalLink className="h-3.5 w-3.5 mr-2" />
                   Reading Material
                 </Button>
@@ -65,8 +65,8 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
           </Card>
 
           {isPending ? (
-            <Card className="p-8 border-dashed border-2 flex flex-col items-center justify-center text-center space-y-4">
-              <div className="p-4 bg-primary/10 rounded-full text-primary">
+            <Card className="p-8 border-dashed border-2 border-border shadow-none rounded-md bg-card flex flex-col items-center justify-center text-center space-y-4">
+              <div className="p-4 bg-primary/10 rounded-full text-primary border border-primary/20">
                 <Upload className="h-8 w-8" />
               </div>
               <div>
@@ -75,14 +75,14 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
                   Drag and drop your files here, or click to browse. Supported formats: .pdf, .docx, .zip
                 </p>
               </div>
-              <Button className="px-8">Choose Files</Button>
+              <Button className="px-8 shadow-none">Choose Files</Button>
             </Card>
           ) : (
-            <Card className="p-6">
+            <Card className="p-6 border border-border shadow-none rounded-md bg-card">
               <h3 className="text-lg font-semibold mb-4">Your Submission</h3>
-              <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border">
+              <div className="flex items-center justify-between p-4 bg-muted/30 rounded-md border border-border">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-background rounded-md border shadow-sm">
+                  <div className="p-2 bg-background rounded-md border border-border shadow-none">
                     <FileText className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -90,18 +90,18 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
                     <p className="text-xs text-muted-foreground">Submitted on {assignment.submission_date ? format(new Date(assignment.submission_date), 'MMM dd, yyyy') : "N/A"}</p>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="hover:bg-muted/50">
                   <Download className="h-4 w-4" />
                 </Button>
               </div>
 
               {assignment.feedback && (
-                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-800/30">
+                <div className="mt-6 p-4 bg-muted/30 rounded-md border border-border">
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-bold text-blue-900 dark:text-blue-300">Instructor Feedback</span>
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-bold text-foreground">Instructor Feedback</span>
                   </div>
-                  <p className="text-sm text-blue-800 dark:text-blue-400">{assignment.feedback}</p>
+                  <p className="text-sm text-muted-foreground">{assignment.feedback}</p>
                 </div>
               )}
             </Card>
@@ -110,21 +110,21 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
 
         {/* Right Column: Status & Info */}
         <div className="space-y-6">
-          <Card className="p-6 overflow-hidden relative">
+          <Card className="p-6 overflow-hidden relative border border-border shadow-none rounded-md bg-card">
             <div className={cn("absolute top-0 left-0 w-1 h-full", 
                assignment.status === 'graded' ? "bg-green-500" : 
-               assignment.status === 'pending' ? "bg-yellow-500" : "bg-blue-500"
+               assignment.status === 'pending' ? "bg-amber-500" : "bg-primary"
             )} />
             <h3 className="text-sm font-semibold text-muted-foreground mb-4">Submission Status</h3>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 font-semibold">
+              <div className="flex items-center gap-3 font-semibold text-foreground">
                 {assignment.status === 'graded' ? <CheckCircle className="h-5 w-5 text-green-500" /> : 
-                 assignment.status === 'pending' ? <AlertCircle className="h-5 w-5 text-yellow-500" /> :
-                 <Clock className="h-5 w-5 text-blue-500" />}
+                 assignment.status === 'pending' ? <AlertCircle className="h-5 w-5 text-amber-500" /> :
+                 <Clock className="h-5 w-5 text-primary" />}
                 <span className="capitalize">{assignment.status.replace('_', ' ')}</span>
               </div>
 
-              <div className="space-y-3 pt-4 border-t text-sm">
+              <div className="space-y-3 pt-4 border-t border-border text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Due Date</span>
                   <span className="font-medium">{format(new Date(assignment.due_date), 'MMM dd, yyyy')}</span>
@@ -136,31 +136,31 @@ export default function AssignmentDetailPage({ params }: { params: Promise<{ id:
                 {isGraded && (
                   <div className="flex justify-between pt-2">
                     <span className="text-muted-foreground">Grade</span>
-                    <span className="font-bold text-green-600">{assignment.points_earned} / {assignment.total_points}</span>
+                    <span className="font-bold text-green-600 dark:text-green-500">{assignment.points_earned} / {assignment.total_points}</span>
                   </div>
                 )}
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-muted/30 border-dashed">
-            <h3 className="text-sm font-semibold mb-3">Grading Criteria</h3>
+          <Card className="p-6 bg-muted/30 border-dashed border-border shadow-none rounded-md">
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Grading Criteria</h3>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex justify-between">
                 <span>Code Correctness</span>
-                <span className="font-medium">40%</span>
+                <span className="font-medium text-foreground">40%</span>
               </li>
               <li className="flex justify-between">
                 <span>Documentation</span>
-                <span className="font-medium">30%</span>
+                <span className="font-medium text-foreground">30%</span>
               </li>
               <li className="flex justify-between">
                 <span>Optimization</span>
-                <span className="font-medium">20%</span>
+                <span className="font-medium text-foreground">20%</span>
               </li>
               <li className="flex justify-between">
                 <span>Style</span>
-                <span className="font-medium">10%</span>
+                <span className="font-medium text-foreground">10%</span>
               </li>
             </ul>
           </Card>

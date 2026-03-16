@@ -1,27 +1,26 @@
 'use client';
 
-import { Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRightIcon, StarIcon, UsersIcon, CalendarIcon, CheckCircleIcon } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { ChevronRightIcon, StarIcon, UsersIcon, ClockIcon, BookOpenIcon } from 'lucide-react';
 
 interface Course {
   id: number | string;
   title: string;
-  slug?: string;
   short_description: string;
   thumbnail_url: string;
   rating: number;
   reviews_count: number;
   enrolled_students_count: number;
   updated_at: string;
+  duration_hours?: number;
+  lessons_count?: number;
   category?: { name: string };
   instructor: {
     name: string;
     profile_photo_url?: string;
   };
+  user_progress?: number;
 }
 
 interface CourseHeroProps {
@@ -29,106 +28,82 @@ interface CourseHeroProps {
   isEnrolled: boolean;
 }
 
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium'
-  }).format(date);
-}
-
 export function CourseHero({ course, isEnrolled }: CourseHeroProps) {
   return (
-    <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg overflow-hidden">
+    <div className="relative w-full h-56 bg-black overflow-hidden border-b border-border">
+      {/* Background thumbnail */}
       {course.thumbnail_url && (
-        <div className="absolute inset-0 opacity-20">
-          <Image
-            src={course.thumbnail_url}
-            alt={course.title}
-            fill
-            className="object-cover"
-          />
+        <div className="absolute inset-0 w-full h-full">
+          {/* We push the image to the right side so the left text overlay is solid */}
+          <div className="absolute inset-0 md:left-1/3">
+            <Image
+              src={course.thumbnail_url}
+              alt={course.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+          {/* Gradient overlay blending the image smoothly into the black background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/20" />
         </div>
       )}
-      
-      <div className="relative p-8 md:p-12">
-        <div className="max-w-3xl">
-          {/* Breadcrumb */}
-          <div className="flex items-center space-x-2 text-sm mb-4">
-            <Link href="/student/courses" className="hover:underline">
-              Courses
-            </Link>
-            <ChevronRightIcon className="w-4 h-4" />
-            <span>{course.category?.name || 'Uncategorized'}</span>
-          </div>
-          
-          {/* Title */}
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {course.title}
-          </h1>
-          
-          {/* Short Description */}
-          <p className="text-xl mb-6 opacity-90">
-            {course.short_description}
-          </p>
-          
-          {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-6">
-            {/* Rating */}
-            <div className="flex items-center">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon
-                    key={i}
-                    className={`w-5 h-5 ${
-                      i < Math.floor(course.rating || 0)
-                        ? 'text-yellow-400 fill-current'
-                        : 'text-gray-300'
-                    }`}
-                  />
-                ))}
+
+      {/* Content */}
+      <div className="relative h-full flex flex-col justify-center px-6 py-6 max-w-6xl mx-auto w-full">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-1.5 text-xs text-white/50 mb-4">
+          <Link href="/student/courses" className="hover:text-white transition-colors">
+            My Courses
+          </Link>
+          <ChevronRightIcon className="w-3 h-3 text-white/50" />
+          <span className="text-white/80">{course.category?.name || 'Course'}</span>
+        </div>
+
+        {/* Bottom row: title + meta */}
+        <div className="flex items-end justify-between gap-6">
+          <div className="min-w-0 max-w-2xl">
+            <h1 className="text-white font-bold text-2xl md:text-3xl leading-tight truncate">
+              {course.title}
+            </h1>
+            <p className="text-white/70 text-sm mt-2 line-clamp-2">
+              {course.short_description}
+            </p>
+
+            {/* Meta row */}
+            <div className="flex items-center gap-4 mt-4 flex-wrap">
+              {/* Rating */}
+              <div className="flex items-center gap-1">
+                <StarIcon className="w-4 h-4 text-yellow-500 fill-current" />
+                <span className="text-white text-sm font-medium">{course.rating.toFixed(1)}</span>
+                <span className="text-white/60 text-sm">({course.reviews_count.toLocaleString()})</span>
               </div>
-              <span className="ml-2 font-semibold">
-                {(course.rating || 0).toFixed(1)}
-              </span>
-              <span className="ml-1 opacity-75">
-                ({course.reviews_count || 0} reviews)
-              </span>
-            </div>
-            
-            {/* Students Enrolled */}
-            <div className="flex items-center">
-              <UsersIcon className="w-5 h-5 mr-2" />
-              <span>{(course.enrolled_students_count || 0).toLocaleString()} students</span>
-            </div>
-            
-            {/* Last Updated */}
-            <div className="flex items-center">
-              <CalendarIcon className="w-5 h-5 mr-2" />
-              <span>Updated {formatDate(course.updated_at || new Date().toISOString())}</span>
-            </div>
-          </div>
-          
-          {/* Instructor */}
-          <div className="flex items-center mt-6">
-            <Avatar className="h-10 w-10 border-2 border-white/20">
-               <AvatarImage src={course.instructor.profile_photo_url} alt={course.instructor.name} />
-               <AvatarFallback>{course.instructor.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="ml-3">
-              <p className="text-sm opacity-75">Created by</p>
-              <p className="font-semibold">{course.instructor.name}</p>
+              {/* Students */}
+              <div className="flex items-center gap-1.5">
+                <UsersIcon className="w-4 h-4 text-white/60" />
+                <span className="text-white/60 text-sm">{course.enrolled_students_count.toLocaleString()} students</span>
+              </div>
+              {/* Duration */}
+              {course.duration_hours && (
+                <div className="flex items-center gap-1.5">
+                  <ClockIcon className="w-4 h-4 text-white/60" />
+                  <span className="text-white/60 text-sm">{course.duration_hours}h total</span>
+                </div>
+              )}
+              {/* Lessons */}
+              {course.lessons_count && (
+                <div className="flex items-center gap-1.5">
+                  <BookOpenIcon className="w-4 h-4 text-white/60" />
+                  <span className="text-white/60 text-sm">{course.lessons_count} lessons</span>
+                </div>
+              )}
+              {/* Instructor */}
+              <div className="flex items-center gap-1">
+                <span className="text-white/60 text-sm">by</span>
+                <span className="text-white text-sm font-medium">{course.instructor.name}</span>
+              </div>
             </div>
           </div>
-          
-          {/* Enrollment Status Badge */}
-          {isEnrolled && (
-            <div className="mt-6">
-              <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm py-1 px-3">
-                <CheckCircleIcon className="w-4 h-4 mr-2" />
-                You're enrolled in this course
-              </Badge>
-            </div>
-          )}
         </div>
       </div>
     </div>

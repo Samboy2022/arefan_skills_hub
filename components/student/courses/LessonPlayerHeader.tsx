@@ -48,13 +48,7 @@ export function LessonPlayerHeader({ course }: LessonPlayerHeaderProps) {
       </div>
       
       <div className="flex items-center space-x-4">
-        {/* Progress */}
-        <div className="hidden sm:flex items-center space-x-3">
-          <span className="text-sm font-medium text-gray-700">
-            {course.user_progress || 0}% Complete
-          </span>
-          <Progress value={course.user_progress || 0} className="w-32 h-2.5" />
-        </div>
+        {/* Progress removed - now exists only in the sidebar as a circular widget */}
         
         {/* Notes */}
         <Button variant="outline" size="sm" className="hidden sm:flex">
