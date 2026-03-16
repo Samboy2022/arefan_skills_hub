@@ -36,19 +36,13 @@ export const STUDENT_NAV_ITEMS = [
     section: "Learning",
     items: [
       {
-        label: "Course Content",
-        href: "/student/course-content",
-        icon: FileText,
-        tooltip: "Lessons & Materials",
-      },
-      {
         label: "Assignments",
         href: "/student/assignments",
         icon: CheckCircle,
         tooltip: "My Assignments",
       },
       {
-        label: "Quizzes & Exams",
+        label: "Quizzes",
         href: "/student/quizzes",
         icon: Zap,
         tooltip: "Tests & Assessments",
@@ -64,12 +58,6 @@ export const STUDENT_NAV_ITEMS = [
         icon: Grades,
         tooltip: "View Grades",
       },
-      {
-        label: "Progress",
-        href: "/student/progress",
-        icon: Clock,
-        tooltip: "Track Progress",
-      },
     ],
   },
   {
@@ -82,7 +70,7 @@ export const STUDENT_NAV_ITEMS = [
         tooltip: "Forums & Discussions",
       },
       {
-        label: "Announcements",
+        label: "Updates",
         href: "/student/announcements",
         icon: Bell,
         tooltip: "Course Updates",
@@ -104,28 +92,16 @@ export const STUDENT_NAV_ITEMS = [
         icon: Download,
         tooltip: "Course Materials",
       },
-      {
-        label: "Schedule",
-        href: "/student/schedule",
-        icon: Calendar,
-        tooltip: "Calendar",
-      },
     ],
   },
   {
     section: "Account",
     items: [
       {
-        label: "Settings",
-        href: "/student/settings",
-        icon: Settings,
-        tooltip: "Preferences",
-      },
-      {
         label: "Profile",
         href: "/student/profile",
         icon: User,
-        tooltip: "My Profile",
+        tooltip: "My Profile & Settings",
       },
     ],
   },

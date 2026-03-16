@@ -90,15 +90,9 @@ export function StudentSidebar() {
         {/* Navigation */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full px-1.5 py-4">
-            <nav className="space-y-6 pb-4">
+            <nav className="space-y-1 pb-4 flex flex-col">
               {STUDENT_NAV_ITEMS.map((section) => (
-                <div key={section.section}>
-                  {!isCollapsed && (
-                    <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      {section.section}
-                    </h3>
-                  )}
-                  <div className="space-y-1">
+                <div key={section.section} className="flex flex-col space-y-1">
                     {section.items.map((item) => {
                       const Icon = item.icon;
                       const active = isActive(item.href);
@@ -152,7 +146,6 @@ export function StudentSidebar() {
                         </Link>
                       );
                     })}
-                  </div>
                 </div>
               ))}
             </nav>
