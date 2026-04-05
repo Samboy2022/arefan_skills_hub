@@ -3,24 +3,20 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { navItems, getNavSections } from '@/lib/constants'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useSidebar } from './sidebar-context'
 
 export function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { isCollapsed } = useSidebar()
   const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
-      if (window.innerWidth < 768) {
-        setIsCollapsed(true)
-      }
     }
     checkMobile()
     window.addEventListener('resize', checkMobile)
@@ -53,18 +49,6 @@ export function Sidebar() {
         </div>
 
         {/* Collapse Toggle Button */}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute top-20 right-[-16px] h-8 w-8 rounded-full border shadow-sm z-50 bg-background hover:bg-accent text-foreground"
-        >
-          {isCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
 
         {/* Navigation */}
         <div className="flex-1 overflow-hidden">

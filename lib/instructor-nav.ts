@@ -1,25 +1,24 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  LayoutDashboard,
-  BookOpen,
-  GraduationCap,
-  FileText,
-  ClipboardList,
-  Trophy,
-  Users,
-  BarChart3,
-  MessageSquare,
-  Megaphone,
-  Calendar,
-  FolderOpen,
-  Settings,
-  LineChart,
-} from "lucide-react";
+  DashboardIcon,
+  CoursesIcon,
+  CurriculumIcon,
+  LessonsIcon,
+  AssignmentsIcon,
+  TrophyIcon,
+  StudentsIcon,
+  GradesIcon,
+  DiscussionsIcon,
+  AnnouncementsIcon,
+  ScheduleIcon,
+  ResourcesIcon,
+  SettingsIcon,
+} from "@/components/shared/colored-icons";
 
 export type InstructorNavItem = {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon: any; // Changed from LucideIcon to any to support colored icons
   tooltip: string;
 };
 
@@ -35,13 +34,13 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Dashboard",
         href: "/instructor",
-        icon: LayoutDashboard,
+        icon: DashboardIcon,
         tooltip: "Overview and quick stats",
       },
       {
         label: "My Courses",
         href: "/instructor/courses",
-        icon: BookOpen,
+        icon: CoursesIcon,
         tooltip: "Manage your courses",
       },
     ],
@@ -52,13 +51,13 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Curriculum Builder",
         href: "/instructor/curriculum",
-        icon: GraduationCap,
+        icon: CurriculumIcon,
         tooltip: "Build course structure",
       },
       {
         label: "Lessons & Content",
         href: "/instructor/lessons",
-        icon: FileText,
+        icon: LessonsIcon,
         tooltip: "Manage lessons and resources",
       },
     ],
@@ -69,13 +68,13 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Assignments",
         href: "/instructor/assignments",
-        icon: ClipboardList,
+        icon: AssignmentsIcon,
         tooltip: "Create and grade assignments",
       },
       {
         label: "Quizzes & Exams",
         href: "/instructor/quizzes",
-        icon: Trophy,
+        icon: TrophyIcon,
         tooltip: "Create and manage quizzes",
       },
     ],
@@ -86,13 +85,13 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Students",
         href: "/instructor/students",
-        icon: Users,
+        icon: StudentsIcon,
         tooltip: "Manage enrolled students",
       },
       {
         label: "Gradebook",
         href: "/instructor/gradebook",
-        icon: BarChart3,
+        icon: GradesIcon,
         tooltip: "Track and manage grades",
       },
     ],
@@ -103,13 +102,13 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Discussions",
         href: "/instructor/discussions",
-        icon: MessageSquare,
+        icon: DiscussionsIcon,
         tooltip: "Course discussions & Q&A",
       },
       {
         label: "Announcements",
         href: "/instructor/announcements",
-        icon: Megaphone,
+        icon: AnnouncementsIcon,
         tooltip: "Create announcements",
       },
     ],
@@ -120,7 +119,7 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Schedule & Calendar",
         href: "/instructor/schedule",
-        icon: Calendar,
+        icon: ScheduleIcon,
         tooltip: "View and manage schedule",
       },
     ],
@@ -131,13 +130,13 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Analytics",
         href: "/instructor/analytics",
-        icon: LineChart,
+        icon: GradesIcon, // Using GradesIcon for analytics
         tooltip: "Student analytics and reports",
       },
       {
         label: "Resources",
         href: "/instructor/resources",
-        icon: FolderOpen,
+        icon: ResourcesIcon,
         tooltip: "File library and resources",
       },
     ],
@@ -148,7 +147,7 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Settings",
         href: "/instructor/settings",
-        icon: Settings,
+        icon: SettingsIcon,
         tooltip: "Profile and preferences",
       },
     ],

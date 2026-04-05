@@ -14,6 +14,7 @@ import {
   AlertCircle,
   CreditCard,
   UserPlus,
+  Menu,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
@@ -35,6 +36,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
+import { useSidebar } from './sidebar-context'
 
 type NotificationItem = {
   id: string
@@ -48,6 +50,7 @@ type NotificationItem = {
 
 export function AdminNavbar() {
   const { theme, setTheme } = useTheme()
+  const { isCollapsed, toggleSidebar } = useSidebar()
   const [mounted, setMounted] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState<NotificationItem[]>([
@@ -114,14 +117,26 @@ export function AdminNavbar() {
   return (
     <>
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      {/* Search */}
-      <div className="flex-1 max-w-2xl">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search tenants, users, courses..."
-            className="pl-10 bg-muted/50 border-0 focus-visible:ring-1"
-          />
+      {/* Left: Toggle button and Search */}
+      <div className="flex items-center gap-4 flex-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleSidebar}
+          className="h-9 w-9 p-0 text-foreground hover:bg-muted"
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
+        
+        {/* Search */}
+        <div className="flex-1 max-w-2xl">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search tenants, users, courses..."
+              className="pl-10 bg-muted/50 border-0 focus-visible:ring-1"
+            />
+          </div>
         </div>
       </div>
 

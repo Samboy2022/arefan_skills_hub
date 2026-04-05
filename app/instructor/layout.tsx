@@ -13,7 +13,7 @@ function InstructorLayoutContent({ children }: { children: React.ReactNode }) {
       <InstructorSidebar />
 
       {/* Main Content Area */}
-      <div className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <div className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-28' : 'ml-64'}`}>
         {/* Navbar */}
         <InstructorNavbar />
 

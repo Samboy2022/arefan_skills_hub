@@ -73,12 +73,6 @@ export const STUDENT_NAV_ITEMS = [
         icon: Bell,
         tooltip: "Course Updates",
       },
-      {
-        label: "Messages",
-        href: "/student/messages",
-        icon: Inbox,
-        tooltip: "Inbox",
-      },
     ],
   },
   {

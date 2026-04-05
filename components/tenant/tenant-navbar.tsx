@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Bell, Moon, Sun, LogOut } from "lucide-react";
+import { Search, Bell, Moon, Sun, LogOut, Menu } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,20 +16,34 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
+import { useSidebar } from "./sidebar-context";
 
 export function TenantNavbar() {
   const { theme, setTheme } = useTheme();
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm px-6">
-      {/* Search */}
-      <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search students, classes..."
-            className="pl-10 bg-muted"
-          />
+      {/* Left: Toggle button and Search */}
+      <div className="flex items-center gap-4 flex-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleSidebar}
+          className="h-9 w-9 p-0 text-foreground hover:bg-muted"
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
+        
+        {/* Search */}
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search students, classes..."
+              className="pl-10 bg-muted"
+            />
+          </div>
         </div>
       </div>
 

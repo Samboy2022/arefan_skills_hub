@@ -1,7 +1,9 @@
 "use client";
 
-import { Bell, Plus, Search, Menu } from "lucide-react";
+import { Bell, Plus, Search, Menu, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
+import { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,12 @@ import { useSidebar } from "./sidebar-context";
 
 export function InstructorNavbar() {
   const { isCollapsed, toggleSidebar } = useSidebar();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -111,6 +119,22 @@ export function InstructorNavbar() {
               <DropdownMenuItem>All Courses</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Theme Toggle */}
+          {mounted && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="h-9 w-9"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+          )}
 
           {/* Profile Dropdown */}
           <DropdownMenu>
