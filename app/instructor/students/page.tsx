@@ -1,6 +1,8 @@
 import { Mail, MessageCircle, Eye, MoreHorizontal, Search } from "lucide-react";
+import Link from "next/link";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +11,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { MOCK_STUDENTS, MOCK_GRADES } from "@/lib/instructor-mock-data";
 import { STUDENT_STATUS } from "@/lib/instructor-constants";
 
@@ -26,17 +37,29 @@ export default function StudentsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Students"
-        description="Manage and monitor student progress in your courses"
-      >
-        <Button>Export CSV</Button>
-      </PageHeader>
+    <div className="mx-auto max-w-6xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <Breadcrumb 
+          showHome={false}
+          items={[
+            { label: "Dashboard", href: "/instructor" },
+            { label: "Students" }
+          ]} 
+        />
+      </div>
+
+      <div className="pt-4 pb-4">
+        <PageHeader
+          title="Students"
+          description="Manage and monitor student progress in your courses"
+        >
+          <Button className="shadow-sm">Export CSV</Button>
+        </PageHeader>
+      </div>
 
       {/* Search and Filters */}
-      <div className="flex gap-2 flex-wrap">
-        <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-2 flex-1 max-w-md">
+      <div className="flex gap-2 flex-wrap mb-4">
+        <div className="flex items-center gap-2 bg-background border border-border rounded-md px-3 py-2 flex-1 max-w-md shadow-sm">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input
             type="text"
@@ -44,53 +67,69 @@ export default function StudentsPage() {
             className="bg-transparent text-sm outline-none placeholder:text-muted-foreground w-full"
           />
         </div>
-        <Button variant="outline">Filter by Status</Button>
+        <Button variant="outline" className="shadow-sm">Filter by Status</Button>
       </div>
 
       {/* Students Table */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Student</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Email</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Status</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Avg Grade</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Last Activity</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {MOCK_STUDENTS.map((student) => {
-                const statusInfo = getStudentStatus(student.status);
-                const avgGrade = getStudentAvgGrade(student.id);
-                const lastActivityText = student.lastActivity
-                  ? student.lastActivity.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-                  : "Never";
+      <div className="rounded-md border bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="font-semibold w-[30%]">Student</TableHead>
+              <TableHead className="font-semibold">Email</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Avg Grade</TableHead>
+              <TableHead className="font-semibold">Last Activity</TableHead>
+              <TableHead className="text-right font-semibold">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {MOCK_STUDENTS.map((student) => {
+              const statusInfo = getStudentStatus(student.status);
+              const avgGrade = getStudentAvgGrade(student.id);
+              const lastActivityText = student.lastActivity
+                ? student.lastActivity.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                : "Never";
 
-                return (
-                  <tr key={student.id} className="hover:bg-muted/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                          {student.name.split(" ").map((n) => n[0]).join("")}
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm text-foreground">{student.name}</p>
-                          <p className="text-xs text-muted-foreground">{student.studentId}</p>
-                        </div>
+              return (
+                <TableRow key={student.id} className="hover:bg-muted/30 transition-colors">
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                        {student.name.split(" ").map((n) => n[0]).join("")}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{student.email}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.color}`}>
-                        {statusInfo.label}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-foreground">{avgGrade}%</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{lastActivityText}</td>
-                    <td className="px-6 py-4 text-right">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-medium text-foreground">{student.name}</span>
+                        <span className="text-xs text-muted-foreground">{student.studentId}</span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {student.email}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={`border-transparent ${statusInfo.color}`}>
+                      {statusInfo.label}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm font-medium">
+                    {avgGrade}%
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {lastActivityText}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="sm" asChild className="h-8 shadow-none text-xs font-medium">
+                        <Link href={`/instructor/students/${student.id}`}>
+                          <Eye className="mr-1.5 h-3.5 w-3.5" /> Profile
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild className="h-8 shadow-none text-xs font-medium">
+                        <Link href={`/instructor/students/${student.id}/message`}>
+                          <MessageCircle className="mr-1.5 h-3.5 w-3.5" /> Message
+                        </Link>
+                      </Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -98,32 +137,32 @@ export default function StudentsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="gap-2">
-                            <Eye className="h-4 w-4" />
-                            View Profile
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
-                            <MessageCircle className="h-4 w-4" />
-                            Send Message
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
-                            <Mail className="h-4 w-4" />
-                            Send Email
+                          <DropdownMenuItem className="gap-2" asChild>
+                            <a href={`mailto:${student.email}`}>
+                              <Mail className="h-4 w-4" />
+                              Send Email
+                            </a>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>View Submissions</DropdownMenuItem>
-                          <DropdownMenuItem>View Grades</DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/instructor/students/${student.id}/submissions`}>
+                              View Submissions
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/instructor/students/${student.id}/grades`}>
+                              View Grades
+                            </Link>
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

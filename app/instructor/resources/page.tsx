@@ -1,6 +1,7 @@
 import { Plus, FolderPlus, Upload, Search, Download, Share2, Trash2, File, Image, Music, Video as VideoIcon } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function ResourcesPage() {
   const folders = [
@@ -29,22 +30,31 @@ export default function ResourcesPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Resources & File Library"
-        description="Organize and manage course materials and files"
-      >
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <FolderPlus className="h-4 w-4" />
-            New Folder
-          </Button>
-          <Button className="gap-2">
-            <Upload className="h-4 w-4" />
-            Upload File
-          </Button>
-        </div>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Resources & File Library" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Resources & File Library"
+          description="Organize and manage course materials and files"
+        >
+          <div className="flex gap-2">
+            <Button variant="outline" className="gap-2">
+              <FolderPlus className="h-4 w-4" />
+              New Folder
+            </Button>
+            <Button className="gap-2">
+              <Upload className="h-4 w-4" />
+              Upload File
+            </Button>
+          </div>
+        </PageHeader>
+      </div>
 
       {/* Search */}
       <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-2 max-w-md">

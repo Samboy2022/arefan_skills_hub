@@ -1,15 +1,29 @@
-import { Plus, Calendar, FileText, Users, MoreHorizontal } from "lucide-react";
+import { Plus, FileEdit, Trash, Eye } from "lucide-react";
+import Link from "next/link";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Badge } from "@/components/ui/badge";
 import { MOCK_ASSIGNMENTS } from "@/lib/instructor-mock-data";
 
 export default function AssignmentsPage() {
@@ -20,119 +34,154 @@ export default function AssignmentsPage() {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
 
-  const AssignmentCard = ({ assignment }: { assignment: typeof MOCK_ASSIGNMENTS[0] }) => {
-    const submissionCount = assignment.submissions?.length || 0;
-    const gradedCount = assignment.submissions?.filter((s) => s.status === "graded").length || 0;
+  const getStatusBadge = (status: string) => {
+    if (status === "active") return <Badge variant="default" className="bg-green-600 hover:bg-green-700">Active</Badge>;
+    if (status === "draft") return <Badge variant="secondary">Draft</Badge>;
+    return <Badge variant="outline">Closed</Badge>;
+  }
 
+  const AssignmentsTable = ({ data }: { data: typeof MOCK_ASSIGNMENTS }) => {
+    if (data.length === 0) {
+      return (
+        <div className="text-center py-12 rounded-lg border border-dashed border-border">
+          <p className="text-muted-foreground">No assignments found in this category.</p>
+        </div>
+      );
+    }
+    
     return (
-      <div className="rounded-lg border border-border bg-card p-6 hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg text-foreground">{assignment.title}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{assignment.description}</p>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Edit Assignment</DropdownMenuItem>
-              <DropdownMenuItem>View Submissions</DropdownMenuItem>
-              <DropdownMenuItem>Download Submissions</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 dark:text-red-400">Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        <div className="space-y-3 py-4 border-t border-b border-border">
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Due: {formatDate(assignment.dueDate)}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <FileText className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground capitalize">{assignment.type} Assignment</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">
-              {submissionCount > 0 ? `${gradedCount} graded, ${submissionCount - gradedCount} pending` : "No submissions yet"}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-4 flex gap-2">
-          <Button className="flex-1">Grade Submissions</Button>
-          <Button variant="outline" className="flex-1">
-            Edit
-          </Button>
-        </div>
+      <div className="rounded-md border bg-card overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="w-[35%] font-semibold">Assignment</TableHead>
+              <TableHead className="font-semibold">Type</TableHead>
+              <TableHead className="font-semibold">Due</TableHead>
+              <TableHead className="font-semibold">Submissions</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="text-right font-semibold">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((assignment) => {
+              const submissionCount = assignment.submissions?.length || 0;
+              const gradedCount = assignment.submissions?.filter((s) => s.status === "graded").length || 0;
+              
+              return (
+                <TableRow key={assignment.id} className="hover:bg-muted/30 transition-colors">
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium text-foreground">{assignment.title}</span>
+                      <span className="text-sm text-muted-foreground truncate max-w-[250px]">{assignment.description}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="capitalize bg-muted/50">{assignment.type}</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {formatDate(assignment.dueDate)}
+                  </TableCell>
+                  <TableCell>
+                    {submissionCount > 0 ? (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm font-medium">{submissionCount} total</span>
+                        <span className="text-xs text-muted-foreground">{gradedCount} graded</span>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground italic">None yet</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{getStatusBadge(assignment.status)}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" size="sm" asChild className="h-8 shadow-none text-xs font-medium">
+                        <Link href={`/instructor/assignments/edit/${assignment.id}`}>
+                          <FileEdit className="mr-1.5 h-3.5 w-3.5" /> Edit
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild className="h-8 shadow-none text-xs font-medium">
+                        <Link href={`/instructor/assignments/${assignment.id}/submissions`}>
+                          <Eye className="mr-1.5 h-3.5 w-3.5" /> Grade
+                        </Link>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive">
+                            <span className="sr-only">Delete</span>
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Assignment?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the assignment 
+                              <span className="font-semibold text-foreground"> {assignment.title}</span> 
+                              and remove all of its data.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     );
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Assignments"
-        description="Create, manage, and grade student assignments"
-      >
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Assignment
-        </Button>
-      </PageHeader>
+    <div className="mx-auto max-w-6xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <Breadcrumb 
+          showHome={false}
+          items={[
+            { label: "Dashboard", href: "/instructor" },
+            { label: "Assignments" }
+          ]} 
+        />
+      </div>
+
+      <div className="pt-4 pb-4">
+        <PageHeader
+          title="Assignments Database"
+          description="Create, manage, and grade student assignments efficiently using the data table."
+        >
+          <Button asChild className="gap-2 shadow-sm">
+            <Link href="/instructor/assignments/create">
+              <Plus className="h-4 w-4" />
+              Create Assignment
+            </Link>
+          </Button>
+        </PageHeader>
+      </div>
 
       <Tabs defaultValue="active" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
-          <TabsTrigger value="active">Active ({activeAssignments.length})</TabsTrigger>
-          <TabsTrigger value="draft">Draft ({draftAssignments.length})</TabsTrigger>
-          <TabsTrigger value="closed">Closed (2)</TabsTrigger>
+        <TabsList className="grid w-full max-w-md grid-cols-3 bg-muted/50 p-1">
+          <TabsTrigger value="active" className="rounded-sm">Active ({activeAssignments.length})</TabsTrigger>
+          <TabsTrigger value="draft" className="rounded-sm">Draft ({draftAssignments.length})</TabsTrigger>
+          <TabsTrigger value="closed" className="rounded-sm">Closed (0)</TabsTrigger>
         </TabsList>
 
-        {/* Active Assignments */}
-        <TabsContent value="active" className="space-y-4 mt-6">
-          {activeAssignments.length > 0 ? (
-            <div className="grid gap-6">
-              {activeAssignments.map((assignment) => (
-                <AssignmentCard key={assignment.id} assignment={assignment} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 rounded-lg border border-dashed border-border">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No active assignments</p>
-            </div>
-          )}
+        <TabsContent value="active" className="mt-6">
+          <AssignmentsTable data={activeAssignments} />
         </TabsContent>
 
-        {/* Draft Assignments */}
-        <TabsContent value="draft" className="space-y-4 mt-6">
-          {draftAssignments.length > 0 ? (
-            <div className="grid gap-6">
-              {draftAssignments.map((assignment) => (
-                <AssignmentCard key={assignment.id} assignment={assignment} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 rounded-lg border border-dashed border-border">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No draft assignments</p>
-            </div>
-          )}
+        <TabsContent value="draft" className="mt-6">
+          <AssignmentsTable data={draftAssignments} />
         </TabsContent>
 
-        {/* Closed Assignments */}
-        <TabsContent value="closed" className="space-y-4 mt-6">
-          <div className="text-center py-12 rounded-lg border border-dashed border-border">
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-            <p className="text-muted-foreground">No closed assignments</p>
-          </div>
+        <TabsContent value="closed" className="mt-6">
+          <AssignmentsTable data={[]} />
         </TabsContent>
       </Tabs>
     </div>

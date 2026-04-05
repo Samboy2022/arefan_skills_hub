@@ -1,17 +1,27 @@
 import { MessageSquare, Pin, Search, Reply, Heart } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOCK_DISCUSSIONS } from "@/lib/instructor-mock-data";
 
 export default function DiscussionsPage() {
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Discussions"
-        description="Monitor and participate in course discussions and Q&A"
-      >
-        <Button>Create Discussion</Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Discussions" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Discussions"
+          description="Monitor and participate in course discussions and Q&A"
+        >
+          <Button>Create Discussion</Button>
+        </PageHeader>
+      </div>
 
       {/* Search */}
       <div className="flex items-center gap-2 bg-background border border-border rounded-lg px-3 py-2 max-w-md">

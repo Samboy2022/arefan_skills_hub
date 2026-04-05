@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CourseHero } from '@/components/student/courses/CourseHero';
 import { CourseCurriculum } from '@/components/student/courses/CourseCurriculum';
 import { EnrollmentCard } from '@/components/student/courses/EnrollmentCard';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 
 // Simulated fetch function
 async function fetchCourse(id: string) {
@@ -84,6 +85,17 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
   
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      {/* Breadcrumb */}
+      <div className="max-w-6xl mx-auto w-full px-6 pt-6">
+        <Breadcrumb 
+          items={[
+            { label: "My Courses", href: "/student/courses" },
+            { label: course.title }
+          ]}
+          className="mb-4"
+        />
+      </div>
+      
       {/* Full-width Hero Banner */}
       <CourseHero 
         course={course} 

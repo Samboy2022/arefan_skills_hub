@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/student/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import { STUDENT_COURSES } from "@/lib/student-mock-data";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -19,12 +20,79 @@ export default function MyCoursesPage() {
     (c) => c.status === "completed"
   );
 
+  // Calculate stats
+  const totalCredits = STUDENT_COURSES.reduce((sum, course) => sum + course.credits, 0);
+  const averageProgress = Math.round(activeCourses.reduce((sum, course) => sum + course.progress, 0) / activeCourses.length);
+  const coursesWithDueAssignments = activeCourses.filter(c => c.due_assignments > 0).length;
+
   return (
     <div className="font-sans">
+      <Breadcrumb 
+        items={[
+          { label: "My Courses" }
+        ]}
+        className="mb-6"
+      />
+      
       <PageHeader
         title="My Courses"
         description="View all your enrolled courses and track your progress"
       />
+
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-4 mb-8">
+        <Card className="border-sky-200 dark:border-sky-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Total Courses</p>
+              <p className="text-xs text-muted-foreground">All enrolled</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
+              <BookOpen className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{STUDENT_COURSES.length}</p>
+        </Card>
+
+        <Card className="border-emerald-200 dark:border-emerald-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Active Courses</p>
+              <p className="text-xs text-muted-foreground">Currently enrolled</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+              <CheckCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{activeCourses.length}</p>
+        </Card>
+
+        <Card className="border-blue-200 dark:border-blue-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Average Progress</p>
+              <p className="text-xs text-muted-foreground">Across active courses</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+              <Award className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{averageProgress}%</p>
+        </Card>
+
+        <Card className="border-amber-200 dark:border-amber-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Need Attention</p>
+              <p className="text-xs text-muted-foreground">Courses with due work</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+              <AlertCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{coursesWithDueAssignments}</p>
+        </Card>
+      </div>
 
       {/* ── Active Courses ── */}
       <div className="mb-12">

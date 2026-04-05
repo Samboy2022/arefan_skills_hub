@@ -1,6 +1,7 @@
 import { Plus, Edit, Trash2, GripVertical, Settings } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOCK_MODULES, MOCK_LESSONS } from "@/lib/instructor-mock-data";
 import { LESSON_TYPES } from "@/lib/instructor-constants";
 
@@ -23,16 +24,25 @@ export default function CurriculumBuilderPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Curriculum Builder"
-        description="Design and organize your course structure with modules and lessons"
-      >
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Module
-        </Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Curriculum Builder" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Curriculum Builder"
+          description="Design and organize your course structure with modules and lessons"
+        >
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Module
+          </Button>
+        </PageHeader>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Panel: Module Tree */}

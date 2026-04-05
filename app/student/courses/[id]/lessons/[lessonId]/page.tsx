@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { LessonPlayerHeader } from '@/components/student/courses/LessonPlayerHeader';
-import { LessonSidebar } from '@/components/student/courses/LessonSidebar';
+import { LessonPlayerClient } from '@/components/student/courses/LessonPlayerClient';
 import { VideoPlayer } from '@/components/student/courses/VideoPlayer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { BookOpen, Play } from 'lucide-react';
 
 // Simulated fetchers
 async function fetchCourse(id: string) {
@@ -148,13 +149,24 @@ export default async function LessonPlayerPage({
   }
   
   return (
-    <div className="h-[100dvh] flex flex-col bg-background overflow-hidden">
-      {/* Header */}
-      <LessonPlayerHeader course={course} />
+    <div className="h-[100dvh] w-full flex flex-col bg-background overflow-hidden">
+      {/* Breadcrumb - positioned above the lesson player */}
+      <div className="px-6 py-3 border-b border-border bg-card">
+        <Breadcrumb 
+          items={[
+            { label: "My Courses", href: "/student/courses" },
+            { label: course.title, href: `/student/courses/${course.id}` },
+            { label: lesson.title }
+          ]}
+          className="text-xs"
+        />
+      </div>
       
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-
+      <LessonPlayerClient 
+        course={course} 
+        currentLessonId={lesson.id}
+        currentLesson={lesson}
+      >
         {/* Video/Content Area */}
         <div className="flex-1 flex flex-col overflow-y-auto w-full min-w-0">
           {/* Video Player */}
@@ -250,12 +262,7 @@ export default async function LessonPlayerPage({
             </Tabs>
           </div>
         </div>
-        
-        {/* Sidebar (Curriculum) */}
-        <div className="w-[360px] bg-card border-l border-border overflow-hidden hidden lg:flex flex-col flex-shrink-0">
-          <LessonSidebar course={course} currentLessonId={lesson.id} />
-        </div>
-      </div>
+      </LessonPlayerClient>
     </div>
   );
 }

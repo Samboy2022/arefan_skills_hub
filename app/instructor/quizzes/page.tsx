@@ -1,6 +1,7 @@
 import { Plus, Calendar, Edit, BarChart3, Users, Clock } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MOCK_QUIZZES } from "@/lib/instructor-mock-data";
 
@@ -61,16 +62,25 @@ export default function QuizzesPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Quizzes & Exams"
-        description="Create and manage assessments for your courses"
-      >
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Quiz
-        </Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Quizzes & Exams" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Quizzes & Exams"
+          description="Create and manage assessments for your courses"
+        >
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Quiz
+          </Button>
+        </PageHeader>
+      </div>
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full max-w-md grid-cols-3">

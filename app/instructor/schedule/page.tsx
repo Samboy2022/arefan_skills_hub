@@ -1,6 +1,7 @@
 import { Plus, Calendar, MapPin, Clock, Video } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOCK_SCHEDULE_EVENTS } from "@/lib/instructor-mock-data";
 
 export default function SchedulePage() {
@@ -31,16 +32,25 @@ export default function SchedulePage() {
   const upcomingEvents = getUpcomingEvents();
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Schedule & Calendar"
-        description="Manage your teaching schedule and important dates"
-      >
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Event
-        </Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Schedule & Calendar" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Schedule & Calendar"
+          description="Manage your teaching schedule and important dates"
+        >
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Event
+          </Button>
+        </PageHeader>
+      </div>
 
       {/* Calendar View */}
       <div className="grid gap-6 lg:grid-cols-3">

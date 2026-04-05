@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ChevronDown,
@@ -40,6 +40,7 @@ interface LessonSidebarProps {
     curriculum: Section[];
   };
   currentLessonId: number;
+  onProgressUpdate?: (progress: number) => void; // Callback to update progress in parent
 }
 
 type SidebarTab = 'content' | 'ai';
@@ -59,31 +60,6 @@ function formatTimestamp(minutes: number): string {
   return `${String(m).padStart(2, '0')}:00`;
 }
 
-/** Circular progress SVG ring */
-function CircularProgress({ value, size = 64 }: { value: number; size?: number }) {
-  const strokeWidth = 5;
-  const r = (size - strokeWidth) / 2;
-  const circ = 2 * Math.PI * r;
-  const offset = circ - (value / 100) * circ;
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-      <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--border)" strokeWidth={strokeWidth} fill="none" />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        stroke="var(--primary)"
-        strokeWidth={strokeWidth}
-        fill="none"
-        strokeDasharray={circ}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        className="transition-all duration-500"
-      />
-    </svg>
-  );
-}
-
 /** Icon per lesson content type */
 function LessonTypeIcon({ type }: { type: string }) {
   const cls = 'w-3.5 h-3.5 shrink-0';
@@ -99,7 +75,7 @@ function LessonTypeIcon({ type }: { type: string }) {
   }
 }
 
-export function LessonSidebar({ course, currentLessonId }: LessonSidebarProps) {
+export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: LessonSidebarProps) {
   const defaultOpen =
     course.curriculum?.find(s => s.lessons.some(l => l.id === currentLessonId))?.id ??
     course.curriculum?.[0]?.id ??
@@ -108,9 +84,34 @@ export function LessonSidebar({ course, currentLessonId }: LessonSidebarProps) {
   const [openSectionId, setOpenSectionId] = useState<number | null>(defaultOpen);
   const [activeTab, setActiveTab] = useState<SidebarTab>('content');
 
-  // Mock completed lesson IDs
-  const completedLessonIds = new Set([1, 2]);
-  const progress = course.user_progress ?? 15;
+  // State for completed lesson IDs - now dynamic
+  const [completedLessonIds, setCompletedLessonIds] = useState<Set<number>>(new Set([1, 2]));
+
+  // Function to toggle lesson completion
+  const toggleLessonCompletion = (lessonId: number, event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent navigation when clicking checkbox
+    event.stopPropagation(); // Stop event bubbling
+    
+    setCompletedLessonIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(lessonId)) {
+        newSet.delete(lessonId);
+      } else {
+        newSet.add(lessonId);
+      }
+      return newSet;
+    });
+  };
+
+  // Calculate progress based on completed lessons and notify parent when it changes
+  const totalLessons = course.curriculum?.reduce((total, section) => total + section.lessons.length, 0) || 0;
+  const completedCount = completedLessonIds.size;
+  const progress = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+  // Use effect to notify parent of progress changes
+  useEffect(() => {
+    onProgressUpdate?.(progress);
+  }, [progress, onProgressUpdate]);
 
   if (!course?.curriculum)
     return <div className="p-4 text-muted-foreground">Loading curriculum...</div>;
@@ -163,22 +164,6 @@ export function LessonSidebar({ course, currentLessonId }: LessonSidebarProps) {
       {/* ── Course Content Panel ── */}
       {activeTab === 'content' && (
         <div className="flex-1 overflow-y-auto">
-
-          {/* Progress header */}
-          <div className="flex items-center gap-4 px-5 py-4 border-b border-border">
-            {/* Circular progress */}
-            <div className="relative shrink-0">
-              <CircularProgress value={progress} size={60} />
-              <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground">
-                {progress}%
-              </span>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">Course Progress</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{progress}% completed</p>
-            </div>
-          </div>
-
           {/* Sections accordion */}
           <div className="flex flex-col divide-y divide-border">
             {course.curriculum.map(section => {
@@ -249,32 +234,38 @@ export function LessonSidebar({ course, currentLessonId }: LessonSidebarProps) {
                           <Link
                             key={lesson.id}
                             href={`/student/courses/${course.id}/lessons/${lesson.id}`}
-                            className={`w-full flex items-center justify-between px-5 py-3 transition-colors ${
-                              isActive ? 'bg-primary/10' : 'hover:bg-muted/60'
+                            className={`group w-full flex items-center justify-between px-5 py-4 transition-all duration-200 cursor-pointer ${
+                              isActive 
+                                ? 'bg-primary/10 border-l-2 border-primary' 
+                                : 'hover:bg-muted/80 hover:shadow-sm active:bg-muted'
                             }`}
                           >
                             {/* Left: status + type icon + title */}
                             <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-                              {/* Status checkbox */}
-                              {isCompleted ? (
-                                <div className="w-4 h-4 bg-primary flex items-center justify-center shrink-0 rounded-sm">
-                                  <Check className="w-2.5 h-2.5 text-white stroke-[2.5]" />
-                                </div>
-                              ) : isActive ? (
-                                <div className="w-4 h-4 bg-card border-2 border-primary shrink-0 rounded-sm" />
-                              ) : (
-                                <div className="w-4 h-4 bg-card border border-border shrink-0 rounded-sm" />
-                              )}
+                              {/* Status checkbox - clickable */}
+                              <button
+                                onClick={(e) => toggleLessonCompletion(lesson.id, e)}
+                                className="shrink-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1 rounded-sm"
+                                aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                              >
+                                {isCompleted ? (
+                                  <div className="w-5 h-5 bg-primary flex items-center justify-center transition-all duration-200 hover:bg-primary/90 hover:scale-110">
+                                    <Check className="w-3 h-3 text-white stroke-[2.5]" />
+                                  </div>
+                                ) : (
+                                  <div className="w-5 h-5 bg-card border-2 border-border transition-all duration-200 hover:border-primary/70 hover:bg-primary/10 hover:scale-105" />
+                                )}
+                              </button>
 
                               {/* Type icon for non-video */}
                               {!isVideoType && <LessonTypeIcon type={lesson.content_type} />}
 
                               {/* Title */}
                               <span
-                                className={`text-sm leading-5 ${
+                                className={`text-sm leading-5 transition-colors ${
                                   isActive
                                     ? 'text-foreground font-medium'
-                                    : 'text-muted-foreground font-normal'
+                                    : 'text-muted-foreground font-normal group-hover:text-foreground'
                                 }`}
                               >
                                 {lesson.title}
@@ -282,17 +273,17 @@ export function LessonSidebar({ course, currentLessonId }: LessonSidebarProps) {
                             </div>
 
                             {/* Right: play/pause + duration */}
-                            <div className="flex items-center gap-1.5 shrink-0">
+                            <div className="flex items-center gap-2 shrink-0">
                               {isVideoType && (
                                 isActive ? (
-                                  <Pause className="w-3.5 h-3.5 text-foreground fill-current" />
+                                  <Pause className="w-4 h-4 text-foreground fill-current transition-transform group-hover:scale-110" />
                                 ) : (
-                                  <Play className="w-3.5 h-3.5 text-muted-foreground fill-current" />
+                                  <Play className="w-4 h-4 text-muted-foreground fill-current transition-all group-hover:text-primary group-hover:scale-110" />
                                 )
                               )}
                               <span
-                                className={`text-xs tabular-nums ${
-                                  isActive ? 'text-foreground' : 'text-muted-foreground'
+                                className={`text-xs tabular-nums transition-colors ${
+                                  isActive ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
                                 }`}
                               >
                                 {formatTimestamp(lesson.duration_minutes ?? 0)}

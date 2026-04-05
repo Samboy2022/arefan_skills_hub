@@ -1,6 +1,7 @@
 import { Eye, Edit, Trash2, Plus, Search, Filter } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOCK_LESSONS, MOCK_MODULES } from "@/lib/instructor-mock-data";
 import { LESSON_TYPES } from "@/lib/instructor-constants";
 
@@ -17,16 +18,25 @@ export default function LessonsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Lessons & Content"
-        description="Manage all lesson content and materials for your course"
-      >
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Lesson
-        </Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Lessons & Content" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Lessons & Content"
+          description="Manage all lesson content and materials for your course"
+        >
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Lesson
+          </Button>
+        </PageHeader>
+      </div>
 
       {/* Filters */}
       <div className="flex gap-2 flex-wrap">

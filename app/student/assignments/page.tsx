@@ -5,35 +5,35 @@ import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
-import { StudentKPICard } from "@/components/student/kpi-card";
 import { cn } from "@/lib/utils";
 import { STUDENT_ASSIGNMENTS, STUDENT_COURSES } from "@/lib/student-mock-data";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 
 const ASSIGNMENT_STATUS_COLORS: Record<string, string> = {
-  pending: "border-primary/20 bg-primary/10 text-primary",
-  submitted: "border-blue-500/20 bg-blue-500/10 text-blue-600",
-  graded: "border-green-500/20 bg-green-500/10 text-green-600",
-  late: "border-orange-500/20 bg-orange-500/10 text-orange-600",
-  missing: "border-red-500/20 bg-red-500/10 text-red-600",
+  pending: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400",
+  submitted: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+  graded: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400",
+  late: "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+  missing: "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400",
 };
 
 const getStatusColor = (status: string): string => {
-  return ASSIGNMENT_STATUS_COLORS[status] || "border-gray-200 bg-gray-50 text-gray-700";
+  return ASSIGNMENT_STATUS_COLORS[status] || "border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300";
 };
 
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "graded":
-      return <CheckCircle className="h-5 w-5 text-green-600" />;
+      return <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />;
     case "submitted":
-      return <Clock className="h-5 w-5 text-blue-600" />;
+      return <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
     case "pending":
-      return <AlertCircle className="h-5 w-5 text-yellow-600" />;
+      return <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
     case "late":
-      return <AlertCircle className="h-5 w-5 text-orange-600" />;
+      return <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />;
     case "missing":
-      return <AlertCircle className="h-5 w-5 text-red-600" />;
+      return <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />;
     default:
       return null;
   }
@@ -41,10 +41,10 @@ const getStatusIcon = (status: string) => {
 
 const getStatusLabel = (status: string) => {
   const labels = {
-    pending: "Pending Submission",
-    submitted: "Submitted - Under Review",
+    pending: "Pending",
+    submitted: "Submitted",
     graded: "Graded",
-    late: "Submitted Late",
+    late: "Late",
     missing: "Missing",
   };
   return labels[status as keyof typeof labels] || status;
@@ -63,53 +63,82 @@ export default function AssignmentsPage() {
     const course = STUDENT_COURSES.find(c => c.id === assignment.course_id);
     const dueDate = new Date(assignment.due_date);
 
-    const strokeColors: Record<string, string> = {
-      pending: "text-amber-600 dark:text-amber-500",
-      submitted: "text-blue-600 dark:text-blue-500",
-      graded: "text-green-600 dark:text-green-500",
-      late: "text-orange-600 dark:text-orange-500",
-      missing: "text-red-600 dark:text-red-500",
-    };
-    
-    const strokeClass = strokeColors[assignment.status] || "text-gray-500";
-
     return (
-      <div key={assignment.id} className="flex flex-col sm:flex-row sm:items-center px-4 py-3 hover:bg-muted/50 transition-colors gap-4">
+      <div key={assignment.id} className="flex flex-col sm:flex-row sm:items-center px-6 py-4 hover:bg-muted/30 transition-colors gap-4 border-l-4 border-l-transparent hover:border-l-primary/50">
         {/* Course Code & Title */}
         <div className="min-w-0 flex-1">
-          <p className={cn("text-[10px] font-bold uppercase tracking-wider mb-0.5", strokeClass)}>{course?.code}</p>
-          <h4 className="font-semibold text-sm leading-tight text-foreground truncate">{assignment.title}</h4>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+              {course?.code}
+            </span>
+            <span className="text-xs text-muted-foreground font-medium">
+              {assignment.total_points} pts
+            </span>
+          </div>
+          <h4 className="font-semibold text-base leading-tight text-foreground line-clamp-2 mb-1">
+            {assignment.title}
+          </h4>
+          <p className="text-sm text-muted-foreground">
+            {assignment.description}
+          </p>
         </div>
 
-        {/* Due Date & Points */}
-        <div className="sm:w-[130px] shrink-0 flex flex-col items-start justify-center">
-          <div className="flex items-center gap-1.5 text-[13px] font-medium text-foreground whitespace-nowrap">
-            <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+        {/* Due Date */}
+        <div className="sm:w-[140px] shrink-0 flex flex-col items-start sm:items-center justify-center">
+          <div className="flex items-center gap-2 text-sm font-medium text-foreground whitespace-nowrap">
+            <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
             <span>{format(dueDate, 'MMM dd, yyyy')}</span>
           </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5 ml-5">{assignment.total_points} Points</div>
+          <div className="text-xs text-muted-foreground mt-1">
+            Due {format(dueDate, 'h:mm a')}
+          </div>
         </div>
 
         {/* Status */}
-        <div className="sm:w-[140px] shrink-0 flex flex-col items-start justify-center">
-          <span className={cn("inline-flex text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm border whitespace-nowrap", getStatusColor(assignment.status))}>
-            {getStatusLabel(assignment.status)}
-          </span>
+        <div className="sm:w-[120px] shrink-0 flex flex-col items-start sm:items-center justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            {getStatusIcon(assignment.status)}
+            <span className={cn("text-xs font-semibold px-3 py-1.5 rounded-full border", getStatusColor(assignment.status))}>
+              {getStatusLabel(assignment.status)}
+            </span>
+          </div>
           {assignment.status === 'graded' && assignment.grade && (
-            <div className="text-[11px] font-bold text-foreground mt-1 ml-1">{assignment.grade}% Score</div>
+            <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+              {assignment.grade}%
+            </div>
+          )}
+          {assignment.status === 'submitted' && assignment.submission_date && (
+            <div className="text-xs text-muted-foreground">
+              Submitted {format(new Date(assignment.submission_date), 'MMM dd')}
+            </div>
           )}
         </div>
 
         {/* Actions */}
-        <div className="sm:w-[120px] shrink-0 flex justify-end">
+        <div className="sm:w-[120px] shrink-0 flex justify-start sm:justify-center">
           <Button 
             size="sm" 
-            variant={assignment.status === 'pending' ? 'default' : 'secondary'} 
-            className="w-full sm:w-[100px] text-xs h-8 font-semibold shadow-sm" 
+            variant={assignment.status === 'pending' ? 'default' : 'outline'} 
+            className="font-semibold shadow-sm min-w-[100px]" 
             asChild
           >
             <Link href={`/student/assignments/${assignment.id}`}>
-              {assignment.status === 'pending' ? 'Submit Work' : 'View'}
+              {assignment.status === 'pending' ? (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Submit
+                </>
+              ) : assignment.status === 'graded' ? (
+                <>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Review
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4 mr-2" />
+                  View
+                </>
+              )}
             </Link>
           </Button>
         </div>
@@ -126,6 +155,13 @@ export default function AssignmentsPage() {
 
   return (
     <div>
+      <Breadcrumb 
+        items={[
+          { label: "Assignments" }
+        ]}
+        className="mb-6"
+      />
+      
       <PageHeader
         title="Assignments"
         description="View and submit your course assignments"
@@ -133,56 +169,107 @@ export default function AssignmentsPage() {
 
       {/* Summary Stats */}
       <div className="grid gap-4 md:grid-cols-5 mb-8">
-        <StudentKPICard
-          title="Total Assignments"
-          value={STUDENT_ASSIGNMENTS.length}
-          icon={CheckCircle}
-          variant="default"
-          hint="Total enrolled"
-        />
-        <StudentKPICard
-          title="Pending"
-          value={groupedAssignments.pending.length}
-          icon={AlertCircle}
-          variant="warning"
-          hint="Need submission"
-        />
-        <StudentKPICard
-          title="Under Review"
-          value={groupedAssignments.submitted.length}
-          icon={Clock}
-          variant="default"
-          hint="Being graded"
-        />
-        <StudentKPICard
-          title="Graded"
-          value={groupedAssignments.graded.length}
-          icon={CheckCircle}
-          variant="success"
-          hint="Results out"
-        />
-        <StudentKPICard
-          title="Missing"
-          value={groupedAssignments.missing.length}
-          icon={AlertCircle}
-          variant="danger"
-          hint="Past deadline"
-        />
+        <Card className="border-sky-200 dark:border-sky-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Total Assignments</p>
+              <p className="text-xs text-muted-foreground">Total enrolled</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
+              <CheckCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{STUDENT_ASSIGNMENTS.length}</p>
+        </Card>
+
+        <Card className="border-amber-200 dark:border-amber-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Pending</p>
+              <p className="text-xs text-muted-foreground">Need submission</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+              <AlertCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{groupedAssignments.pending.length}</p>
+        </Card>
+
+        <Card className="border-blue-200 dark:border-blue-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Under Review</p>
+              <p className="text-xs text-muted-foreground">Being graded</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+              <Clock className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{groupedAssignments.submitted.length}</p>
+        </Card>
+
+        <Card className="border-emerald-200 dark:border-emerald-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Graded</p>
+              <p className="text-xs text-muted-foreground">Results out</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+              <CheckCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{groupedAssignments.graded.length}</p>
+        </Card>
+
+        <Card className="border-red-200 dark:border-red-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Missing</p>
+              <p className="text-xs text-muted-foreground">Past deadline</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+              <AlertCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{groupedAssignments.missing.length}</p>
+        </Card>
       </div>
 
-      <div className="w-full xl:w-[70vw] max-w-full">
-        <Card className="overflow-hidden border border-border rounded-md bg-card shadow-none">
+      <div className="w-full">
+        <Card className="overflow-hidden border border-border rounded-lg bg-card shadow-sm">
           {/* Table Header */}
-          <div className="hidden sm:flex items-center px-4 py-3 bg-muted/40 border-b border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-            <div className="flex-1">Assignment Details</div>
-            <div className="w-[130px]">Due Date</div>
-            <div className="w-[140px]">Status</div>
-            <div className="w-[120px] text-right">Action</div>
+          <div className="hidden sm:flex items-center px-6 py-4 bg-muted/50 border-b border-border">
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-foreground">Assignment Details</h3>
+            </div>
+            <div className="w-[140px] text-center">
+              <h3 className="text-sm font-semibold text-foreground">Due Date</h3>
+            </div>
+            <div className="w-[120px] text-center">
+              <h3 className="text-sm font-semibold text-foreground">Status</h3>
+            </div>
+            <div className="w-[120px] text-center">
+              <h3 className="text-sm font-semibold text-foreground">Action</h3>
+            </div>
           </div>
           
           {/* List Body */}
-          <div className="flex flex-col divide-y divide-border">
-            {sortedAssignments.map(renderAssignmentRow)}
+          <div className="divide-y divide-border">
+            {sortedAssignments.length > 0 ? (
+              sortedAssignments.map(renderAssignmentRow)
+            ) : (
+              <div className="px-6 py-12 text-center">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="p-3 rounded-full bg-muted">
+                    <CheckCircle className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">No assignments found</h3>
+                    <p className="text-sm text-muted-foreground">You're all caught up! No assignments to display.</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
       </div>

@@ -1,44 +1,58 @@
 "use client";
 
-import { Zap, Play, CheckCircle, Clock, Eye, HelpCircle } from "lucide-react";
+import { Zap, Play, CheckCircle, Clock, Eye, HelpCircle, Timer, Target, Award, BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
-import { StudentKPICard } from "@/components/student/kpi-card";
 import { cn } from "@/lib/utils";
-import { STUDENT_QUIZZES } from "@/lib/student-mock-data";
+import { STUDENT_QUIZZES, STUDENT_COURSES } from "@/lib/student-mock-data";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 const getTypeColor = (type: string) => {
   switch (type) {
     case "graded":
-      return "bg-red-500/10 text-red-600 border border-red-500/20";
+      return "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400";
     case "practice":
-      return "bg-primary/10 text-primary border border-primary/20";
+      return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
     case "ungraded":
     default:
-      return "bg-muted text-muted-foreground border border-border";
+      return "border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300";
   }
 };
 
 const getTypeLabel = (type: string) => {
   const labels = {
-    graded: "Graded Quiz",
-    practice: "Practice Quiz",
+    graded: "Graded",
+    practice: "Practice",
     ungraded: "Ungraded",
   };
   return labels[type as keyof typeof labels] || type;
 };
 
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "submitted":
+      return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400";
+    case "in_progress":
+      return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
+    case "not_started":
+      return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400";
+    default:
+      return "border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300";
+  }
+};
+
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "submitted":
-      return <CheckCircle className="h-5 w-5 text-green-600" />;
+      return <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />;
     case "in_progress":
-      return <Clock className="h-5 w-5 text-blue-600" />;
+      return <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
     case "not_started":
-      return <Zap className="h-5 w-5 text-gray-400" />;
+      return <Play className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
     default:
-      return null;
+      return <HelpCircle className="h-4 w-4 text-gray-500" />;
   }
 };
 
@@ -58,70 +72,108 @@ export default function QuizzesPage() {
     completed: STUDENT_QUIZZES.filter(q => q.status === "submitted"),
   };
 
-  const renderQuizCard = (quiz: typeof STUDENT_QUIZZES[0]) => (
-    <Card key={quiz.id} className="overflow-hidden border border-border shadow-none rounded-md transition-colors hover:border-primary/50 bg-card flex flex-col h-full group">
-      <div className={cn("h-1.5 w-full", quiz.status === 'submitted' ? 'bg-green-500' : quiz.status === 'in_progress' ? 'bg-primary' : 'bg-muted')} />
-      <div className="p-5 flex flex-col flex-1">
-        <div className="flex justify-between items-start mb-4">
-          <div className={cn("p-2 rounded-md bg-muted text-foreground")}>
-            {getStatusIcon(quiz.status)}
+  // Sort quizzes: In Progress first, then Not Started, then Completed
+  const sortedQuizzes = [...STUDENT_QUIZZES].sort((a, b) => {
+    const statusOrder = { 'in_progress': 0, 'not_started': 1, 'submitted': 2 };
+    return statusOrder[a.status as keyof typeof statusOrder] - statusOrder[b.status as keyof typeof statusOrder];
+  });
+
+  const renderQuizRow = (quiz: typeof STUDENT_QUIZZES[0]) => {
+    const course = STUDENT_COURSES.find(c => c.id === quiz.course_id);
+
+    return (
+      <div key={quiz.id} className="flex flex-col sm:flex-row sm:items-center px-6 py-4 hover:bg-muted/30 transition-colors gap-4 border-l-4 border-l-transparent hover:border-l-primary/50">
+        {/* Quiz Details */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+              {course?.code || 'QUIZ'}
+            </span>
+            <span className={cn("text-xs font-semibold px-3 py-1 rounded-full border", getTypeColor(quiz.type))}>
+              {getTypeLabel(quiz.type)}
+            </span>
           </div>
-          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm", getTypeColor(quiz.type))}>
-            {getTypeLabel(quiz.type)}
-          </span>
-        </div>
-        
-        <div className="mb-4">
-          <h4 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors">{quiz.title}</h4>
-          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-            <HelpCircle className="h-3 w-3" />
-            <span>{quiz.total_questions} questions</span>
+          <h4 className="font-semibold text-base leading-tight text-foreground line-clamp-2 mb-1">
+            {quiz.title}
+          </h4>
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <HelpCircle className="h-4 w-4" />
+              <span>{quiz.total_questions} questions</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Timer className="h-4 w-4" />
+              <span>{quiz.time_limit} minutes</span>
+            </div>
           </div>
         </div>
 
-        <div className="mt-auto space-y-3">
-          <div className="grid grid-cols-2 gap-2 text-[11px]">
-            <div className="p-2 bg-muted/50 rounded-md">
-              <p className="text-muted-foreground mb-0.5">Time Limit</p>
-              <p className="font-semibold">{quiz.time_limit} mins</p>
-            </div>
-            <div className="p-2 bg-muted/50 rounded-md">
-              <p className="text-muted-foreground mb-0.5">Attempts</p>
-              <p className="font-semibold">{quiz.attempts.length}/{quiz.attempts_allowed}</p>
-            </div>
+        {/* Attempts & Score */}
+        <div className="sm:w-[140px] shrink-0 flex flex-col items-start sm:items-center justify-center">
+          <div className="text-sm font-medium text-foreground mb-1">
+            {quiz.attempts.length}/{quiz.attempts_allowed} attempts
           </div>
-
-          {quiz.best_score !== null && (
-            <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-100 dark:border-green-800/30 flex justify-between items-center">
-              <span className="text-[11px] font-medium text-green-800 dark:text-green-300">Best Score</span>
-              <span className="text-sm font-bold text-green-700 dark:text-green-400">{quiz.best_score}%</span>
+          {quiz.best_score !== null ? (
+            <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+              <Award className="h-4 w-4" />
+              <span className="text-sm font-bold">{quiz.best_score}%</span>
             </div>
+          ) : (
+            <div className="text-xs text-muted-foreground">No score yet</div>
           )}
+        </div>
 
-          <div className="flex gap-2">
-            <Button size="sm" variant={quiz.status === 'submitted' ? 'outline' : 'default'} className="flex-1 text-xs h-9" asChild>
-              <a href={`/student/quizzes/${quiz.id}`}>
-                {quiz.status === 'submitted' ? (
-                  <>
-                    <Eye className="h-3.5 w-3.5 mr-1.5" />
-                    Review
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3.5 w-3.5 mr-1.5" />
-                    {quiz.status === 'in_progress' ? 'Continue' : 'Start'}
-                  </>
-                )}
-              </a>
-            </Button>
+        {/* Status */}
+        <div className="sm:w-[120px] shrink-0 flex flex-col items-start sm:items-center justify-center">
+          <div className="flex items-center gap-2 mb-2">
+            {getStatusIcon(quiz.status)}
+            <span className={cn("text-xs font-semibold px-3 py-1.5 rounded-full border", getStatusColor(quiz.status))}>
+              {getStatusLabel(quiz.status)}
+            </span>
           </div>
+        </div>
+
+        {/* Actions */}
+        <div className="sm:w-[120px] shrink-0 flex justify-start sm:justify-center">
+          <Button 
+            size="sm" 
+            variant={quiz.status === 'submitted' ? 'outline' : 'default'} 
+            className="font-semibold shadow-sm min-w-[100px]" 
+            asChild
+          >
+            <Link href={`/student/quizzes/${quiz.id}`}>
+              {quiz.status === 'submitted' ? (
+                <>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Review
+                </>
+              ) : quiz.status === 'in_progress' ? (
+                <>
+                  <Play className="h-4 w-4 mr-2" />
+                  Continue
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4 mr-2" />
+                  Start Quiz
+                </>
+              )}
+            </Link>
+          </Button>
         </div>
       </div>
-    </Card>
-  );
+    );
+  };
 
   return (
     <div>
+      <Breadcrumb 
+        items={[
+          { label: "Quizzes & Exams" }
+        ]}
+        className="mb-6"
+      />
+      
       <PageHeader
         title="Quizzes & Exams"
         description="Take assessments and review your performance"
@@ -129,73 +181,85 @@ export default function QuizzesPage() {
 
       {/* Summary Stats */}
       <div className="grid gap-4 md:grid-cols-3 mb-8">
-        <StudentKPICard
-          title="Total Quizzes"
-          value={STUDENT_QUIZZES.length}
-          icon={HelpCircle}
-          variant="default"
-          hint="All assigned"
-        />
-        <StudentKPICard
-          title="To Start"
-          value={groupedQuizzes.upcoming.length}
-          icon={Play}
-          variant="warning"
-          hint="Not attempted"
-        />
-        <StudentKPICard
-          title="Completed"
-          value={groupedQuizzes.completed.length}
-          icon={CheckCircle}
-          variant="success"
-          hint="Successfully submitted"
-        />
+        <Card className="border-sky-200 dark:border-sky-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Total Quizzes</p>
+              <p className="text-xs text-muted-foreground">All assigned</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
+              <HelpCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{STUDENT_QUIZZES.length}</p>
+        </Card>
+
+        <Card className="border-amber-200 dark:border-amber-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">To Start</p>
+              <p className="text-xs text-muted-foreground">Not attempted</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+              <Play className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{groupedQuizzes.upcoming.length}</p>
+        </Card>
+
+        <Card className="border-emerald-200 dark:border-emerald-900 p-3 hover:shadow-md transition-shadow">
+          <div className="mb-3 flex items-start justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Completed</p>
+              <p className="text-xs text-muted-foreground">Successfully submitted</p>
+            </div>
+            <div className="rounded-full p-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+              <CheckCircle className="h-4.5 w-4.5" />
+            </div>
+          </div>
+          <p className="text-xl font-bold leading-none">{groupedQuizzes.completed.length}</p>
+        </Card>
       </div>
 
-      {/* Upcoming / Available Quizzes */}
-      {groupedQuizzes.upcoming.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-600">
-              <Zap className="h-5 w-5" />
+      {/* Quizzes Table */}
+      <div className="w-full">
+        <Card className="overflow-hidden border border-border rounded-lg bg-card shadow-sm">
+          {/* Table Header */}
+          <div className="hidden sm:flex items-center px-6 py-4 bg-muted/50 border-b border-border">
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-foreground">Quiz Details</h3>
             </div>
-            Available to Take
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedQuizzes.upcoming.map(renderQuizCard)}
-          </div>
-        </div>
-      )}
-
-      {/* In Progress Quizzes */}
-      {groupedQuizzes.inProgress.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600">
-              <Clock className="h-5 w-5" />
+            <div className="w-[140px] text-center">
+              <h3 className="text-sm font-semibold text-foreground">Progress</h3>
             </div>
-            In Progress
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedQuizzes.inProgress.map(renderQuizCard)}
-          </div>
-        </div>
-      )}
-
-      {/* Completed Quizzes */}
-      {groupedQuizzes.completed.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-500/10 text-green-600">
-              <CheckCircle className="h-5 w-5" />
+            <div className="w-[120px] text-center">
+              <h3 className="text-sm font-semibold text-foreground">Status</h3>
             </div>
-            Completed
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedQuizzes.completed.map(renderQuizCard)}
+            <div className="w-[120px] text-center">
+              <h3 className="text-sm font-semibold text-foreground">Action</h3>
+            </div>
           </div>
-        </div>
-      )}
+          
+          {/* Table Body */}
+          <div className="divide-y divide-border">
+            {sortedQuizzes.length > 0 ? (
+              sortedQuizzes.map(renderQuizRow)
+            ) : (
+              <div className="px-6 py-12 text-center">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="p-3 rounded-full bg-muted">
+                    <HelpCircle className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">No quizzes found</h3>
+                    <p className="text-sm text-muted-foreground">No quizzes have been assigned yet.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

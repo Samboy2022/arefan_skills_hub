@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STUDENT_MESSAGES } from "@/lib/student-mock-data";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function MessagesPage() {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
@@ -51,6 +52,13 @@ export default function MessagesPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
+      <Breadcrumb 
+        items={[
+          { label: "Messages" }
+        ]}
+        className="mb-6"
+      />
+      
       <PageHeader
         title="Messages"
         description="Communicate with instructors and classmates"

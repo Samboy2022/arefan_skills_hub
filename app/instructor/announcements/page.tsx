@@ -1,6 +1,7 @@
 import { Plus, Calendar, MoreHorizontal, Eye, Edit, Trash2, Send } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,16 +23,25 @@ export default function AnnouncementsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Announcements"
-        description="Create and manage course announcements"
-      >
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Announcement
-        </Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Announcements" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Announcements"
+          description="Create and manage course announcements"
+        >
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Announcement
+          </Button>
+        </PageHeader>
+      </div>
 
       {/* Announcement Sections */}
       <div className="space-y-8">

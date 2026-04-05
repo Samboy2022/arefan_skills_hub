@@ -1,6 +1,7 @@
 import { Download, Filter, RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOCK_STUDENTS, MOCK_GRADES, MOCK_ASSIGNMENTS } from "@/lib/instructor-mock-data";
 import { GRADE_RANGES } from "@/lib/instructor-constants";
 
@@ -24,25 +25,34 @@ export default function GradebookPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Gradebook"
-        description="View and manage grades for all students and assignments"
-      >
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-          <Button variant="outline" size="sm" className="h-10 w-10 p-0">
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-        </div>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Gradebook" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Gradebook"
+          description="View and manage grades for all students and assignments"
+        >
+          <div className="flex gap-2">
+            <Button variant="outline" className="gap-2">
+              <Filter className="h-4 w-4" />
+              Filter
+            </Button>
+            <Button variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Export
+            </Button>
+            <Button variant="outline" size="sm" className="h-10 w-10 p-0">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
+        </PageHeader>
+      </div>
 
       {/* Gradebook Table */}
       <div className="rounded-lg border border-border bg-card overflow-x-auto">

@@ -18,7 +18,7 @@ function InstructorLayoutContent({ children }: { children: React.ReactNode }) {
         <InstructorNavbar />
 
         {/* Page Content */}
-        <main className="px-6 pb-6 min-h-screen">
+        <main className="min-h-screen p-6">
           {children}
         </main>
       </div>

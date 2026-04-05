@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -34,37 +33,31 @@ export function Sidebar() {
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-screen border-r bg-background transition-all duration-300 flex flex-col',
-          isCollapsed ? 'w-20' : 'w-64'
+          'fixed left-0 top-0 z-40 h-screen border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 flex flex-col',
+          isCollapsed ? 'w-28' : 'w-64'
         )}
       >
         {/* Logo Section */}
-        <div className="h-16 border-b flex items-center justify-center px-4">
+        <div className="h-16 border-b border-sidebar-border flex items-center px-4 shrink-0 transition-all duration-300">
           {isCollapsed ? (
-            <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-lg font-bold text-primary-foreground">L</span>
+            <div className="flex items-center justify-center w-full">
+              <img src="/fnskillslogo11.png" alt="FN Skills Logo" className="h-8 w-auto" />
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-                <span className="text-lg font-bold text-primary-foreground">L</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold leading-none">LMS Platform</span>
+            <div className="flex items-center gap-3 w-full">
+              <div className="flex items-center justify-center shrink-0">
+                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-10 w-auto" />
               </div>
             </div>
           )}
         </div>
 
-        {/* Toggle Button */}
+        {/* Collapse Toggle Button */}
         <Button
           variant="outline"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className={cn(
-            "absolute top-20 h-8 w-8 rounded-full border shadow-sm z-50 transition-all duration-300",
-            isCollapsed ? "right-[-16px]" : "right-[-16px]"
-          )}
+          className="absolute top-20 right-[-16px] h-8 w-8 rounded-full border shadow-sm z-50 bg-background hover:bg-accent text-foreground"
         >
           {isCollapsed ? (
             <ChevronRight className="h-4 w-4" />
@@ -75,15 +68,10 @@ export function Sidebar() {
 
         {/* Navigation */}
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full px-3 py-4">
-            <nav className="space-y-6 pb-4">
+          <ScrollArea className="h-full py-4">
+            <nav className="space-y-1 pb-4">
               {sections.map(([section, items]) => (
                 <div key={section}>
-                  {!isCollapsed && (
-                    <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      {section}
-                    </h3>
-                  )}
                   <div className="space-y-1">
                     {items.map((item) => {
                       const isActive = pathname === item.href
@@ -96,16 +84,18 @@ export function Sidebar() {
                               <Link href={item.href}>
                                 <div
                                   className={cn(
-                                    'relative flex items-center justify-center h-11 rounded-lg transition-all duration-200',
+                                    'relative flex flex-col items-center justify-center gap-1 h-14 transition-all duration-200 px-0.5',
                                     isActive
-                                      ? 'bg-primary/10 text-primary shadow-sm'
-                                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                      ? 'bg-brand/10 text-brand'
+                                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                                   )}
                                 >
-                                  {isActive && (
-                                    <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-white" />
-                                  )}
-                                  <Icon className="h-5 w-5" />
+                                  <div className="relative">
+                                    <Icon className="h-5 w-5" />
+                                  </div>
+                                  <span className="text-[9px] font-medium text-center leading-tight line-clamp-2 px-1 break-words">
+                                    {item.title}
+                                  </span>
                                 </div>
                               </Link>
                             </TooltipTrigger>
@@ -120,23 +110,22 @@ export function Sidebar() {
                         <Link key={item.href} href={item.href}>
                           <div
                             className={cn(
-                              'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative',
+                              'flex items-center gap-3 px-3 py-2.5 transition-all duration-200 group relative',
                               isActive
-                                ? 'bg-primary/10 text-primary shadow-sm'
-                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                                ? 'bg-brand/10 text-brand'
+                                : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground'
                             )}
                           >
-                            {isActive && (
-                              <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-white" />
-                            )}
-                            <Icon className="h-5 w-5 flex-shrink-0" />
+                            <div className="relative">
+                              <Icon className="h-5 w-5 flex-shrink-0" />
+                            </div>
                             <span className="text-sm font-medium flex-1">{item.title}</span>
                             {item.badge && (
                               <span className={cn(
                                 "text-xs px-2 py-0.5 rounded-full font-semibold",
                                 isActive 
-                                  ? "bg-primary/15 text-primary" 
-                                  : "bg-primary/10 text-primary"
+                                  ? "bg-brand/15 text-brand" 
+                                  : "bg-brand/10 text-brand"
                               )}>
                                 {item.badge}
                               </span>
@@ -150,50 +139,6 @@ export function Sidebar() {
               ))}
             </nav>
           </ScrollArea>
-        </div>
-
-        {/* Logout Button */}
-        <div className="border-t p-3">
-          {isCollapsed ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => {
-                    // Add logout logic here
-                    window.location.href = '/login'
-                  }}
-                  className="flex items-center justify-center h-11 w-full rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all duration-200"
-                >
-                  <Image
-                    src="https://img.icons8.com/color/48/logout-rounded.png"
-                    alt="Logout"
-                    width={20}
-                    height={20}
-                  />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="ml-2">
-                <p className="font-medium">Logout</p>
-              </TooltipContent>
-            </Tooltip>
-          ) : (
-            <button
-              onClick={() => {
-                // Add logout logic here
-                window.location.href = '/login'
-              }}
-              className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
-            >
-              <Image
-                src="https://img.icons8.com/color/48/logout-rounded.png"
-                alt="Logout"
-                width={20}
-                height={20}
-                className="flex-shrink-0"
-              />
-              <span className="text-sm font-medium flex-1 text-left">Logout</span>
-            </button>
-          )}
         </div>
       </aside>
     </TooltipProvider>

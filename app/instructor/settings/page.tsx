@@ -1,15 +1,25 @@
 import { User, Bell, Settings, LogOut } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Settings"
-        description="Manage your profile and preferences"
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Settings" }
+        ]} 
       />
+      <div className="pt-2">
+        <PageHeader
+          title="Settings"
+          description="Manage your profile and preferences"
+        />
+      </div>
 
       <Tabs defaultValue="profile" className="w-full max-w-2xl">
         <TabsList className="grid w-full grid-cols-4">

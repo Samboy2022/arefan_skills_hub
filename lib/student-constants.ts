@@ -1,17 +1,15 @@
 import {
-  GradesIcon as BarChart3,
+  DashboardIcon as LayoutDashboard,
   CoursesIcon as BookOpen,
   LessonsIcon as FileText,
-  CheckCircleIcon as CheckCircle,
+  AwardIcon as Award,
   ZapIcon as Zap,
-  GradesIcon as Grades,
-  ClockIcon as Clock,
+  GradesIcon as BarChart3,
   MessageIcon as MessageSquare,
   BellIcon as Bell,
   DownloadIcon as Download,
-  ScheduleIcon as Calendar,
-  SettingsIcon as Settings,
   UserIcon as User,
+  MessageIcon as Inbox,
 } from "@/components/shared/colored-icons";
 
 export const STUDENT_NAV_ITEMS = [
@@ -21,7 +19,7 @@ export const STUDENT_NAV_ITEMS = [
       {
         label: "Dashboard",
         href: "/student",
-        icon: BarChart3,
+        icon: LayoutDashboard,
         tooltip: "Home & Overview",
       },
       {
@@ -38,13 +36,13 @@ export const STUDENT_NAV_ITEMS = [
       {
         label: "Assignments",
         href: "/student/assignments",
-        icon: CheckCircle,
+        icon: FileText,
         tooltip: "My Assignments",
       },
       {
         label: "Quizzes",
         href: "/student/quizzes",
-        icon: Zap,
+        icon: Award,
         tooltip: "Tests & Assessments",
       },
     ],
@@ -55,7 +53,7 @@ export const STUDENT_NAV_ITEMS = [
       {
         label: "Grades",
         href: "/student/grades",
-        icon: Grades,
+        icon: BarChart3,
         tooltip: "View Grades",
       },
     ],
@@ -78,7 +76,7 @@ export const STUDENT_NAV_ITEMS = [
       {
         label: "Messages",
         href: "/student/messages",
-        icon: MessageSquare,
+        icon: Inbox,
         tooltip: "Inbox",
       },
     ],

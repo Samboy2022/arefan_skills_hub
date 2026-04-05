@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
-import { INSTRUCTOR_NAV_ITEMS } from "@/lib/instructor-constants";
+import { INSTRUCTOR_NAV_ITEMS } from "@/lib/instructor-nav";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,7 +17,7 @@ export function InstructorSidebar() {
 
   useEffect(() => {
     const checkMobile = () => {
-      if (window.innerWidth < 1024) {
+      if (window.innerWidth < 768) {
         setIsCollapsed(true);
       }
     };
@@ -27,134 +27,127 @@ export function InstructorSidebar() {
   }, [setIsCollapsed]);
 
   const isActive = (href: string) => {
-    // Exact match for the dashboard
     if (href === "/instructor") {
       return pathname === "/instructor";
     }
-    // For other pages, check exact match or sub-routes
     return pathname === href || pathname.startsWith(href + "/");
   };
+
+  const navItems = INSTRUCTOR_NAV_ITEMS.flatMap((section) => section.items);
 
   return (
     <TooltipProvider delayDuration={200}>
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 flex flex-col",
+          "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-zinc-800 bg-zinc-950 text-zinc-100 transition-all duration-300",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
-        {/* Logo / Header */}
-        <div className="h-16 border-b border-sidebar-border flex items-center px-4 shrink-0 transition-all duration-300">
+        <div className="flex h-16 shrink-0 items-center justify-center border-b border-zinc-800 px-4">
           {isCollapsed ? (
             <div className="flex items-center justify-center w-full">
-              <img src="/placeholder-logo.svg" alt="Logo" className="h-8 w-8" />
+              <img src="/fnskillslogo11.png" alt="FN Skills Logo" className="h-8 w-auto" />
             </div>
           ) : (
-            <div className="flex items-center gap-3 w-full">
-              <div className="flex items-center justify-center h-9 w-9 bg-brand/10 rounded-lg shrink-0">
-                <img src="/placeholder-logo.svg" alt="Logo" className="h-6 w-6" />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-bold leading-none truncate">Instructor</span>
-                <span className="text-xs text-muted-foreground mt-0.5">Faculty Portal</span>
+            <div className="flex w-full items-center gap-3">
+              <div className="flex items-center justify-center shrink-0">
+                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-10 w-auto" />
               </div>
             </div>
           )}
         </div>
 
-        {/* Collapse Toggle Button */}
         <Button
           variant="outline"
           size="icon"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute top-20 right-[-16px] h-8 w-8 rounded-full border shadow-sm z-50 bg-background hover:bg-accent text-foreground"
+          className="absolute right-[-16px] top-20 z-50 h-8 w-8 rounded-full border-zinc-700 bg-zinc-900 text-zinc-200 transition-all duration-300 hover:bg-zinc-800 hover:text-zinc-50"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" strokeWidth={2} />
           ) : (
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" strokeWidth={2} />
           )}
         </Button>
 
-        {/* Navigation */}
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full px-3 py-4">
-            <nav className="space-y-6 pb-4">
-              {INSTRUCTOR_NAV_ITEMS.map((section) => (
-                <div key={section.section}>
-                  {!isCollapsed && (
-                    <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      {section.section}
-                    </h3>
-                  )}
-                  <div className="space-y-1">
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      const active = isActive(item.href);
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <ScrollArea className="h-full px-3 py-4 [&_[data-slot=scroll-area-thumb]]:bg-zinc-600">
+            <nav className="space-y-1 pb-4">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
 
-                      if (isCollapsed) {
-                        return (
-                          <Tooltip key={item.href}>
-                            <TooltipTrigger asChild>
-                              <Link href={item.href}>
-                                <div
-                                  className={cn(
-                                    "relative flex items-center justify-center h-11 rounded-lg transition-all duration-200",
-                                    active
-                                      ? "bg-brand/10 text-brand"
-                                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                                  )}
-                                >
-                                  {active && (
-                                    <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-brand" />
-                                  )}
-                                  <Icon className="h-5 w-5" />
-                                </div>
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="ml-2">
-                              <p className="font-medium">{item.tooltip}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        );
-                      }
-
-                      return (
-                        <Link key={item.href} href={item.href}>
+                if (isCollapsed) {
+                  return (
+                    <Tooltip key={item.href}>
+                      <TooltipTrigger asChild>
+                        <Link href={item.href}>
                           <div
                             className={cn(
-                              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative",
+                              "relative flex h-11 items-center justify-center rounded-lg transition-all duration-200",
                               active
-                                ? "bg-brand/10 text-brand"
-                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                                ? "bg-zinc-800 text-zinc-50"
+                                : "text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
                             )}
                           >
                             {active && (
-                              <div className="absolute right-0 top-1/2 h-8 w-1.5 -translate-y-1/2 rounded-l-full bg-brand" />
+                              <div className="absolute right-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-l-full bg-primary" />
                             )}
-                            <Icon className="h-5 w-5 flex-shrink-0" />
-                            <span className="text-sm font-medium flex-1">{item.label}</span>
+                            <Icon
+                              className="h-5 w-5 shrink-0 text-current"
+                              strokeWidth={2}
+                              aria-hidden
+                            />
                           </div>
                         </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="ml-2">
+                        <p className="font-medium">{item.tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }
+
+                return (
+                  <Link key={item.href} href={item.href}>
+                    <div
+                      className={cn(
+                        "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200",
+                        active
+                          ? "bg-zinc-800 text-zinc-50"
+                          : "text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+                      )}
+                    >
+                      {active && (
+                        <div className="absolute right-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-l-full bg-primary" />
+                      )}
+                      <Icon
+                        className="h-5 w-5 shrink-0 text-current"
+                        strokeWidth={2}
+                        aria-hidden
+                      />
+                      <span className="flex-1 text-sm font-medium">{item.label}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </nav>
           </ScrollArea>
         </div>
 
-        {/* Logout Button */}
-        <div className="border-t border-border p-3 shrink-0">
+        <div className="shrink-0 border-t border-zinc-800 p-3">
           {isCollapsed ? (
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={() => { window.location.href = "/login/instructor"; }}
-                  className="flex items-center justify-center h-11 w-full rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 transition-all duration-200"
+                  type="button"
+                  onClick={() => {
+                    window.location.href = "/login/instructor";
+                  }}
+                  className="flex h-11 w-full items-center justify-center rounded-lg text-zinc-400 transition-all duration-200 hover:bg-red-950/40 hover:text-red-400"
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-5 w-5 shrink-0 text-current" strokeWidth={2} aria-hidden />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right" className="ml-2">
@@ -163,11 +156,14 @@ export function InstructorSidebar() {
             </Tooltip>
           ) : (
             <button
-              onClick={() => { window.location.href = "/login/instructor"; }}
-              className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 transition-all duration-200"
+              type="button"
+              onClick={() => {
+                window.location.href = "/login/instructor";
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-zinc-400 transition-all duration-200 hover:bg-red-950/40 hover:text-red-400"
             >
-              <LogOut className="h-5 w-5 flex-shrink-0" />
-              <span className="text-sm font-medium flex-1 text-left">Logout</span>
+              <LogOut className="h-5 w-5 shrink-0 text-current" strokeWidth={2} aria-hidden />
+              <span className="flex-1 text-left text-sm font-medium">Logout</span>
             </button>
           )}
         </div>

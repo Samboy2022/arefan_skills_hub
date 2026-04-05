@@ -2,6 +2,7 @@ import { TrendingUp, Users, Target, Activity } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { KPICard } from "@/components/instructor/kpi-card";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { MOCK_STUDENTS, MOCK_ASSIGNMENTS, MOCK_GRADES } from "@/lib/instructor-mock-data";
 
 export default function AnalyticsPage() {
@@ -17,13 +18,22 @@ export default function AnalyticsPage() {
   }).sort((a, b) => b.score - a.score);
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Analytics & Performance"
-        description="Analyze student engagement and course performance"
-      >
-        <Button variant="outline">Export Report</Button>
-      </PageHeader>
+    <div className="space-y-4">
+      <Breadcrumb 
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/instructor" },
+          { label: "Analytics & Performance" }
+        ]} 
+      />
+      <div className="pt-2">
+        <PageHeader
+          title="Analytics & Performance"
+          description="Analyze student engagement and course performance"
+        >
+          <Button variant="outline">Export Report</Button>
+        </PageHeader>
+      </div>
 
       {/* Overview KPIs */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
