@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo } from "react";
 import {
   BookOpen,
   Award,
@@ -16,15 +19,28 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function MyCoursesPage() {
-  const activeCourses = STUDENT_COURSES.filter((c) => c.status === "active");
-  const completedCourses = STUDENT_COURSES.filter(
-    (c) => c.status === "completed"
-  );
+  // Memoized calculated values - fixes O(n) performance issues
+  const activeCourses = useMemo(() => 
+    STUDENT_COURSES.filter((c) => c.status === "active"), 
+  [STUDENT_COURSES]);
+  
+  const completedCourses = useMemo(() => 
+    STUDENT_COURSES.filter((c) => c.status === "completed"), 
+  [STUDENT_COURSES]);
 
-  // Calculate stats
-  const totalCredits = STUDENT_COURSES.reduce((sum, course) => sum + course.credits, 0);
-  const averageProgress = Math.round(activeCourses.reduce((sum, course) => sum + course.progress, 0) / activeCourses.length);
-  const coursesWithDueAssignments = activeCourses.filter(c => c.due_assignments > 0).length;
+  // Calculate stats with proper null guards - fixes division by zero crash
+  const totalCredits = useMemo(() => 
+    STUDENT_COURSES.reduce((sum, course) => sum + course.credits, 0), 
+  [STUDENT_COURSES]);
+  
+  const averageProgress = useMemo(() => {
+    if (activeCourses.length === 0) return 0;
+    return Math.round(activeCourses.reduce((sum, course) => sum + course.progress, 0) / activeCourses.length);
+  }, [activeCourses]);
+  
+  const coursesWithDueAssignments = useMemo(() => 
+    activeCourses.filter(c => c.due_assignments > 0).length, 
+  [activeCourses]);
 
   return (
     <div className="font-sans">
@@ -41,7 +57,7 @@ export default function MyCoursesPage() {
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card className="p-4 border-border relative overflow-hidden">
           <div className="relative z-10">
             <p className="text-xs text-muted-foreground mb-1">Total Enrolled</p>
@@ -78,11 +94,19 @@ export default function MyCoursesPage() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Active Courses ({activeCourses.length})</h2>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {activeCourses.map((course) => (
+          {activeCourses.length === 0 ? (
+            <Card className="col-span-full py-12 px-6 flex flex-col items-center justify-center text-center">
+              <BookOpen className="h-12 w-12 text-muted-foreground mb-4 opacity-30" />
+              <h3 className="text-lg font-semibold mb-2">No active courses</h3>
+              <p className="text-muted-foreground text-sm max-w-md">You are not currently enrolled in any courses. Visit the course catalog to browse available courses.</p>
+            </Card>
+          ) : activeCourses.map((course) => (
             <Link
               key={course.id}
+              prefetch={false}
               href={`/student/courses/${course.id}`}
-              className="block group h-full"
+              className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
+              aria-label={`View active course: ${course.name}`}
             >
               <Card className="h-full border border-border bg-card hover:border-primary/50 transition-colors shadow-none rounded flex flex-col overflow-hidden relative">
                 
@@ -90,8 +114,9 @@ export default function MyCoursesPage() {
                 <div className="relative aspect-[16/9] w-full bg-muted border-b border-border">
                   <Image 
                     src={course.thumbnail} 
-                    alt={course.name} 
+                    alt={`Course thumbnail for ${course.name}`} 
                     fill 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover" 
                   />
                   {/* Overlay protecting the badge */}
@@ -127,7 +152,7 @@ export default function MyCoursesPage() {
                 </div>
 
                 {/* Body */}
-                <div className="p-5 pt-8 flex flex-col flex-1 bg-card">
+                <div className="p-5 pt-10 flex flex-col flex-1 bg-card">
                   <span className="text-[13px] text-muted-foreground font-medium mb-2 block">
                     {course.credits} Credits
                   </span>
@@ -178,20 +203,23 @@ export default function MyCoursesPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {completedCourses.map((course) => (
               <Link
-                key={course.id}
-                href={`/student/courses/${course.id}`}
-                className="block group h-full"
-              >
+              key={course.id}
+              prefetch={false}
+              href={`/student/courses/${course.id}`}
+              className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
+              aria-label={`View completed course: ${course.name}`}
+            >
                 <Card className="h-full border border-border shadow-none rounded-md bg-card flex flex-col overflow-hidden hover:border-primary/50 transition-all group">
                   
                   {/* Header */}
                   <div className="relative h-32 w-full bg-muted border-b border-border overflow-hidden">
                     <Image 
-                      src={course.thumbnail} 
-                      alt={course.name} 
-                      fill 
-                      className="object-cover opacity-60 group-hover:opacity-100 transition-all duration-500 scale-105 group-hover:scale-100" 
-                    />
+                    src={course.thumbnail} 
+                    alt={`Completed course thumbnail for ${course.name}`} 
+                    fill 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover opacity-60 group-hover:opacity-100 transition-all duration-500 scale-105 group-hover:scale-100" 
+                  />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                     
                     <div className="absolute top-4 left-4">

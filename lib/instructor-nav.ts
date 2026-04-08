@@ -45,23 +45,7 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       },
     ],
   },
-  {
-    section: "Curriculum & Content",
-    items: [
-      {
-        label: "Curriculum Builder",
-        href: "/instructor/curriculum",
-        icon: CurriculumIcon,
-        tooltip: "Build course structure",
-      },
-      {
-        label: "Lessons & Content",
-        href: "/instructor/lessons",
-        icon: LessonsIcon,
-        tooltip: "Manage lessons and resources",
-      },
-    ],
-  },
+
   {
     section: "Assessments",
     items: [

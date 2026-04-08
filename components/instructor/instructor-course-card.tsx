@@ -60,7 +60,7 @@ export function InstructorCourseCard({
   if (variant === "archived") {
     return (
       <div className="h-full">
-        <Card className="flex h-full flex-col overflow-hidden rounded-md border border-border bg-card shadow-none transition-all hover:border-primary/50">
+        <Card className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:translate-y-[-2px] group">
           <div className="relative h-32 w-full overflow-hidden border-b border-border bg-muted">
             <Image
               src={course.thumbnail}
@@ -182,7 +182,7 @@ export function InstructorCourseCard({
 
   return (
     <div className="h-full">
-      <Card className="relative flex h-full flex-col overflow-hidden rounded border border-border bg-card shadow-none transition-colors hover:border-primary/50">
+      <Card className="relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:translate-y-[-4px] group">
         <div className="relative aspect-[16/9] w-full border-b border-border bg-muted">
           <Link href={viewHref} className="absolute inset-0 z-[1] block">
             <span className="sr-only">View {course.title}</span>
@@ -191,7 +191,7 @@ export function InstructorCourseCard({
             src={course.thumbnail}
             alt={course.title}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
@@ -253,33 +253,33 @@ export function InstructorCourseCard({
           </div>
 
           <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-4">
-            <Button size="sm" variant="default" className="gap-1.5" asChild>
-              <Link href={viewHref}>
-                <Eye className="h-3.5 w-3.5" />
-                View course
-              </Link>
-            </Button>
-            <Button size="sm" variant="outline" className="gap-1.5" asChild>
-              <Link href={editHref}>
-                <Pencil className="h-3.5 w-3.5" />
-                Edit details
-              </Link>
-            </Button>
-            <Button size="sm" variant="outline" className="gap-1.5" asChild>
-              <Link href={contentHref}>
-                <FilePenLine className="h-3.5 w-3.5" />
-                Edit content
-              </Link>
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive"
-              onClick={() => setDeleteOpen(true)}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete
-            </Button>
+             <Button size="sm" variant="default" className="gap-1.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97]" asChild>
+               <Link href={viewHref}>
+                 <Eye className="h-3.5 w-3.5" />
+                 View course
+               </Link>
+             </Button>
+             <Button size="sm" variant="outline" className="gap-1.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97]" asChild>
+               <Link href={editHref}>
+                 <Pencil className="h-3.5 w-3.5" />
+                 Edit details
+               </Link>
+             </Button>
+             <Button size="sm" variant="outline" className="gap-1.5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97]" asChild>
+               <Link href={contentHref}>
+                 <FilePenLine className="h-3.5 w-3.5" />
+                 Edit content
+               </Link>
+             </Button>
+             <Button
+               size="sm"
+               variant="outline"
+               className="gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive transition-all duration-200 hover:scale-[1.02] active:scale-[0.97]"
+               onClick={() => setDeleteOpen(true)}
+             >
+               <Trash2 className="h-3.5 w-3.5" />
+               Delete
+             </Button>
           </div>
         </div>
       </Card>

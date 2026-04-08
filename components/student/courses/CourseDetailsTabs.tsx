@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle2, MessageSquare, StarIcon } from 'lucide-react';
 import { CourseCurriculum } from './CourseCurriculum';
 
-export function CourseDetailsTabs({ course, isEnrolled }: { course: any, isEnrolled: boolean }) {
+export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: { course: any, isEnrolled: boolean, isInstructor?: boolean }) {
   const [reviews, setReviews] = useState(course.reviews || []);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -114,6 +114,7 @@ export function CourseDetailsTabs({ course, isEnrolled }: { course: any, isEnrol
               course={course} 
               isEnrolled={isEnrolled}
               curriculum={course.curriculum}
+              isInstructor={isInstructor}
             />
           </Card>
         </section>
