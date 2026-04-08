@@ -14,7 +14,13 @@ import {
   PenSquare,
   Sparkles,
   ListVideo,
+  Send,
+  User,
+  Bot,
 } from 'lucide-react';
+
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface Lesson {
   id: number;
@@ -40,10 +46,15 @@ interface LessonSidebarProps {
     curriculum: Section[];
   };
   currentLessonId: number;
-  onProgressUpdate?: (progress: number) => void; // Callback to update progress in parent
+  onProgressUpdate?: (progress: number) => void;
+  externalCompletedIds?: Set<number>;
+  onToggleComplete?: (id: number) => void;
 }
 
 type SidebarTab = 'content' | 'ai';
+
+// Global cache to persist chats between lesson navigations without a backend
+const globalChatHistory: Record<number, { role: 'user' | 'ai'; content: string }[]> = {};
 
 function formatDuration(minutes: number): string {
   if (!minutes) return '0m';
@@ -75,7 +86,7 @@ function LessonTypeIcon({ type }: { type: string }) {
   }
 }
 
-export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: LessonSidebarProps) {
+export function LessonSidebar({ course, currentLessonId, onProgressUpdate, externalCompletedIds, onToggleComplete }: LessonSidebarProps) {
   const defaultOpen =
     course.curriculum?.find(s => s.lessons.some(l => l.id === currentLessonId))?.id ??
     course.curriculum?.[0]?.id ??
@@ -84,23 +95,66 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
   const [openSectionId, setOpenSectionId] = useState<number | null>(defaultOpen);
   const [activeTab, setActiveTab] = useState<SidebarTab>('content');
 
-  // State for completed lesson IDs - now dynamic
-  const [completedLessonIds, setCompletedLessonIds] = useState<Set<number>>(new Set([1, 2]));
+  // Use external state if provided, fall back to local
+  const [localCompletedIds, setLocalCompletedIds] = useState<Set<number>>(new Set([1, 2]));
+  const completedLessonIds = externalCompletedIds ?? localCompletedIds;
 
-  // Function to toggle lesson completion
+  // AI Chat State
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState<{ role: 'user' | 'ai'; content: string }[]>(
+    globalChatHistory[currentLessonId] || [
+      { role: 'ai', content: 'Hello! I am your AI Study Guide. Ask me anything about this lesson, or request a summary!' }
+    ]
+  );
+  
+  // Find current lesson for title display
+  const activeLesson = course.curriculum?.flatMap(s => s.lessons).find(l => l.id === currentLessonId);
+
+  // Sync global cache when messages change or component unmounts
+  useEffect(() => {
+    globalChatHistory[currentLessonId] = chatMessages;
+  }, [chatMessages, currentLessonId]);
+
+  // Load correct chat when lesson changes
+  useEffect(() => {
+    setChatMessages(
+      globalChatHistory[currentLessonId] || [
+        { role: 'ai', content: `Hello! I am your AI Study Guide. Ask me anything about "${activeLesson?.title || 'this lesson'}", or request a summary!` }
+      ]
+    );
+  }, [currentLessonId, activeLesson?.title]);
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const newMsg = { role: 'user' as const, content: chatInput.trim() };
+    setChatMessages(prev => [...prev, newMsg]);
+    setChatInput('');
+
+    // Simulate AI response
+    setTimeout(() => {
+      setChatMessages(prev => [...prev, { 
+        role: 'ai', 
+        content: `I am currently a demo AI assistant. You asked: "${newMsg.content}". In a real app, I'd analyze the lesson content and give a smart response!` 
+      }]);
+    }, 1000);
+  };
+
+
+  // Toggle completion — prefer external handler
   const toggleLessonCompletion = (lessonId: number, event: React.MouseEvent) => {
-    event.preventDefault(); // Prevent navigation when clicking checkbox
-    event.stopPropagation(); // Stop event bubbling
-    
-    setCompletedLessonIds(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(lessonId)) {
-        newSet.delete(lessonId);
-      } else {
-        newSet.add(lessonId);
-      }
-      return newSet;
-    });
+    event.preventDefault();
+    event.stopPropagation();
+    if (onToggleComplete) {
+      onToggleComplete(lessonId);
+    } else {
+      setLocalCompletedIds(prev => {
+        const next = new Set(prev);
+        next.has(lessonId) ? next.delete(lessonId) : next.add(lessonId);
+        return next;
+      });
+    }
   };
 
   // Calculate progress based on completed lessons and notify parent when it changes
@@ -147,17 +201,43 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
 
       {/* ── AI Study Guide Panel ── */}
       {activeTab === 'ai' && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8 text-center">
-          <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-            <Sparkles className="w-7 h-7 text-primary" />
+        <div className="flex-1 flex flex-col min-h-0 bg-muted/10">
+          <div className="p-4 border-b border-border bg-card shadow-sm z-10 shrink-0">
+            <h3 className="text-sm font-semibold flex items-center gap-2 text-foreground">
+              <Sparkles className="w-4 h-4 text-primary shrink-0" />
+              <span className="truncate">AI Guide: {activeLesson?.title || 'Lesson Guide'}</span>
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 truncate">
+              Ask questions or get summaries for this topic.
+            </p>
           </div>
-          <h3 className="text-base font-semibold text-foreground">AI Study Guide</h3>
-          <p className="text-sm text-muted-foreground max-w-[220px]">
-            Get AI-generated summaries, key concepts, and practice questions for each lesson.
-          </p>
-          <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded">
-            Coming soon
-          </span>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {chatMessages.map((msg, i) => (
+              <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
+                  {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                </div>
+                <div className={`rounded-lg p-3 text-sm max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-card border border-border text-foreground shadow-sm'}`}>
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <form onSubmit={handleSendMessage} className="p-4 bg-card border-t border-border shrink-0">
+            <div className="flex gap-2">
+              <Input 
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Ask your AI guide..." 
+                className="flex-1 text-sm bg-background"
+              />
+              <Button type="submit" size="icon" className="shrink-0" disabled={!chatInput.trim()}>
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </form>
         </div>
       )}
 
@@ -182,7 +262,7 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
                   <button
                     onClick={() => setOpenSectionId(isOpen ? null : section.id)}
                     className={`w-full flex items-start justify-between px-5 py-4 text-left transition-colors ${
-                      isOpen ? 'bg-muted' : 'bg-card hover:bg-muted/50'
+                      isOpen ? 'bg-muted/30' : 'bg-transparent hover:bg-muted/30'
                     }`}
                   >
                     <div className="flex items-start gap-2 flex-1 min-w-0 pr-3">
@@ -191,10 +271,10 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
                           isOpen ? 'rotate-180' : ''
                         }`}
                       />
-                      {/* Title — NO truncate, allow wrapping */}
+                      {/* Title — NO truncate, allow wrapping, lighter font mapping */}
                       <span
-                        className={`text-sm font-medium leading-snug ${
-                          isOpen || hasActive ? 'text-primary' : 'text-foreground'
+                        className={`text-[13px] font-medium leading-snug ${
+                          isOpen || hasActive ? 'text-primary' : 'text-foreground/90'
                         }`}
                       >
                         {section.title}
@@ -233,11 +313,11 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
                         return (
                           <Link
                             key={lesson.id}
-                            href={`/student/courses/${course.id}/lessons/${lesson.id}`}
-                            className={`group w-full flex items-center justify-between px-5 py-4 transition-all duration-200 cursor-pointer ${
+                            href={lesson.content_type === 'assignment' ? `/student/assignments/${lesson.id}` : `/student/courses/${course.id}/lessons/${lesson.id}`}
+                            className={`group w-full flex items-center justify-between px-5 py-3 transition-colors duration-200 cursor-pointer ${
                               isActive 
-                                ? 'bg-primary/10 border-l-2 border-primary' 
-                                : 'hover:bg-muted/80 hover:shadow-sm active:bg-muted'
+                                ? 'bg-primary/10 dark:bg-primary/20' 
+                                : 'hover:bg-muted/40'
                             }`}
                           >
                             {/* Left: status + type icon + title */}
@@ -245,15 +325,15 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
                               {/* Status checkbox - clickable */}
                               <button
                                 onClick={(e) => toggleLessonCompletion(lesson.id, e)}
-                                className="shrink-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1 rounded-sm"
+                                className="shrink-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1 rounded-full"
                                 aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
                               >
                                 {isCompleted ? (
-                                  <div className="w-5 h-5 bg-primary flex items-center justify-center transition-all duration-200 hover:bg-primary/90 hover:scale-110">
+                                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center transition-all duration-200 hover:bg-primary/90 hover:scale-110">
                                     <Check className="w-3 h-3 text-white stroke-[2.5]" />
                                   </div>
                                 ) : (
-                                  <div className="w-5 h-5 bg-card border-2 border-border transition-all duration-200 hover:border-primary/70 hover:bg-primary/10 hover:scale-105" />
+                                  <div className="w-5 h-5 bg-transparent border-[1.5px] border-muted-foreground/50 rounded-full transition-all duration-200 hover:border-primary/60 hover:bg-primary/5 hover:scale-105" />
                                 )}
                               </button>
 
@@ -262,10 +342,10 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate }: Les
 
                               {/* Title */}
                               <span
-                                className={`text-sm leading-5 transition-colors ${
+                                className={`text-[13px] leading-5 transition-colors ${
                                   isActive
-                                    ? 'text-foreground font-medium'
-                                    : 'text-muted-foreground font-normal group-hover:text-foreground'
+                                    ? 'text-primary font-medium'
+                                    : 'text-muted-foreground/90 font-normal group-hover:text-foreground/90'
                                 }`}
                               >
                                 {lesson.title}

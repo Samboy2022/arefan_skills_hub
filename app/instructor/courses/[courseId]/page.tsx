@@ -73,9 +73,27 @@ export default async function InstructorCourseViewPage({
             <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Catalog description
             </h2>
-            <p className="text-[15px] leading-relaxed text-foreground">
-              {course.description}
-            </p>
+            <div 
+              className="prose dark:prose-invert prose-sm sm:prose-base max-w-none text-foreground"
+              dangerouslySetInnerHTML={{ __html: course.description }}
+            />
+            
+            <h2 className="mt-8 mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              What You'll Learn
+            </h2>
+            <ul className="space-y-2">
+              {[
+                  "Build modern web applications from scratch",
+                  "Understand advanced principles and patterns",
+                  "Implement secure and scalable architectures",
+                  "Deploy fully functional projects to production"
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-[15px] text-foreground">
+                  <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
 

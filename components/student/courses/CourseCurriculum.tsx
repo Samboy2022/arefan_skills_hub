@@ -20,6 +20,7 @@ interface Lesson {
 interface Section {
   id: number;
   title: string;
+  description?: string;
   lessons_count: number;
   duration_minutes: number;
   is_locked?: boolean;
@@ -80,11 +81,24 @@ export function CourseCurriculum({ course, isEnrolled, curriculum = [] }: Course
                   expandedSections.includes(section.id) ? 'rotate-180' : ''
                 }`}
               />
-              <div className="text-left">
-                <h3 className="font-semibold text-foreground text-sm">{section.title}</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {section.lessons_count} lessons · {section.duration_minutes} min
+              <div className="text-left w-full pr-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold text-foreground text-sm">{section.title}</h3>
+                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wider h-5 flex items-center bg-muted text-muted-foreground">{section.lessons_count} Lessons</Badge>
+                </div>
+                
+                <p className="text-xs text-muted-foreground mt-1 mb-2 leading-relaxed">
+                  {section.description || `Explore the core concepts and fundamental topics covered in ${section.title}.`}
                 </p>
+                
+                {/* Metrics Breakdown */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground bg-background/50 inline-flex p-1.5 rounded-md border border-border/50">
+                  <span className="font-medium flex items-center gap-1"><PlayCircleIcon className="w-3 h-3"/> {section.lessons.filter(l => l.content_type === 'video' || l.content_type === 'document').length} Multimedia</span>
+                  <span>&bull;</span>
+                  <span className="font-medium flex items-center gap-1"><FileIcon className="w-3 h-3 text-amber-500"/> {section.lessons.filter(l => l.content_type === 'assignment').length} Assignment{section.lessons.filter(l => l.content_type === 'assignment').length !== 1 && 's'}</span>
+                  <span>&bull;</span>
+                  <span className="font-medium flex items-center gap-1"><HelpCircleIcon className="w-3 h-3 text-purple-500"/> {section.lessons.filter(l => l.content_type === 'quiz').length} Quiz{section.lessons.filter(l => l.content_type === 'quiz').length !== 1 && 'zes'}</span>
+                </div>
               </div>
             </div>
             
@@ -106,7 +120,16 @@ export function CourseCurriculum({ course, isEnrolled, curriculum = [] }: Course
                     {getLessonIcon(lesson.content_type)}
                     
                     <div className="ml-3">
-                      <p className="font-medium text-sm text-foreground">{lesson.title}</p>
+                      {(lesson.is_preview || isEnrolled) ? (
+                        <Link 
+                          href={lesson.content_type === 'assignment' ? `/student/assignments/${lesson.id}` : `/student/courses/${course.id}/lessons/${lesson.id}`}
+                          className="font-medium text-sm text-foreground hover:text-primary transition-colors hover:underline"
+                        >
+                          {lesson.title}
+                        </Link>
+                      ) : (
+                        <p className="font-medium text-sm text-foreground">{lesson.title}</p>
+                      )}
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {lesson.duration_minutes} min
                       </p>
@@ -121,7 +144,7 @@ export function CourseCurriculum({ course, isEnrolled, curriculum = [] }: Course
                     
                     {/* Play/Lock Icon */}
                     {lesson.is_preview || isEnrolled ? (
-                      <Link href={`/student/courses/${course.id}/lessons/${lesson.id}`}>
+                      <Link href={lesson.content_type === 'assignment' ? `/student/assignments/${lesson.id}` : `/student/courses/${course.id}/lessons/${lesson.id}`}>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
                           <PlayIcon className="w-4 h-4 ml-0.5" />
                         </Button>

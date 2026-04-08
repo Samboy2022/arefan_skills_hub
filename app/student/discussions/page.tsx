@@ -1,651 +1,682 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, Eye, Reply, Pin, ChevronLeft, Send, Paperclip, MoreVertical, MessageCircle, Search, Filter, Plus, Clock, TrendingUp, Users, Star, ThumbsUp } from "lucide-react";
+import {
+  MessageSquare, Plus, ChevronRight, Pin, Eye, MessageCircle,
+  ArrowLeft, Send, ThumbsUp, Pencil, Trash2, X, CheckCircle,
+  Users, Globe, BookOpen, Search, Reply, AlertTriangle
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PageHeader } from "@/components/student/page-header";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ForumRichEditor } from "@/components/student/discussions/ForumRichEditor";
-import { DISCUSSION_THREADS } from "@/lib/student-mock-data";
+import { DISCUSSION_THREADS, STUDENT_COURSES } from "@/lib/student-mock-data";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { format } from "date-fns";
+import type { DiscussionThread, DiscussionComment } from "@/lib/student-types";
 
-export default function DiscussionsPage() {
-  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("recent");
-  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
-  const [replyContents, setReplyContents] = useState<Record<string, string>>({});
-  const [likes, setLikes] = useState<Record<string, { count: number; isLiked: boolean }>>({
-    'main-topic': { count: 3, isLiked: false },
-    'r1': { count: 4, isLiked: false },
-    'r2': { count: 8, isLiked: false },
-    'r3': { count: 2, isLiked: false },
-  });
-  
-  const activeThread = DISCUSSION_THREADS.find(t => t.id === activeThreadId);
-  const unreadThreadsCount = DISCUSSION_THREADS.filter(t => t.has_unread).length;
-  const pinnedThreads = DISCUSSION_THREADS.filter(t => t.is_pinned);
-  const regularThreads = DISCUSSION_THREADS.filter(t => !t.is_pinned);
+// ── Helpers ────────────────────────────────────────────────────────────────────
+const CURRENT_USER_ID = "student_current";
+const CURRENT_USER_NAME = "John Doe";
+const CURRENT_USER_AVATAR = "https://api.dicebear.com/7.x/avataaars/svg?seed=John";
 
-  // Mock replies for the detail view
-  const mockReplies = [
-    {
-      id: "r1",
-      author: "Jane Smith",
-      content: "I've been having the same issue! I found that adjusting the termination condition in the loop fixed it for me. Have you tried checking if your index is off by one?",
-      timestamp: "2024-02-06T15:20:00",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
-      likes: 4,
-      isHelpful: true
-    },
-    {
-      id: "r2",
-      author: "Dr. Sarah Johnson",
-      content: "Excellent suggestion, Jane. John, typically for-loop issues in this module stem from accessing array elements outside of their bounds. I recommend using the debugger to step through each iteration.",
-      timestamp: "2024-02-06T16:45:00",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-      isInstructor: true,
-      likes: 8,
-      isHelpful: true
-    },
-    {
-      id: "r3",
-      author: "Mike Chen",
-      content: "Thanks everyone! The debugger tip really helped. I was indeed accessing the array out of bounds. Fixed it by changing my condition from <= to <.",
-      timestamp: "2024-02-06T18:30:00",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
-      likes: 2
-    }
-  ];
+const formatDate = (d: string) => {
+  try { return format(new Date(d), "MMM dd, yyyy 'at' h:mm a"); } catch { return d; }
+};
 
-  const handleLike = (id: string) => {
-    setLikes(prev => ({
-      ...prev,
-      [id]: {
-        count: prev[id].isLiked ? prev[id].count - 1 : prev[id].count + 1,
-        isLiked: !prev[id].isLiked
-      }
-    }));
-  };
-
-  const handleReply = (replyId: string) => {
-    setActiveReplyId(activeReplyId === replyId ? null : replyId);
-  };
-
-  const handleSubmitReply = (replyId: string) => {
-    const content = replyContents[replyId] || '';
-    if (content.trim()) {
-      console.log('Reply to', replyId, ':', content);
-      // Handle reply submission here
-      setReplyContents(prev => ({ ...prev, [replyId]: '' }));
-      setActiveReplyId(null);
-    }
-  };
-
-  const handleReplyContentChange = (replyId: string, content: string) => {
-    setReplyContents(prev => ({ ...prev, [replyId]: content }));
-  };
-
-  if (activeThread) {
-    return (
-      <div className="flex flex-col space-y-6">
-        {/* Back Navigation */}
-        <div className="flex items-center justify-between">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setActiveThreadId(null)}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back to Forum
-          </Button>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Star className="h-4 w-4 mr-2" />
-              Follow
-            </Button>
-            <Button variant="ghost" size="sm">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </div>
+// ── Thread Row ─────────────────────────────────────────────────────────────────
+function ThreadRow({ thread, onClick }: { thread: DiscussionThread; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full text-left flex items-center gap-4 px-5 py-4 hover:bg-muted/20 transition-colors border-b border-border last:border-b-0"
+    >
+      <Avatar className="h-9 w-9 shrink-0">
+        <AvatarImage src={thread.author_avatar} />
+        <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
+          {thread.author.charAt(0)}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-0.5">
+          {thread.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+          {thread.has_unread && <span className="h-2 w-2 rounded-full bg-primary shrink-0" />}
+          <p className={cn("text-sm font-semibold line-clamp-1", thread.has_unread ? "text-foreground" : "text-foreground/80")}>
+            {thread.title}
+          </p>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Main Discussion Area */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Original Post */}
-            <Card className="border border-border bg-card">
-              <div className="p-6">
-                <div className="flex items-start gap-4 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={activeThread.author_avatar} />
-                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                      {activeThread.author.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h4 className="font-semibold text-foreground">{activeThread.author}</h4>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(activeThread.created_at).toLocaleDateString()}
-                      </span>
-                      {activeThread.is_pinned && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-700 rounded-md text-xs">
-                          <Pin className="h-3 w-3" />
-                          Pinned
-                        </div>
-                      )}
-                    </div>
-                    <h1 className="text-xl font-bold text-foreground mb-3">{activeThread.title}</h1>
-                    <div className="text-sm text-muted-foreground leading-relaxed">
-                      <p>Hey everyone, I'm working through the logic in module 2 and I've run into a bit of a snag with the nested for loops. My code seems to be running infinitely or producing unexpected results. Has anyone else encountered this? Any tips on how to properly debug the iteration cycles?</p>
-                      <div className="mt-4 p-3 bg-muted/50 rounded-md font-mono text-xs">
-                        <code>{`for (let i = 0; i <= array.length; i++) {
-  for (let j = 0; j <= array[i].length; j++) {
-    // Processing logic here
-  }
-}`}</code>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Reply className="h-4 w-4" />
-                      {activeThread.replies_count} replies
-                    </span>
-                    <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Eye className="h-4 w-4" />
-                      {activeThread.views} views
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleLike('main-topic')}
-                      className={likes['main-topic'].isLiked ? 'text-primary' : 'text-muted-foreground'}
-                    >
-                      <ThumbsUp className={`h-4 w-4 mr-2 ${likes['main-topic'].isLiked ? 'fill-current' : ''}`} />
-                      Helpful ({likes['main-topic'].count})
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleReply('main-topic')}
-                    >
-                      <Reply className="h-4 w-4 mr-2" />
-                      Reply
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Reply Form for Main Topic */}
-            {activeReplyId === 'main-topic' && (
-              <Card className="border border-border bg-card">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-semibold text-foreground">Reply to main topic</h4>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => setActiveReplyId(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <div className="space-y-4">
-                    <ForumRichEditor
-                      content={replyContents['main-topic'] || ''}
-                      onChange={(content) => handleReplyContentChange('main-topic', content)}
-                      placeholder="Share your thoughts, provide help, or ask follow-up questions..."
-                    />
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          <Paperclip className="h-4 w-4 mr-2" />
-                          Attach File
-                        </Button>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          onClick={() => setActiveReplyId(null)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={() => handleSubmitReply('main-topic')}
-                        >
-                          <Send className="h-4 w-4 mr-2" />
-                          Post Reply
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )}
-
-            {/* Replies Section */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-foreground">
-                  {mockReplies.length} Replies
-                </h3>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    <Filter className="h-4 w-4 mr-2" />
-                    Sort by
-                  </Button>
-                </div>
-              </div>
-              
-              {mockReplies.map((reply, index) => (
-                <div key={reply.id} className="space-y-4">
-                  <Card className="border border-border bg-card">
-                    <div className="p-6">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={reply.avatar} />
-                          <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                            {reply.author.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h4 className="font-semibold text-foreground">{reply.author}</h4>
-                            {reply.isInstructor && (
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
-                                Instructor
-                              </span>
-                            )}
-                            {reply.isHelpful && (
-                              <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
-                                Helpful Answer
-                              </span>
-                            )}
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(reply.timestamp).toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="text-sm text-muted-foreground leading-relaxed mb-4">
-                            {reply.content}
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className={likes[reply.id]?.isLiked ? 'text-primary' : 'text-muted-foreground'}
-                              onClick={() => handleLike(reply.id)}
-                            >
-                              <ThumbsUp className={`h-4 w-4 mr-2 ${likes[reply.id]?.isLiked ? 'fill-current' : ''}`} />
-                              {likes[reply.id]?.count || reply.likes}
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-muted-foreground"
-                              onClick={() => handleReply(reply.id)}
-                            >
-                              <Reply className="h-4 w-4 mr-2" />
-                              Reply
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-
-                  {/* Individual Reply Form */}
-                  {activeReplyId === reply.id && (
-                    <Card className="border border-border bg-card ml-14">
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="font-semibold text-foreground">Reply to {reply.author}</h4>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => setActiveReplyId(null)}
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                        <div className="space-y-4">
-                          <ForumRichEditor
-                            content={replyContents[reply.id] || ''}
-                            onChange={(content) => handleReplyContentChange(reply.id, content)}
-                            placeholder={`Reply to ${reply.author}...`}
-                          />
-                          <div className="flex items-center justify-between">
-                            <div className="flex gap-2">
-                              <Button variant="outline" size="sm">
-                                <Paperclip className="h-4 w-4 mr-2" />
-                                Attach File
-                              </Button>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button 
-                                variant="outline" 
-                                onClick={() => setActiveReplyId(null)}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                onClick={() => handleSubmitReply(reply.id)}
-                              >
-                                <Send className="h-4 w-4 mr-2" />
-                                Post Reply
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Thread Stats */}
-            <Card className="border border-border bg-card p-4">
-              <h4 className="font-semibold text-foreground mb-3">Thread Stats</h4>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Created</span>
-                  <span className="text-sm font-medium">2 days ago</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Last reply</span>
-                  <span className="text-sm font-medium">4 hours ago</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Participants</span>
-                  <span className="text-sm font-medium">4 users</span>
-                </div>
-              </div>
-            </Card>
-
-            {/* Related Threads */}
-            <Card className="border border-border bg-card p-4">
-              <h4 className="font-semibold text-foreground mb-3">Related Discussions</h4>
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="group cursor-pointer">
-                    <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      Debugging async operations in module {i+2}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground">{5+i} replies</span>
-                      <span className="text-xs text-muted-foreground">•</span>
-                      <span className="text-xs text-muted-foreground">{i} hours ago</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Forum Guidelines */}
-            <Card className="border border-border bg-card p-4">
-              <h4 className="font-semibold text-foreground mb-3">Forum Guidelines</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  Be respectful and professional
-                </li>
-                <li className="flex gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  Search before posting
-                </li>
-                <li className="flex gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  Use code blocks for snippets
-                </li>
-              </ul>
-            </Card>
-          </div>
-        </div>
+        <p className="text-xs text-muted-foreground line-clamp-1 mb-1">{thread.description}</p>
+        <p className="text-[11px] text-muted-foreground">{thread.author} · {formatDate(thread.created_at)}</p>
       </div>
-    );
-  }
+      <div className="flex items-center gap-4 shrink-0 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" />{thread.replies_count}</span>
+        <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{thread.views}</span>
+        <ChevronRight className="h-4 w-4" />
+      </div>
+    </button>
+  );
+}
+
+// ── Thread Detail View ─────────────────────────────────────────────────────────
+function ThreadDetailView({
+  thread,
+  onBack,
+  isGeneral,
+  onEdit,
+  onDelete,
+}: {
+  thread: DiscussionThread;
+  onBack: () => void;
+  isGeneral: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+}) {
+  const [comments, setComments] = useState<DiscussionComment[]>(thread.comments ?? []);
+  const [commentText, setCommentText] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const [likedComments, setLikedComments] = useState<Set<string>>(new Set());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const isOwner = thread.author_id === CURRENT_USER_ID;
+
+  const handleComment = () => {
+    if (!commentText.trim()) return;
+    const newComment: DiscussionComment = {
+      id: `c${Date.now()}`,
+      thread_id: thread.id,
+      author: CURRENT_USER_NAME,
+      author_avatar: CURRENT_USER_AVATAR,
+      content: commentText,
+      created_at: new Date().toISOString(),
+      likes: 0,
+      replies: [],
+    };
+    setComments(prev => [...prev, newComment]);
+    setCommentText("");
+  };
+
+  const handleReply = (commentId: string) => {
+    const text = replyTexts[commentId];
+    if (!text?.trim()) return;
+    setComments(prev => prev.map(c => {
+      if (c.id !== commentId) return c;
+      return {
+        ...c,
+        replies: [...c.replies, {
+          id: `r${Date.now()}`,
+          comment_id: commentId,
+          author: CURRENT_USER_NAME,
+          author_avatar: CURRENT_USER_AVATAR,
+          content: text,
+          created_at: new Date().toISOString(),
+          likes: 0,
+        }]
+      };
+    }));
+    setReplyTexts(prev => ({ ...prev, [commentId]: "" }));
+    setReplyingTo(null);
+  };
+
+  const toggleLike = (id: string) => {
+    setLikedComments(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   return (
-    <div>
-      <Breadcrumb 
-        items={[
-          { label: "Discussions" }
-        ]}
-        className="mb-6"
-      />
-      
-      <PageHeader
-        title="Discussion Forum"
-        description="Connect with classmates and get help with your coursework"
-      />
+    <div className="space-y-5">
+      {/* Breadcrumb */}
+      <Breadcrumb items={[
+        { label: "Discussions", href: "#" },
+        { label: isGeneral ? "General Forum" : "Course Forum", href: "#" },
+        { label: thread.title },
+      ]} />
 
-      {/* Forum Stats */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
-        <Card className="border-sky-200 dark:border-sky-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Threads</p>
-              <p className="text-xs text-muted-foreground">All discussions</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
-              <MessageSquare className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">{DISCUSSION_THREADS.length}</p>
-        </Card>
-
-        <Card className="border-amber-200 dark:border-amber-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Unread</p>
-              <p className="text-xs text-muted-foreground">Need attention</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-              <Eye className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">{unreadThreadsCount}</p>
-        </Card>
-
-        <Card className="border-emerald-200 dark:border-emerald-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">My Posts</p>
-              <p className="text-xs text-muted-foreground">Your contributions</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-              <Reply className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">12</p>
-        </Card>
-
-        <Card className="border-purple-200 dark:border-purple-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Active Users</p>
-              <p className="text-xs text-muted-foreground">Online now</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
-              <Users className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">24</p>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search discussions..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant={activeFilter === "recent" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("recent")}
-            className="font-medium"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            Recent
-          </Button>
-          <Button
-            variant={activeFilter === "popular" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("popular")}
-            className="font-medium"
-          >
-            <TrendingUp className="h-4 w-4 mr-2" />
-            Popular
-          </Button>
-          <Button
-            variant={activeFilter === "unanswered" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveFilter("unanswered")}
-            className="font-medium"
-          >
-            Unanswered
-          </Button>
-        </div>
-        <Button className="font-medium">
-          <Plus className="h-4 w-4 mr-2" />
-          New Thread
+      {/* Back + owner actions */}
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={onBack} className="gap-2">
+          <ArrowLeft className="h-4 w-4" /> Back
         </Button>
+        {isOwner && (
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={onEdit}>
+              <Pencil className="h-3.5 w-3.5" /> Edit
+            </Button>
+            <Button variant="outline" size="sm" className="gap-1.5 text-red-600 hover:text-red-700 border-red-200" onClick={() => setShowDeleteConfirm(true)}>
+              <Trash2 className="h-3.5 w-3.5" /> Delete
+            </Button>
+          </div>
+        )}
       </div>
 
-      {/* Pinned Threads */}
-      {pinnedThreads.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Pin className="h-5 w-5 text-amber-500" />
-            Pinned Discussions
-          </h3>
-          <div className="space-y-3">
-            {pinnedThreads.map(thread => (
-              <Card
-                key={thread.id}
-                onClick={() => setActiveThreadId(thread.id)}
-                className="p-4 border border-amber-200 bg-amber-50/50 hover:bg-amber-50 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Pin className="h-4 w-4 text-amber-600" />
-                      <h4 className="font-semibold text-foreground line-clamp-1">
-                        {thread.title}
-                      </h4>
-                      {thread.has_unread && (
-                        <div className="h-2 w-2 rounded-full bg-primary" />
-                      )}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-5 w-5">
-                          <AvatarImage src={thread.author_avatar} />
-                          <AvatarFallback className="text-xs">{thread.author.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <span>{thread.author}</span>
-                      </div>
-                      <span>•</span>
-                      <span>{new Date(thread.created_at).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-6 ml-4">
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-foreground">{thread.replies_count}</div>
-                      <div className="text-xs text-muted-foreground">replies</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm font-semibold text-foreground">{thread.views}</div>
-                      <div className="text-xs text-muted-foreground">views</div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
+      {/* Delete confirm */}
+      {showDeleteConfirm && (
+        <div className="rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800 p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground mb-1">Delete this thread?</p>
+            <p className="text-xs text-muted-foreground mb-3">This action cannot be undone. All comments and replies will be permanently removed.</p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="destructive" onClick={onDelete}>Yes, Delete</Button>
+              <Button size="sm" variant="outline" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Regular Threads */}
-      <div>
-        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-          <MessageSquare className="h-5 w-5" />
-          Recent Discussions
-        </h3>
-        <div className="space-y-3">
-          {regularThreads.map(thread => (
-            <Card
-              key={thread.id}
-              onClick={() => setActiveThreadId(thread.id)}
-              className={cn(
-                "p-4 border transition-colors cursor-pointer",
-                thread.has_unread 
-                  ? "border-primary/40 bg-primary/5 hover:bg-primary/10" 
-                  : "border-border hover:border-primary/50 bg-card"
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h4 className={cn(
-                      "font-semibold line-clamp-1",
-                      thread.has_unread ? "text-foreground" : "text-muted-foreground"
-                    )}>
-                      {thread.title}
-                    </h4>
-                    {thread.has_unread && (
-                      <div className="h-2 w-2 rounded-full bg-primary" />
+      {/* Original Post */}
+      <Card className="border-border">
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <Avatar className="h-10 w-10 shrink-0">
+              <AvatarImage src={thread.author_avatar} />
+              <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">{thread.author.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="font-semibold text-sm text-foreground">{thread.author}</span>
+                {isOwner && <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">You</span>}
+                <span className="text-xs text-muted-foreground">{formatDate(thread.created_at)}</span>
+                {thread.is_pinned && <span className="flex items-center gap-1 text-[10px] font-bold text-amber-600 uppercase"><Pin className="h-3 w-3"/>Pinned</span>}
+              </div>
+              <h1 className="text-xl font-bold text-foreground mb-3">{thread.title}</h1>
+              <p className="text-sm text-muted-foreground leading-relaxed">{thread.description}</p>
+              <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" />{comments.length} comments</span>
+                <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{thread.views} views</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Comments */}
+      {comments.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{comments.length} Comment{comments.length !== 1 ? "s" : ""}</h3>
+          {comments.map(comment => (
+            <Card key={comment.id} className="border-border">
+              <div className="p-5">
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-9 w-9 shrink-0">
+                    <AvatarImage src={comment.author_avatar} />
+                    <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">{comment.author.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="text-sm font-semibold text-foreground">{comment.author}</span>
+                      {comment.is_instructor && (
+                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">Instructor</span>
+                      )}
+                      {comment.is_helpful && (
+                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400">
+                          <CheckCircle className="h-3 w-3" /> Helpful
+                        </span>
+                      )}
+                      <span className="text-xs text-muted-foreground">{formatDate(comment.created_at)}</span>
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed mb-3">{comment.content}</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => toggleLike(comment.id)}
+                        className={cn("flex items-center gap-1.5 text-xs font-medium transition-colors", likedComments.has(comment.id) ? "text-primary" : "text-muted-foreground hover:text-foreground")}
+                      >
+                        <ThumbsUp className={cn("h-3.5 w-3.5", likedComments.has(comment.id) && "fill-current")} />
+                        {comment.likes + (likedComments.has(comment.id) ? 1 : 0)}
+                      </button>
+                      <button
+                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                        className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Reply className="h-3.5 w-3.5" /> Reply
+                      </button>
+                    </div>
+
+                    {/* Nested Replies */}
+                    {comment.replies.length > 0 && (
+                      <div className="mt-4 space-y-3 pl-4 border-l-2 border-border">
+                        {comment.replies.map(reply => (
+                          <div key={reply.id} className="flex items-start gap-3">
+                            <Avatar className="h-7 w-7 shrink-0">
+                              <AvatarImage src={reply.author_avatar} />
+                              <AvatarFallback className="text-[10px] font-bold bg-muted">{reply.author.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="flex items-center gap-2 mb-0.5">
+                                <span className="text-xs font-semibold text-foreground">{reply.author}</span>
+                                <span className="text-[11px] text-muted-foreground">{formatDate(reply.created_at)}</span>
+                              </div>
+                              <p className="text-xs text-foreground leading-relaxed">{reply.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Reply Box */}
+                    {replyingTo === comment.id && (
+                      <div className="mt-3 pl-4 border-l-2 border-primary/30 space-y-2">
+                        <Textarea
+                          value={replyTexts[comment.id] ?? ""}
+                          onChange={e => setReplyTexts(prev => ({ ...prev, [comment.id]: e.target.value }))}
+                          placeholder={`Reply to ${comment.author}...`}
+                          className="min-h-[80px] text-sm resize-none"
+                        />
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => setReplyingTo(null)}>Cancel</Button>
+                          <Button size="sm" className="gap-1.5" onClick={() => handleReply(comment.id)}>
+                            <Send className="h-3.5 w-3.5" /> Reply
+                          </Button>
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-5 w-5">
-                        <AvatarImage src={thread.author_avatar} />
-                        <AvatarFallback className="text-xs">{thread.author.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span>{thread.author}</span>
-                    </div>
-                    <span>•</span>
-                    <span>{new Date(thread.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-6 ml-4">
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">{thread.replies_count}</div>
-                    <div className="text-xs text-muted-foreground">replies</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm font-semibold text-foreground">{thread.views}</div>
-                    <div className="text-xs text-muted-foreground">views</div>
-                  </div>
-                  <ChevronLeft className="h-5 w-5 rotate-180 text-muted-foreground" />
                 </div>
               </div>
             </Card>
           ))}
         </div>
+      )}
+
+      {/* Comment box */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Leave a Comment</h3>
+        <Textarea
+          value={commentText}
+          onChange={e => setCommentText(e.target.value)}
+          placeholder="Type your comment here..."
+          className="min-h-[100px] text-sm resize-none"
+        />
+        <div className="flex justify-end">
+          <Button disabled={!commentText.trim()} onClick={handleComment} className="gap-2">
+            <Send className="h-4 w-4" /> Comment
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Create Thread Form ─────────────────────────────────────────────────────────
+function CreateThreadForm({ onCancel, onSubmit }: { onCancel: () => void; onSubmit: (t: DiscussionThread) => void }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleCreate = () => {
+    if (!title.trim() || !description.trim()) return;
+    const thread: DiscussionThread = {
+      id: `gen${Date.now()}`,
+      course_id: null,
+      forum_type: "general",
+      title,
+      description,
+      author: CURRENT_USER_NAME,
+      author_id: CURRENT_USER_ID,
+      author_avatar: CURRENT_USER_AVATAR,
+      created_at: new Date().toISOString(),
+      replies_count: 0,
+      views: 0,
+      is_pinned: false,
+      has_unread: false,
+      comments: [],
+    };
+    onSubmit(thread);
+  };
+
+  return (
+    <div className="space-y-5 max-w-2xl">
+      <Breadcrumb items={[
+        { label: "Discussions", href: "#" },
+        { label: "General Forum", href: "#" },
+        { label: "New Discussion" },
+      ]} />
+      <div>
+        <h2 className="text-xl font-bold text-foreground mb-1">Create a New Discussion</h2>
+        <p className="text-sm text-muted-foreground">Start a thread visible to all students on the platform.</p>
+      </div>
+      <div className="space-y-4">
+        <div>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5">Thread Title *</label>
+          <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Enter a clear, descriptive title..." />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5">Description *</label>
+          <ForumRichEditor content={description} onChange={setDescription} placeholder="Describe your topic, question, or idea in detail..." />
+        </div>
+      </div>
+      <div className="flex items-center justify-between pt-2 border-t border-border">
+        <Button variant="ghost" size="sm" onClick={onCancel}><ArrowLeft className="h-4 w-4 mr-1.5" /> Cancel</Button>
+        <Button disabled={!title.trim() || !description.trim()} onClick={handleCreate} className="gap-2">
+          <Send className="h-4 w-4" /> Create
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ── Edit Thread Form ───────────────────────────────────────────────────────────
+function EditThreadForm({ thread, onCancel, onSave }: { thread: DiscussionThread; onCancel: () => void; onSave: (title: string, description: string) => void }) {
+  const [title, setTitle] = useState(thread.title);
+  const [description, setDescription] = useState(thread.description);
+
+  return (
+    <div className="space-y-5 max-w-2xl">
+      <Breadcrumb items={[
+        { label: "Discussions", href: "#" },
+        { label: "General Forum", href: "#" },
+        { label: "Edit Discussion" },
+      ]} />
+      <div>
+        <h2 className="text-xl font-bold text-foreground mb-1">Edit Discussion</h2>
+        <p className="text-sm text-muted-foreground">Make changes to your thread below.</p>
+      </div>
+      <div className="space-y-4">
+        <div>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5">Thread Title *</label>
+          <Input value={title} onChange={e => setTitle(e.target.value)} />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5">Description *</label>
+          <ForumRichEditor content={description} onChange={setDescription} />
+        </div>
+      </div>
+      <div className="flex items-center justify-between pt-2 border-t border-border">
+        <Button variant="ghost" size="sm" onClick={onCancel}><X className="h-4 w-4 mr-1.5" /> Cancel</Button>
+        <Button disabled={!title.trim() || !description.trim()} onClick={() => onSave(title, description)} className="gap-2">
+          <CheckCircle className="h-4 w-4" /> Update
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ── Forum Thread List ──────────────────────────────────────────────────────────
+function ForumList({
+  threads,
+  isGeneral,
+  courseId,
+  courseName,
+  onBack,
+}: {
+  threads: DiscussionThread[];
+  isGeneral: boolean;
+  courseId?: string;
+  courseName?: string;
+  onBack: () => void;
+}) {
+  const [allThreads, setAllThreads] = useState<DiscussionThread[]>(threads);
+  const [view, setView] = useState<"list" | "thread" | "create" | "edit">("list");
+  const [activeThread, setActiveThread] = useState<DiscussionThread | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const pinned = allThreads.filter(t => t.is_pinned);
+  const regular = allThreads.filter(t => !t.is_pinned);
+  const filtered = (arr: DiscussionThread[]) =>
+    arr.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const handleDelete = () => {
+    if (!activeThread) return;
+    setAllThreads(prev => prev.filter(t => t.id !== activeThread.id));
+    setView("list");
+    setActiveThread(null);
+  };
+
+  const handleEditSave = (title: string, description: string) => {
+    if (!activeThread) return;
+    const updated = { ...activeThread, title, description };
+    setAllThreads(prev => prev.map(t => t.id === activeThread.id ? updated : t));
+    setActiveThread(updated);
+    setView("thread");
+  };
+
+  if (view === "create") return <CreateThreadForm onCancel={() => setView("list")} onSubmit={t => { setAllThreads(prev => [t, ...prev]); setView("list"); }} />;
+  if (view === "edit" && activeThread) return <EditThreadForm thread={activeThread} onCancel={() => setView("thread")} onSave={handleEditSave} />;
+  if (view === "thread" && activeThread) return (
+    <ThreadDetailView
+      thread={activeThread}
+      onBack={() => setView("list")}
+      isGeneral={isGeneral}
+      onEdit={() => setView("edit")}
+      onDelete={handleDelete}
+    />
+  );
+
+  return (
+    <div className="space-y-5">
+      <Breadcrumb items={[
+        { label: "Discussions", href: "#" },
+        { label: isGeneral ? "General Forum" : (courseName ?? "Course Forum") },
+      ]} />
+
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Button variant="ghost" size="sm" className="gap-1.5 -ml-2 text-muted-foreground" onClick={onBack}>
+              <ArrowLeft className="h-4 w-4" /> All Forums
+            </Button>
+          </div>
+          <h1 className="text-xl font-bold text-foreground">
+            {isGeneral ? "General Forum" : courseName}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {isGeneral
+              ? "Open discussion for everyone on the platform"
+              : `Course-specific discussion for enrolled students`}
+          </p>
+        </div>
+        {isGeneral && (
+          <Button className="gap-2 shrink-0" onClick={() => setView("create")}>
+            <Plus className="h-4 w-4" /> New Discussion
+          </Button>
+        )}
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search discussions..."
+          className="pl-9"
+        />
+      </div>
+
+      {/* Thread List */}
+      <Card className="border-border overflow-hidden">
+        {pinned.length > 0 && (
+          <div>
+            <div className="px-5 py-2.5 bg-amber-50/60 dark:bg-amber-900/10 border-b border-amber-200/60 dark:border-amber-800/40">
+              <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5"><Pin className="h-3.5 w-3.5" />Pinned</p>
+            </div>
+            {filtered(pinned).map(t => (
+              <ThreadRow key={t.id} thread={t} onClick={() => { setActiveThread(t); setView("thread"); }} />
+            ))}
+          </div>
+        )}
+        {filtered(regular).length > 0 ? (
+          <div>
+            {pinned.length > 0 && (
+              <div className="px-5 py-2.5 bg-muted/20 border-b border-border">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Recent Discussions</p>
+              </div>
+            )}
+            {filtered(regular).map(t => (
+              <ThreadRow key={t.id} thread={t} onClick={() => { setActiveThread(t); setView("thread"); }} />
+            ))}
+          </div>
+        ) : filtered(pinned).length === 0 ? (
+          <div className="py-16 text-center">
+            <MessageSquare className="h-8 w-8 opacity-20 mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">No discussions found.</p>
+            {isGeneral && <Button size="sm" className="mt-3 gap-2" onClick={() => setView("create")}><Plus className="h-4 w-4" /> Start one</Button>}
+          </div>
+        ) : null}
+      </Card>
+    </div>
+  );
+}
+
+// ── Main Page: Landing ─────────────────────────────────────────────────────────
+type PaneView = "landing" | "general" | { type: "course"; courseId: string };
+
+export default function DiscussionsPage() {
+  const [view, setView] = useState<PaneView>("landing");
+
+  const generalThreads = DISCUSSION_THREADS.filter(t => t.forum_type === "general");
+  const courseIds = [...new Set(DISCUSSION_THREADS.filter(t => t.forum_type === "course").map(t => t.course_id!))];
+
+  // If inside a sub-view, render it
+  if (view === "general") {
+    return (
+      <ForumList
+        threads={generalThreads}
+        isGeneral={true}
+        onBack={() => setView("landing")}
+      />
+    );
+  }
+
+  if (typeof view === "object" && view.type === "course") {
+    const course = STUDENT_COURSES.find(c => c.id === view.courseId);
+    const courseThreads = DISCUSSION_THREADS.filter(t => t.forum_type === "course" && t.course_id === view.courseId);
+    return (
+      <ForumList
+        threads={courseThreads}
+        isGeneral={false}
+        courseId={view.courseId}
+        courseName={`${course?.code} — ${course?.name}`}
+        onBack={() => setView("landing")}
+      />
+    );
+  }
+
+  // ── Landing page ─────────────────────────────────────────────────────────────
+  const generalUnread = generalThreads.filter(t => t.has_unread).length;
+
+  return (
+    <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Discussions" }]} />
+
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Discussion Forums</h1>
+        <p className="text-sm text-muted-foreground mt-1">Connect with classmates and participate in course discussions.</p>
+      </div>
+
+      {/* Summary strip */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Total Threads</p>
+            <p className="text-2xl font-bold text-foreground">{DISCUSSION_THREADS.length}</p>
+          </div>
+          <img src="https://img.icons8.com/color/96/chat.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total Threads" />
+        </Card>
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Unread</p>
+            <p className="text-2xl font-bold text-primary">{DISCUSSION_THREADS.filter(t => t.has_unread).length}</p>
+          </div>
+          <img src="https://img.icons8.com/color/96/new-message.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Unread" />
+        </Card>
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Course Forums</p>
+            <p className="text-2xl font-bold text-foreground">{courseIds.length}</p>
+          </div>
+          <img src="https://img.icons8.com/color/96/books.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Course Forums" />
+        </Card>
+      </div>
+
+      {/* Forum Panes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* General Forum Pane */}
+        <Card className="border-border overflow-hidden flex flex-col">
+          <div className="p-5 border-b border-border">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <img src="https://img.icons8.com/color/96/commercial.png" alt="General" className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="font-bold text-foreground">General Forum</h2>
+                <p className="text-xs text-muted-foreground">Open to everyone</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              A public forum where all students can create, comment, and engage with discussions on any topic.
+            </p>
+          </div>
+          {/* Recent threads preview */}
+          <div className="flex-1 divide-y divide-border">
+            {generalThreads.slice(0, 3).map(t => (
+              <div key={t.id} className="px-5 py-3 flex items-center gap-3">
+                {t.has_unread && <span className="h-2 w-2 rounded-full bg-primary shrink-0" />}
+                {t.is_pinned && <Pin className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                {!t.has_unread && !t.is_pinned && <MessageCircle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
+                <p className="text-sm text-foreground line-clamp-1 flex-1">{t.title}</p>
+                <span className="text-xs text-muted-foreground shrink-0">{t.replies_count} replies</span>
+              </div>
+            ))}
+          </div>
+          <div className="p-4 border-t border-border flex gap-2">
+            <Button className="flex-1 gap-2" onClick={() => setView("general")}>
+              <ChevronRight className="h-4 w-4" /> Enter Forum
+            </Button>
+            <Button variant="outline" className="gap-2" onClick={() => setView("general")}>
+              <Plus className="h-4 w-4" /> New
+            </Button>
+          </div>
+        </Card>
+
+        {/* Course Forum Pane */}
+        <Card className="border-border overflow-hidden flex flex-col">
+          <div className="p-5 border-b border-border">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 flex items-center justify-center">
+                <img src="https://img.icons8.com/color/96/books.png" alt="Course" className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="font-bold text-foreground">Course Forums</h2>
+                <p className="text-xs text-muted-foreground">Enrolled courses only</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Course-specific forums for learners enrolled in a course. Only enrolled students can participate.
+            </p>
+          </div>
+          {/* Course list */}
+          <div className="flex-1 divide-y divide-border">
+            {courseIds.map(courseId => {
+              const course = STUDENT_COURSES.find(c => c.id === courseId);
+              const threads = DISCUSSION_THREADS.filter(t => t.course_id === courseId && t.forum_type === "course");
+              const unread = threads.filter(t => t.has_unread).length;
+              return (
+                <button
+                  key={courseId}
+                  onClick={() => setView({ type: "course", courseId })}
+                  className="w-full text-left px-5 py-3.5 flex items-center gap-3 hover:bg-muted/20 transition-colors group"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">{course?.code}</span>
+                      {unread > 0 && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary text-white">{unread} new</span>}
+                    </div>
+                    <p className="text-sm font-medium text-foreground mt-0.5 line-clamp-1">{course?.name}</p>
+                    <p className="text-xs text-muted-foreground">{threads.length} discussion{threads.length !== 1 ? "s" : ""}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                </button>
+              );
+            })}
+          </div>
+        </Card>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   BookOpen,
   Award,
@@ -63,7 +64,11 @@ export default function MyCoursesPage() {
         <PageHeader
           title="My Courses"
           description="Manage and organize your teaching courses"
-          action={<Button>Create New Course</Button>}
+          action={
+            <Link href="/instructor/courses/create">
+              <Button>Create New Course</Button>
+            </Link>
+          }
         />
       </div>
 

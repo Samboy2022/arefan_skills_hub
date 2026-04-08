@@ -1,14 +1,15 @@
 "use client";
 
-import { Mail, MapPin, Calendar, Award, BookOpen, Edit, Settings, Shield, Bell, ChevronRight, Share2, Download, ExternalLink, GraduationCap, Building2, UserCircle, User } from "lucide-react";
+import { Mail, Calendar, Edit, GraduationCap, AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 export default function ProfilePage() {
   return (
@@ -25,75 +26,25 @@ export default function ProfilePage() {
         description="View and manage your academic profile and personal information"
       />
 
-      {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
-        <Card className="border-sky-200 dark:border-sky-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Active Courses</p>
-              <p className="text-xs text-muted-foreground">Currently enrolled</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
-              <BookOpen className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">3</p>
-        </Card>
 
-        <Card className="border-emerald-200 dark:border-emerald-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Academic GPA</p>
-              <p className="text-xs text-muted-foreground">Overall performance</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-              <Award className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">3.65</p>
-        </Card>
 
-        <Card className="border-purple-200 dark:border-purple-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Credits Earned</p>
-              <p className="text-xs text-muted-foreground">Total completed</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
-              <GraduationCap className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">84</p>
-        </Card>
-
-        <Card className="border-amber-200 dark:border-amber-900 p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Success Rate</p>
-              <p className="text-xs text-muted-foreground">Assignment completion</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-              <Shield className="h-4 w-4" />
-            </div>
-          </div>
-          <p className="text-2xl font-bold leading-none">98%</p>
-        </Card>
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-md p-4 flex items-start gap-3">
+        <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
+        <div className="flex-1">
+          <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-500">Security Warning: Default Password Detected</h4>
+          <p className="text-sm text-amber-700 dark:text-amber-400/90 mt-1">
+            You are currently using the default system password. Please update your password immediately to secure your account.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" asChild className="bg-white dark:bg-black border-amber-200 hover:bg-amber-100 shrink-0">
+          <Link href="/student/profile/edit">Change Password</Link>
+        </Button>
       </div>
 
       {/* Profile Hero Section */}
       <Card className="border border-border bg-card">
-        <div className="h-24 bg-muted/30 border-b border-border relative">
-           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
-           <div className="absolute top-4 right-6 flex gap-2">
-             <Button variant="outline" size="sm">
-               <Settings className="h-4 w-4 mr-2" />
-               Settings
-             </Button>
-           </div>
-        </div>
-        
-        <div className="px-6 pb-6">
-          <div className="relative flex flex-col md:flex-row md:items-end gap-6 -mt-12 mb-6">
+        <div className="px-6 py-8">
+          <div className="relative flex flex-col md:flex-row md:items-center gap-6">
             <Avatar className="h-24 w-24 border-4 border-background">
               <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
               <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">JD</AvatarFallback>
@@ -123,9 +74,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Button>
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Profile
+            <Button asChild>
+              <Link href="/student/profile/edit">
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Link>
             </Button>
           </div>
         </div>
@@ -134,68 +87,52 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Academic Summary */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-6">Academic Performance</h3>
-
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              {[
-                { label: "Average Grade", val: "85.2%", sub: "Across all courses" },
-                { label: "Attendance", val: "94%", sub: "Verified sessions" },
-                { label: "Submissions", val: "100%", sub: "No pending tasks" },
-              ].map((item, i) => (
-                <div key={i} className="p-4 bg-muted/30 border border-border rounded-md">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">{item.label}</p>
-                  <p className="text-2xl font-bold text-foreground mb-1">{item.val}</p>
-                  <p className="text-xs text-muted-foreground">{item.sub}</p>
-                </div>
-              ))}
+          <Card className="border border-border bg-card p-0 overflow-hidden relative">
+            <div className="p-6 border-b border-border relative z-10 flex items-center justify-between">
+               <h3 className="text-lg font-semibold text-foreground">Academic Performance</h3>
             </div>
-
-            <h4 className="font-semibold text-foreground mb-4">Current Course Progress</h4>
-            <div className="space-y-4">
-              {[
-                { name: "Introduction to Computer Science", code: "CS101", progress: 65 },
-                { name: "Calculus II", code: "MATH201", progress: 72 },
-                { name: "English Literature", code: "ENG102", progress: 58 },
-              ].map((course, idx) => (
-                <div key={idx} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-foreground">{course.name}</p>
-                      <p className="text-xs text-muted-foreground">{course.code}</p>
-                    </div>
-                    <span className="text-sm font-medium text-primary">{course.progress}% Complete</span>
-                  </div>
-                  <Progress value={course.progress} className="h-2" />
-                </div>
-              ))}
-            </div>
+            <img src="https://img.icons8.com/color/96/diploma.png" className="absolute right-4 top-4 h-12 w-12 opacity-10 pointer-events-none" alt="Academic" />
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Code</TableHead>
+                  <TableHead className="w-[30%]">Progress</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[
+                  { name: "Introduction to Computer Science", code: "CS101", progress: 65 },
+                  { name: "Calculus II", code: "MATH201", progress: 72 },
+                  { name: "English Literature", code: "ENG102", progress: 58 },
+                ].map((course, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-medium">{course.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{course.code}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Progress value={course.progress} className="h-2 flex-1" />
+                        <span className="text-xs font-semibold">{course.progress}%</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground">In Progress</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
 
-          {/* Achievements */}
-          <Card className="border border-border bg-card p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Achievements</h3>
-            <div className="space-y-3">
-              {[1, 2].map(i => (
-                <div key={i} className="flex items-center gap-4 p-4 border border-border rounded-md hover:border-primary/50 transition-colors cursor-pointer group">
-                  <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <Award className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <h5 className="font-medium text-foreground">Dean's List {2024 - i}</h5>
-                    <p className="text-xs text-muted-foreground">Academic Excellence Award</p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              ))}
-            </div>
-          </Card>
+
         </div>
 
         {/* Right Column - Additional Information */}
         <div className="space-y-6">
-          <Card className="border border-border bg-card p-4">
-            <h3 className="font-semibold text-foreground mb-4">Institution Info</h3>
+          <Card className="border border-border bg-card p-4 relative overflow-hidden">
+            <div className="relative z-10">
+              <h3 className="font-semibold text-foreground mb-4">Institution Info</h3>
+            </div>
+            <img src="https://img.icons8.com/color/96/university.png" className="absolute -right-2 -bottom-2 h-20 w-20 opacity-10 pointer-events-none" alt="Institution" />
             <div className="space-y-3">
               <div>
                 <p className="text-xs text-muted-foreground">Primary Campus</p>
@@ -212,23 +149,7 @@ export default function ProfilePage() {
             </div>
           </Card>
 
-          <Card className="border border-border bg-card p-4">
-            <h3 className="font-semibold text-foreground mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share Profile
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <Download className="h-4 w-4 mr-2" />
-                Download CV
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Public Profile
-              </Button>
-            </div>
-          </Card>
+
         </div>
       </div>
     </div>

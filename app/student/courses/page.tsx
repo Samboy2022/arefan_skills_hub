@@ -4,6 +4,7 @@ import {
   AlertCircle,
   CheckCircle,
   ArrowRight,
+  LayoutGrid,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/student/page-header";
@@ -40,69 +41,41 @@ export default function MyCoursesPage() {
       />
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
-        <Card className="border-sky-200 dark:border-sky-900 p-3 hover:shadow-md transition-shadow">
-          <div className="mb-3 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Courses</p>
-              <p className="text-xs text-muted-foreground">All enrolled</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
-              <BookOpen className="h-4.5 w-4.5" />
-            </div>
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Total Enrolled</p>
+            <p className="text-2xl font-bold text-foreground">{STUDENT_COURSES.length}</p>
           </div>
-          <p className="text-xl font-bold leading-none">{STUDENT_COURSES.length}</p>
+          <img src="https://img.icons8.com/color/96/books.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total" />
         </Card>
-
-        <Card className="border-emerald-200 dark:border-emerald-900 p-3 hover:shadow-md transition-shadow">
-          <div className="mb-3 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Active Courses</p>
-              <p className="text-xs text-muted-foreground">Currently enrolled</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-              <CheckCircle className="h-4.5 w-4.5" />
-            </div>
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Active</p>
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{activeCourses.length}</p>
           </div>
-          <p className="text-xl font-bold leading-none">{activeCourses.length}</p>
+          <img src="https://img.icons8.com/color/96/open-book.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Active" />
         </Card>
-
-        <Card className="border-blue-200 dark:border-blue-900 p-3 hover:shadow-md transition-shadow">
-          <div className="mb-3 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Average Progress</p>
-              <p className="text-xs text-muted-foreground">Across active courses</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-              <Award className="h-4.5 w-4.5" />
-            </div>
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Avg. Progress</p>
+            <p className="text-2xl font-bold text-primary">{averageProgress}%</p>
           </div>
-          <p className="text-xl font-bold leading-none">{averageProgress}%</p>
+          <img src="https://img.icons8.com/color/96/line-chart.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Progress" />
         </Card>
-
-        <Card className="border-amber-200 dark:border-amber-900 p-3 hover:shadow-md transition-shadow">
-          <div className="mb-3 flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Need Attention</p>
-              <p className="text-xs text-muted-foreground">Courses with due work</p>
-            </div>
-            <div className="rounded-full p-1.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-              <AlertCircle className="h-4.5 w-4.5" />
-            </div>
+        <Card className="p-4 border-border relative overflow-hidden">
+          <div className="relative z-10">
+            <p className="text-xs text-muted-foreground mb-1">Need Attention</p>
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{coursesWithDueAssignments}</p>
           </div>
-          <p className="text-xl font-bold leading-none">{coursesWithDueAssignments}</p>
+          <img src="https://img.icons8.com/color/96/error.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Attention" />
         </Card>
       </div>
 
+
       {/* ── Active Courses ── */}
-      <div className="mb-12">
-        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-primary" />
-          Active Courses
-          <span className="text-sm font-normal text-muted-foreground ml-1">
-            ({activeCourses.length})
-          </span>
-        </h2>
+      <div className="mb-10">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Active Courses ({activeCourses.length})</h2>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {activeCourses.map((course) => (
@@ -126,10 +99,20 @@ export default function MyCoursesPage() {
                   
                   {/* Course Code Badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-background text-foreground uppercase">
+                    <span className="text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-background text-foreground uppercase shadow-sm">
                       {course.code}
                     </span>
                   </div>
+
+                  {/* Due Assignments Badge */}
+                  {course.due_assignments > 0 && (
+                    <div className="absolute top-4 right-4">
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-amber-500 text-white uppercase shadow-sm">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {course.due_assignments} Task{course.due_assignments !== 1 ? 's' : ''} Due
+                      </span>
+                    </div>
+                  )}
 
                   {/* Circular Progress (floating) */}
                   <div className="absolute -bottom-6 right-5 bg-card rounded-full p-1 border border-border flex items-center justify-center">
@@ -189,14 +172,8 @@ export default function MyCoursesPage() {
 
       {/* ── Completed Courses ── */}
       {completedCourses.length > 0 && (
-        <div className="mt-16">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground flex items-center gap-3 mb-8 border-t border-border pt-12">
-            <Award className="h-4 w-4" />
-            Archive of Completed Coursework
-            <span className="text-xs font-normal text-muted-foreground/60 ml-1">
-              ({completedCourses.length} Credits Earned)
-            </span>
-          </h2>
+        <div className="mt-10 pt-8 border-t border-border">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Completed Courses ({completedCourses.length})</h2>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {completedCourses.map((course) => (

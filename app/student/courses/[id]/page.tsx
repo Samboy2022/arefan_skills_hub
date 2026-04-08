@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { CheckCircle2, Clock, BookOpen, Users, BarChart, Globe, Award } from 'lucide-react';
+import { CheckCircle2, Clock, BookOpen, Users, Globe, Star, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { CourseHero } from '@/components/student/courses/CourseHero';
 import { CourseCurriculum } from '@/components/student/courses/CourseCurriculum';
+import { CourseDetailsTabs } from '@/components/student/courses/CourseDetailsTabs';
 import { EnrollmentCard } from '@/components/student/courses/EnrollmentCard';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
 
@@ -43,6 +44,7 @@ async function fetchCourse(id: string) {
       {
         id: 1,
         title: 'Introduction to Modern Web',
+        description: 'A comprehensive onboarding to the tools, workflows, and fundamental concepts that power modern web applications.',
         lessons_count: 3,
         duration_minutes: 45,
         lessons: [
@@ -54,6 +56,7 @@ async function fetchCourse(id: string) {
       {
         id: 2,
         title: 'React Fundamentals Deep Dive',
+        description: 'Master component-driven architecture, advanced state management, and modern React rendering patterns.',
         lessons_count: 4,
         duration_minutes: 120,
         is_locked: false,
@@ -64,6 +67,10 @@ async function fetchCourse(id: string) {
           { id: 7, title: 'React Performance Notes', duration_minutes: 20, content_type: 'document' },
         ],
       }
+    ],
+    reviews: [
+      { id: 1, author: 'Jane Doe', rating: 5, comment: 'Phenomenal depth! The backend modules fully prepared me for my new job.', date: '2025-10-14' },
+      { id: 2, author: 'Alex Turner', rating: 4, comment: 'Great structure, though I wish the React testing section was slightly longer.', date: '2025-11-02' }
     ]
   };
 }
@@ -107,63 +114,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           
           {/* Main Content Column (Left) */}
-          <div className="lg:col-span-2 space-y-10">
-            
-            {/* What You'll Learn */}
-            <section>
-              <h2 className="text-xl font-bold text-foreground mb-4">What You'll Learn</h2>
-              <Card className="border border-border shadow-none rounded-md bg-card">
-                <CardContent className="p-6">
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
-                    {course.learning_outcomes.map((outcome, index) => (
-                      <li key={index} className="flex items-start">
-                        <CheckCircle2 className="w-5 h-5 text-primary mr-3 shrink-0 mt-0.5" />
-                        <span className="text-sm text-muted-foreground leading-relaxed">{outcome}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </section>
-            
-            {/* About This Course */}
-            <section>
-              <h2 className="text-xl font-bold text-foreground mb-4">About This Course</h2>
-              <div 
-                className="prose prose-sm max-w-none text-muted-foreground prose-p:leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: course.description }}
-              />
-            </section>
-            
-            {/* Course Curriculum */}
-            <section>
-              <h2 className="text-xl font-bold text-foreground mb-4">Course Curriculum</h2>
-              <Card className="border border-border shadow-none rounded-md bg-card overflow-hidden">
-                <CourseCurriculum 
-                  course={course} 
-                  isEnrolled={isEnrolled}
-                  curriculum={course.curriculum}
-                />
-              </Card>
-            </section>
-            
-            {/* Instructor Info */}
-            <section>
-              <h2 className="text-xl font-bold text-foreground mb-4">Instructor</h2>
-              <Card className="border border-border shadow-none rounded-md bg-muted/30">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl shrink-0">
-                      {course.instructor.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground text-lg">{course.instructor.name}</h3>
-                      <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{course.instructor.bio}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
+          <div className="lg:col-span-2">
+            <CourseDetailsTabs course={course} isEnrolled={isEnrolled} />
           </div>
           
           {/* Sidebar Column (Right) */}
@@ -177,11 +129,12 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
               />
               
               {/* Course Meta Info Card */}
-              <Card className="border border-border shadow-none rounded-md bg-card">
-                <CardHeader className="pb-4 border-b border-border/50 px-6 pt-6">
+              <Card className="border border-border shadow-none rounded-md bg-card relative overflow-hidden">
+                <CardHeader className="pb-4 border-b border-border/50 px-6 pt-6 relative z-10">
                   <h3 className="font-semibold text-foreground">Course Info</h3>
                 </CardHeader>
-                <CardContent className="space-y-4 px-6 py-5">
+                <img src="https://img.icons8.com/color/96/info.png" className="absolute -right-2 top-2 h-16 w-16 opacity-10 pointer-events-none" alt="Info" />
+                <CardContent className="space-y-4 px-6 py-5 relative z-10">
                   <div className="flex items-center text-sm">
                     <Clock className="w-4 h-4 mr-3 text-muted-foreground" />
                     <span className="font-medium text-foreground">{course.duration_hours} hours</span>
@@ -193,25 +146,50 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
                     <span className="text-muted-foreground ml-1">lessons</span>
                   </div>
                   <div className="flex items-center text-sm">
+                    <Star className="w-4 h-4 mr-3 text-amber-500" />
+                    <span className="font-medium text-foreground">{course.rating}</span>
+                    <span className="text-muted-foreground ml-1">({course.reviews_count.toLocaleString()} reviews)</span>
+                  </div>
+                  <div className="flex items-center text-sm">
                     <Users className="w-4 h-4 mr-3 text-muted-foreground" />
                     <span className="font-medium text-foreground">{course.enrolled_students_count.toLocaleString()}</span>
                     <span className="text-muted-foreground ml-1">students</span>
                   </div>
                   <div className="flex items-center text-sm">
-                    <BarChart className="w-4 h-4 mr-3 text-muted-foreground" />
-                    <span className="capitalize font-medium text-foreground">{course.level}</span>
-                    <span className="text-muted-foreground ml-1">level</span>
-                  </div>
-                  <div className="flex items-center text-sm">
                     <Globe className="w-4 h-4 mr-3 text-muted-foreground" />
                     <span className="capitalize font-medium text-foreground">{course.language}</span>
                   </div>
-                  {course.is_certificate_enabled && (
-                    <div className="flex items-center text-sm">
-                      <Award className="w-4 h-4 mr-3 text-primary" />
-                      <span className="font-medium text-foreground">Certificate of completion</span>
-                    </div>
-                  )}
+
+                  {/* Grading & Mark Breakdown */}
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Grading &amp; Mark Breakdown</p>
+                    <table className="w-full text-xs">
+                      <tbody className="divide-y divide-border">
+                        <tr>
+                          <td className="py-2 text-muted-foreground flex items-center gap-1.5">
+                            <MessageSquare className="h-3.5 w-3.5 text-emerald-500" /> Forum
+                          </td>
+                          <td className="py-2 text-right font-medium text-foreground">10.00 pts</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 text-muted-foreground flex items-center gap-1.5">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-sky-500" /> Quiz
+                          </td>
+                          <td className="py-2 text-right font-medium text-foreground">30.00 pts</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 text-muted-foreground flex items-center gap-1.5">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-primary" /> Assignment
+                          </td>
+                          <td className="py-2 text-right font-medium text-foreground">60.00 pts</td>
+                        </tr>
+                        <tr className="border-t border-border">
+                          <td className="pt-2 font-bold text-foreground">Total</td>
+                          <td className="pt-2 font-bold text-right text-primary">100.00 pts</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </CardContent>
               </Card>
             </div>

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { MessageSquare, Send, Search, User, MoreVertical, Paperclip, Smile, ChevronLeft } from "lucide-react";
+import { MessageSquare, Send, Search, User, MoreVertical, Paperclip, Smile, ChevronLeft, Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/student/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STUDENT_MESSAGES } from "@/lib/student-mock-data";
 import { format } from "date-fns";
@@ -51,32 +50,33 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)]">
+    <div className="flex flex-col h-[calc(100vh-6rem)]">
       <Breadcrumb 
         items={[
           { label: "Messages" }
         ]}
-        className="mb-6"
+        className="mb-3 shrink-0"
       />
       
-      <PageHeader
-        title="Messages"
-        description="Communicate with instructors and classmates"
-      />
-
-      <div className="flex-1 flex overflow-hidden border border-border rounded-md bg-card shadow-none mt-4">
+      <div className="flex-1 flex overflow-hidden border border-border rounded-xl bg-card shadow-sm">
         {/* Conversations Sidebar */}
         <div className={cn(
           "w-full md:w-80 border-r border-border flex flex-col bg-muted/10 transition-all",
           showMobileChat ? "hidden md:flex" : "flex"
         )}>
-          <div className="p-4 border-b bg-background/30">
+          <div className="p-4 border-b border-border bg-card">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-xl font-extrabold text-foreground tracking-tight">Messages</h1>
+              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-colors">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search messages..."
-                className="w-full pl-9 pr-4 py-2 text-sm rounded-md border border-border bg-background/50 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-border bg-muted/30 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-medium placeholder:text-muted-foreground/70"
               />
             </div>
           </div>
@@ -87,30 +87,38 @@ export default function MessagesPage() {
                 key={conv.id}
                 onClick={() => handleSelectConversation(conv.id)}
                 className={cn(
-                  "w-full p-4 flex gap-3 text-left border-b border-border/50 last:border-0 transition-colors hover:bg-muted/30",
-                  activeConversationId === conv.id ? "bg-muted/50" : ""
+                  "w-full p-4 flex gap-3 text-left border-b border-border/40 last:border-0 transition-colors group",
+                  activeConversationId === conv.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-muted/40"
                 )}
               >
                 <div className="relative">
-                  <Avatar className="h-10 w-10 border border-border shadow-none">
+                  <Avatar className="h-11 w-11 shadow-sm">
                     <AvatarImage src={conv.lastMessage.sender_avatar} />
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
                       {conv.lastMessage.sender_name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   {conv.unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 h-3 w-3 bg-primary rounded-full border-2 border-background" />
+                    <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-primary rounded-full border-2 border-card" />
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-0.5">
-                    <p className="font-semibold text-sm truncate text-foreground">{conv.lastMessage.sender_name}</p>
-                    <span className="text-[10px] text-muted-foreground font-medium">
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <div className="flex justify-between items-center mb-0.5">
+                    <p className={cn(
+                      "font-semibold text-[13px] truncate",
+                      activeConversationId === conv.id ? "text-primary dark:text-foreground" : "text-foreground group-hover:text-primary transition-colors"
+                    )}>
+                      {conv.lastMessage.sender_name}
+                    </p>
+                    <span className={cn(
+                      "text-[10px] uppercase font-bold tracking-wider",
+                      conv.unreadCount > 0 ? "text-primary" : "text-muted-foreground"
+                    )}>
                       {format(new Date(conv.lastMessage.timestamp), 'HH:mm')}
                     </span>
                   </div>
                   <p className={cn(
-                    "text-xs truncate",
+                    "text-[13px] truncate leading-relaxed",
                     conv.unreadCount > 0 ? "font-bold text-foreground" : "text-muted-foreground"
                   )}>
                     {conv.lastMessage.content}
@@ -129,17 +137,17 @@ export default function MessagesPage() {
           {activeConversation ? (
             <>
               {/* Header */}
-              <div className="p-4 border-b border-border flex items-center justify-between bg-muted/5">
-                <div className="flex items-center gap-3">
+              <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card text-card-foreground">
+                <div className="flex items-center gap-3.5">
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="md:hidden h-8 w-8 -ml-1 text-muted-foreground hover:bg-muted/50" 
+                    className="md:hidden h-8 w-8 -ml-2 text-muted-foreground" 
                     onClick={() => setShowMobileChat(false)}
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
-                  <Avatar className="h-9 w-9 border border-border shadow-none">
+                  <Avatar className="h-10 w-10 shadow-sm border border-border">
                     <AvatarImage src={activeConversation.lastMessage.sender_avatar} />
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
                       {activeConversation.lastMessage.sender_name.charAt(0)}

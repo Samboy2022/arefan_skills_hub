@@ -64,6 +64,7 @@ export function NotesModal({ isOpen, onClose, lessonId, lessonTitle }: NotesModa
 
   // Load existing notes for this lesson
   const loadNotes = () => {
+    if (typeof window === 'undefined') return '<p>Start taking notes for this lesson...</p>';
     const savedNotes = localStorage.getItem(`lesson_notes_${lessonId}`);
     return savedNotes || '<p>Start taking notes for this lesson...</p>';
   };

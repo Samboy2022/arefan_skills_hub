@@ -19,6 +19,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { useSidebar } from "@/components/student/sidebar-context";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export function StudentNavbar() {
   const { isCollapsed, toggleSidebar } = useSidebar();
@@ -27,6 +28,10 @@ export function StudentNavbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSessionOpen, setIsSessionOpen] = useState(false);
   const [isSemesterOpen, setIsSemesterOpen] = useState(false);
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   // Mock message count - in real app this would come from API
   const unreadMessageCount = 3;
@@ -40,22 +45,39 @@ export function StudentNavbar() {
     initials: "JD"
   };
 
-  // Mock session data - in real app this would come from API
+  const currentSessionId = searchParams.get("session") || "2024-2025";
+  const currentSemesterId = searchParams.get("semester") || "sem1";
+
+  // Mock session data - driven by URL params
   const sessions = [
-    { id: "2024-2025", label: "2024/2025", isActive: true },
-    { id: "2023-2024", label: "2023/2024", isActive: false },
-    { id: "2025-2026", label: "2025/2026", isActive: false },
+    { id: "2024-2025", label: "2024/2025", isActive: currentSessionId === "2024-2025" },
+    { id: "2023-2024", label: "2023/2024", isActive: currentSessionId === "2023-2024" },
+    { id: "2025-2026", label: "2025/2026", isActive: currentSessionId === "2025-2026" },
   ];
 
-  // Mock semester data - in real app this would come from API
+  // Mock semester data - driven by URL params
   const semesters = [
-    { id: "sem1", label: "Semester 1", isActive: true },
-    { id: "sem2", label: "Semester 2", isActive: false },
-    { id: "sem3", label: "Semester 3", isActive: false },
+    { id: "sem1", label: "Semester 1", isActive: currentSemesterId === "sem1" },
+    { id: "sem2", label: "Semester 2", isActive: currentSemesterId === "sem2" },
+    { id: "sem3", label: "Semester 3", isActive: currentSemesterId === "sem3" },
   ];
 
   const activeSession = sessions.find(session => session.isActive);
   const activeSemester = semesters.find(semester => semester.isActive);
+
+  const handleSessionChange = (id: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("session", id);
+    router.push(`${pathname}?${params.toString()}`);
+    setIsSessionOpen(false);
+  };
+
+  const handleSemesterChange = (id: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("semester", id);
+    router.push(`${pathname}?${params.toString()}`);
+    setIsSemesterOpen(false);
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -87,24 +109,15 @@ export function StudentNavbar() {
         {/* Actions */}
         <div className="flex items-center gap-3">
           {/* Session and Semester Controls */}
-          <div className="flex items-center gap-2">
-            {/* Combined Session and Semester Badge */}
-            <div className="hidden lg:flex">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 flex flex-col items-center py-2 px-3">
-                <span className="text-xs font-semibold">Session: {activeSession?.label}</span>
-                <span className="text-xs">{activeSemester?.label}</span>
-              </Badge>
-            </div>
-
+          <div className="flex items-center gap-4 md:gap-6 border-r border-border pr-4 mr-1">
             {/* Session Switcher */}
             <DropdownMenu open={isSessionOpen} onOpenChange={setIsSessionOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 h-9">
-                  <Calendar className="h-4 w-4" />
-                  <span className="hidden sm:inline">Session: {activeSession?.label}</span>
-                  <span className="sm:hidden">{activeSession?.label}</span>
-                  <ChevronDown className="h-3 w-3" />
-                </Button>
+                <button className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group">
+                  <span className="hidden sm:inline text-foreground group-hover:text-primary transition-colors font-bold">Session: {activeSession?.label}</span>
+                  <span className="sm:hidden text-foreground font-bold">{activeSession?.label}</span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-48">
                 <div className="px-2 py-1.5">
@@ -115,6 +128,7 @@ export function StudentNavbar() {
                   <DropdownMenuItem 
                     key={session.id}
                     className="cursor-pointer flex items-center justify-between"
+                    onClick={() => handleSessionChange(session.id)}
                   >
                     <span>{session.label}</span>
                     {session.isActive && (
@@ -130,12 +144,11 @@ export function StudentNavbar() {
             {/* Semester Switcher */}
             <DropdownMenu open={isSemesterOpen} onOpenChange={setIsSemesterOpen}>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2 h-9">
-                  <BookOpen className="h-4 w-4" />
-                  <span className="hidden sm:inline">{activeSemester?.label}</span>
-                  <span className="sm:hidden">S{activeSemester?.id.slice(-1)}</span>
-                  <ChevronDown className="h-3 w-3" />
-                </Button>
+                <button className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group">
+                  <span className="hidden sm:inline text-foreground group-hover:text-primary transition-colors font-bold">{activeSemester?.label}</span>
+                  <span className="sm:hidden text-foreground font-bold">S{activeSemester?.id.slice(-1)}</span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-48">
                 <div className="px-2 py-1.5">
@@ -146,6 +159,7 @@ export function StudentNavbar() {
                   <DropdownMenuItem 
                     key={semester.id}
                     className="cursor-pointer flex items-center justify-between"
+                    onClick={() => handleSemesterChange(semester.id)}
                   >
                     <span>{semester.label}</span>
                     {semester.isActive && (
@@ -241,25 +255,17 @@ export function StudentNavbar() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
-              align="center" 
-              className="w-56 mt-2"
+              align="end" 
+              className="w-48 mt-2"
               onMouseEnter={() => setIsProfileOpen(true)}
               onMouseLeave={() => setIsProfileOpen(false)}
             >
-              <div className="px-2 py-1.5">
-                <p className="text-sm font-medium text-foreground">{user.name}</p>
-                <p className="text-xs text-muted-foreground">{user.email}</p>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer">
-                <User className="h-4 w-4 mr-2" />
-                My Profile
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/student/profile">
+                  <User className="h-4 w-4 mr-2" />
+                  My Profile
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950">
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout

@@ -42,6 +42,8 @@ export type StudentLesson = {
 export type StudentAssignment = {
   id: string;
   course_id: string;
+  category: "course" | "module" | "lesson";
+  target_name: string;
   title: string;
   description: string;
   due_date: string;
@@ -51,12 +53,23 @@ export type StudentAssignment = {
   feedback: string | null;
   points_earned: number | null;
   total_points: number;
+  has_attachment: boolean;
+};
+
+export type QuizQuestion = {
+  id: string;
+  text: string;
+  options: string[];
+  correct_option_index: number;
+  points: number;
 };
 
 export type StudentQuiz = {
   id: string;
   course_id: string;
   title: string;
+  category: "course" | "module" | "lesson";
+  target_name: string;
   type: "graded" | "practice" | "ungraded";
   total_questions: number;
   time_limit: number;
@@ -68,39 +81,79 @@ export type StudentQuiz = {
     date_attempted: string;
   }[];
   best_score: number | null;
+  questions?: QuizQuestion[];
+};
+
+export type GradeComponent = {
+  earned: number;
+  total: number;
+  weight: number; // percentage weight in final grade
 };
 
 export type StudentGrade = {
   course_id: string;
   course_name: string;
-  assignments_grade: number;
-  quizzes_grade: number;
-  participation_grade: number;
-  final_grade: number;
+  assignments: GradeComponent;
+  tests: GradeComponent;
+  quizzes: GradeComponent;
+  forum_activities: GradeComponent;
+  final_points: number;
+  total_points: number;
+  final_grade: number; // percentage, kept for GPA/letter grade calc
   letter_grade: string;
+};
+
+export type DiscussionComment = {
+  id: string;
+  thread_id: string;
+  author: string;
+  author_avatar: string;
+  is_instructor?: boolean;
+  content: string;
+  created_at: string;
+  is_helpful?: boolean;
+  likes: number;
+  replies: DiscussionReply[];
+};
+
+export type DiscussionReply = {
+  id: string;
+  comment_id: string;
+  author: string;
+  author_avatar: string;
+  content: string;
+  created_at: string;
+  likes: number;
 };
 
 export type DiscussionThread = {
   id: string;
-  course_id: string;
+  course_id: string | null;
+  forum_type: "general" | "course";
   title: string;
+  description: string;
   author: string;
+  author_id: string;
   author_avatar: string;
   created_at: string;
   replies_count: number;
   views: number;
   is_pinned: boolean;
   has_unread: boolean;
+  comments?: DiscussionComment[];
 };
 
 export type CourseAnnouncement = {
   id: string;
-  course_id: string;
+  announcement_type: "general" | "course";
+  course_id: string | null;
   title: string;
   content: string;
   instructor: string;
+  instructor_avatar?: string;
   created_at: string;
   is_read: boolean;
+  priority?: "normal" | "important" | "urgent";
 };
 
 export type ScheduleEvent = {
@@ -129,8 +182,10 @@ export type StudentMessage = {
 export type StudentMaterial = {
   id: string;
   course_id: string;
+  module_id?: string;
   name: string;
-  type: "pdf" | "video" | "document" | "link" | "zip";
+  description?: string;
+  type: "pdf" | "video" | "document" | "link" | "zip" | "image";
   size: string;
   uploaded_by: string;
   uploaded_date: string;
