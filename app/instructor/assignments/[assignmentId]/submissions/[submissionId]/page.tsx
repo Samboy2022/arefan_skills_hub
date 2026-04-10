@@ -47,7 +47,7 @@ export default function GradeSubmissionPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl h-auto md:h-[calc(100vh-10rem)] flex flex-col space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto max-w-7xl flex flex-col space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
         <Breadcrumb 
           showHome={false}
@@ -59,10 +59,10 @@ export default function GradeSubmissionPage() {
         />
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 h-full min-h-0 pt-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2 items-start">
         
         {/* Left Side: Student Submission Content */}
-        <div className="lg:col-span-2 flex flex-col h-full bg-card border rounded-lg overflow-hidden relative shadow-sm">
+        <div className="lg:col-span-2 flex flex-col bg-card border rounded-lg overflow-hidden shadow-sm">
           <div className="p-4 border-b bg-muted/30 flex items-center justify-between shrink-0">
             <h2 className="font-semibold text-lg flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary" />

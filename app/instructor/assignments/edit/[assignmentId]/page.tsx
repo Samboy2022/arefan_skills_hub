@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useParams, useRouter, notFound } from "next/navigation";
-import { ArrowLeft, CalendarIcon, FileText } from "lucide-react";
+import { CalendarIcon, FileText, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,30 @@ import { ForumRichEditor } from "@/components/student/discussions/ForumRichEdito
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { MOCK_ASSIGNMENTS } from "@/lib/instructor-mock-data";
+
+// Mock data for select dropdowns
+const mockCourses = [
+  { id: "1", name: "Introduction to Computer Science" },
+  { id: "2", name: "Advanced Web Development" },
+  { id: "3", name: "Data Structures & Algorithms" },
+];
+
+const mockModules = [
+  { id: "1", courseId: "1", name: "Module 1: Fundamentals" },
+  { id: "2", courseId: "1", name: "Module 2: Programming Basics" },
+  { id: "3", courseId: "2", name: "Module 1: Modern CSS" },
+  { id: "4", courseId: "2", name: "Module 2: React Fundamentals" },
+];
+
+const mockLessons = [
+  { id: "1", moduleId: "1", name: "Lesson 1: What is Computer Science?" },
+  { id: "2", moduleId: "1", name: "Lesson 2: Binary & Data" },
+  { id: "3", moduleId: "3", name: "Lesson 1: CSS Grid Layout" },
+];
 
 export default function EditAssignmentPage() {
   const router = useRouter();
@@ -35,6 +56,19 @@ export default function EditAssignmentPage() {
   const [description, setDescription] = useState(assignment.description || "");
   const [date, setDate] = useState<Date | undefined>(assignment.dueDate);
   const [title, setTitle] = useState(assignment.title);
+  const [assignmentType, setAssignmentType] = useState<string | null>(assignment.assignmentType || null);
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(assignment.courseId || null);
+  const [selectedModule, setSelectedModule] = useState<string | null>(assignment.moduleId || null);
+  const [selectedLesson, setSelectedLesson] = useState<string | null>(assignment.lessonId || null);
+  const [notifyOnSubmit, setNotifyOnSubmit] = useState(assignment.notifyOnSubmit ?? true);
+  const [enableDeadline, setEnableDeadline] = useState(assignment.enableDeadline ?? true);
+  const [supportFiles, setSupportFiles] = useState<FileList | null>(null);
+
+  // Filter modules based on selected course
+  const filteredModules = mockModules.filter(m => m.courseId === selectedCourse);
+  
+  // Filter lessons based on selected module
+  const filteredLessons = mockLessons.filter(l => l.moduleId === selectedModule);
   
   const handleSave = () => {
     // Demo save
@@ -75,6 +109,72 @@ export default function EditAssignmentPage() {
             <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Midterm Essay" className="max-w-xl" />
           </div>
 
+          {/* ASSIGNMENT TYPE SELECTOR */}
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold">Assignment Type</Label>
+            <Select onValueChange={setAssignmentType} value={assignmentType || undefined}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select assignment scope" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="course">Course Assignment</SelectItem>
+                <SelectItem value="module">Module Assignment</SelectItem>
+                <SelectItem value="lesson">Lesson Assignment</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* CONDITIONAL SELECTION FIELDS */}
+          {assignmentType && (
+            <div className="grid gap-6 sm:grid-cols-3 border rounded-lg p-4 bg-muted/10">
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Select Course</Label>
+                <Select onValueChange={setSelectedCourse} value={selectedCourse || undefined}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockCourses.map(course => (
+                      <SelectItem key={course.id} value={course.id}>{course.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {(assignmentType === 'module' || assignmentType === 'lesson') && (
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold">Select Module</Label>
+                  <Select onValueChange={setSelectedModule} value={selectedModule || undefined} disabled={!selectedCourse}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={selectedCourse ? "Choose module" : "Select course first"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredModules.map(module => (
+                        <SelectItem key={module.id} value={module.id}>{module.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {assignmentType === 'lesson' && (
+                <div className="space-y-3">
+                  <Label className="text-sm font-semibold">Select Lesson</Label>
+                  <Select onValueChange={setSelectedLesson} value={selectedLesson || undefined} disabled={!selectedModule}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={selectedModule ? "Choose lesson" : "Select module first"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredLessons.map(lesson => (
+                        <SelectItem key={lesson.id} value={lesson.id}>{lesson.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="grid gap-8 sm:grid-cols-2">
             <div className="space-y-3">
               <Label className="text-sm font-semibold">Assignment Category</Label>
@@ -92,7 +192,62 @@ export default function EditAssignmentPage() {
             </div>
 
             <div className="space-y-3">
-              <Label className="text-sm font-semibold">Due Date</Label>
+              <Label htmlFor="totalScore" className="text-sm font-semibold">Total Score Obtainable</Label>
+              <Input id="totalScore" type="number" defaultValue={assignment.maxScore} min={1} />
+            </div>
+          </div>
+
+          {/* SUPPORTING DOCUMENTS UPLOAD */}
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold">Supporting Documents</Label>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center border-border/60 hover:border-border transition-colors cursor-pointer">
+              <Input
+                id="supportFiles"
+                type="file"
+                multiple
+                className="hidden"
+                onChange={(e) => setSupportFiles(e.target.files)}
+              />
+              <Label htmlFor="supportFiles" className="cursor-pointer">
+                <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  {supportFiles && supportFiles.length > 0
+                    ? `${supportFiles.length} file(s) selected`
+                    : "Click to upload supporting documents or drag and drop"}
+                </p>
+              </Label>
+            </div>
+          </div>
+
+          {/* TOGGLE OPTIONS */}
+          <div className="grid gap-6 sm:grid-cols-2 border rounded-lg p-4 bg-muted/10">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-semibold">Notification on Submission</Label>
+                <p className="text-xs text-muted-foreground">Receive email when students submit</p>
+              </div>
+              <Switch
+                checked={notifyOnSubmit}
+                onCheckedChange={setNotifyOnSubmit}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-semibold">Enable Deadline</Label>
+                <p className="text-xs text-muted-foreground">Allow late submissions when disabled</p>
+              </div>
+              <Switch
+                checked={enableDeadline}
+                onCheckedChange={setEnableDeadline}
+              />
+            </div>
+          </div>
+
+          {/* DEADLINE DATE (CONDITIONAL) */}
+          {enableDeadline && (
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold">Submission Deadline</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -103,7 +258,7 @@ export default function EditAssignmentPage() {
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    {date ? format(date, "PPP") : <span>Pick a deadline date</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -116,14 +271,9 @@ export default function EditAssignmentPage() {
                 </PopoverContent>
               </Popover>
             </div>
-          </div>
+          )}
 
           <div className="grid gap-8 sm:grid-cols-2">
-            <div className="space-y-3">
-              <Label htmlFor="points" className="text-sm font-semibold">Maximum Score / Points</Label>
-              <Input id="points" type="number" defaultValue={assignment.maxScore} min={1} />
-            </div>
-
             <div className="space-y-3">
               <Label className="text-sm font-semibold">Status</Label>
               <Select defaultValue={assignment.status || "active"}>

@@ -50,16 +50,16 @@ export default function AssignmentsPage() {
     }
     
     return (
-      <div className="rounded-md border bg-card overflow-hidden">
-        <Table>
+      <div className="w-full overflow-x-auto rounded-md border bg-card shadow-sm">
+        <Table className="w-full min-w-[max-content]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="w-[35%] font-semibold">Assignment</TableHead>
-              <TableHead className="font-semibold">Type</TableHead>
-              <TableHead className="font-semibold">Due</TableHead>
-              <TableHead className="font-semibold">Submissions</TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="text-right font-semibold">Actions</TableHead>
+              <TableHead className="w-[35%] font-semibold whitespace-nowrap">Assignment</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Type</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Due</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Submissions</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+              <TableHead className="text-right font-semibold whitespace-nowrap min-w-[150px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -93,15 +93,15 @@ export default function AssignmentsPage() {
                   </TableCell>
                   <TableCell>{getStatusBadge(assignment.status)}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" asChild className="h-8 shadow-none text-xs font-medium">
-                        <Link href={`/instructor/assignments/edit/${assignment.id}`}>
-                          <FileEdit className="mr-1.5 h-3.5 w-3.5" /> Edit
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/instructor/assignments/${assignment.id}/submissions`}>
+                          <Eye className="h-4 w-4 text-emerald-500" />
                         </Link>
                       </Button>
-                      <Button variant="outline" size="sm" asChild className="h-8 shadow-none text-xs font-medium">
-                        <Link href={`/instructor/assignments/${assignment.id}/submissions`}>
-                          <Eye className="mr-1.5 h-3.5 w-3.5" /> Grade
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/instructor/assignments/edit/${assignment.id}`}>
+                          <FileEdit className="h-4 w-4 text-primary" />
                         </Link>
                       </Button>
                       <AlertDialog>

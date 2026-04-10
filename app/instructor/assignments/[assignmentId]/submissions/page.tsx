@@ -50,15 +50,15 @@ export default function AssignmentSubmissionsPage() {
     }
     
     return (
-      <div className="rounded-md border bg-card overflow-hidden">
-        <Table>
+      <div className="w-full overflow-x-auto rounded-md border bg-card shadow-sm">
+        <Table className="w-full min-w-[max-content]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="font-semibold">Student</TableHead>
-              <TableHead className="font-semibold">Submitted On</TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="font-semibold">Score</TableHead>
-              <TableHead className="text-right font-semibold">Actions</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Student</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Submitted On</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Status</TableHead>
+              <TableHead className="font-semibold whitespace-nowrap">Score</TableHead>
+              <TableHead className="text-right font-semibold whitespace-nowrap min-w-[150px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

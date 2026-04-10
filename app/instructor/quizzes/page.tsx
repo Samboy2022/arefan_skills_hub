@@ -1,68 +1,130 @@
-import { Plus, Calendar, Edit, BarChart3, Users, Clock } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Plus, MoreHorizontal, Edit, Eye, Trash2, ShieldAlert } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MOCK_QUIZZES } from "@/lib/instructor-mock-data";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { MOCK_QUIZZES, MOCK_INSTRUCTOR_COURSES } from "@/lib/instructor-mock-data";
+import { QuizFormModal, QuizConfig } from "@/components/instructor/quizzes/QuizFormModal";
+import { QuizPreviewModal } from "@/components/instructor/quizzes/QuizPreviewModal";
+import { OverrideStudentModal } from "@/components/instructor/quizzes/OverrideStudentModal";
+
+type LocalQuiz = typeof MOCK_QUIZZES[0] & Partial<QuizConfig>;
 
 export default function QuizzesPage() {
-  const upcomingQuizzes = MOCK_QUIZZES.filter((q) => new Date(q.dueDate || "") > new Date());
-  const activeQuizzes = MOCK_QUIZZES.filter((q) => q.published);
-  const completedQuizzes = MOCK_QUIZZES.filter((q) => new Date(q.dueDate || "") <= new Date());
+  const [quizzes, setQuizzes] = useState<LocalQuiz[]>(MOCK_QUIZZES as LocalQuiz[]);
+  
+  // Modals state
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [editingQuiz, setEditingQuiz] = useState<QuizConfig | null>(null);
+  
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isOverrideOpen, setIsOverrideOpen] = useState(false);
+  const [activeQuizForModals, setActiveQuizForModals] = useState<LocalQuiz | null>(null);
 
-  const formatDate = (date?: Date) => {
-    if (!date) return "No date";
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const handleOpenCreateModal = () => {
+    setEditingQuiz(null);
+    setIsFormModalOpen(true);
   };
 
-  const QuizCard = ({ quiz }: { quiz: typeof MOCK_QUIZZES[0] }) => {
-    const attemptCount = quiz.attempts?.length || 0;
-    const avgScore = attemptCount > 0 ? Math.round((quiz.attempts?.reduce((sum, a) => sum + a.score, 0) || 0) / attemptCount) : 0;
-
-    return (
-      <div className="rounded-lg border border-border bg-card p-6 hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg text-foreground">{quiz.title}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{quiz.description}</p>
-          </div>
-        </div>
-
-        <div className="space-y-3 py-4 border-t border-b border-border">
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Due: {formatDate(quiz.dueDate)}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{quiz.timeLimit || 0} minutes time limit</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">{attemptCount} student attempts</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Average score: {avgScore}%</span>
-          </div>
-        </div>
-
-        <div className="mt-4 grid gap-2 grid-cols-2">
-          <Button variant="outline" className="gap-2">
-            <Edit className="h-4 w-4" />
-            Edit
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Analytics
-          </Button>
-        </div>
-      </div>
-    );
+  const handleOpenEditModal = (quiz: LocalQuiz) => {
+    setEditingQuiz({
+      id: quiz.id,
+      title: quiz.title,
+      type: "course", 
+      targetId: "course-1",
+      isGradable: quiz.isGradable !== undefined ? quiz.isGradable : true,
+      gradePoints: quiz.gradePoints || 10,
+      isTimed: quiz.isTimed !== undefined ? quiz.isTimed : !!quiz.timeLimit,
+      timeLimit: quiz.timeLimit || 30,
+      randomizeQuestions: quiz.randomizeQuestions !== undefined ? quiz.randomizeQuestions : true,
+      hasDeadline: !!quiz.dueDate,
+      startDate: quiz.startDate || "",
+      endDate: quiz.dueDate || "",
+      questionsAllowed: quiz.questionsAllowed || 10,
+      attemptsAllowed: quiz.attemptsAllowed || 1,
+      emailNotifications: quiz.emailNotifications !== undefined ? quiz.emailNotifications : true,
+    } as QuizConfig);
+    setIsFormModalOpen(true);
   };
+
+  const handleDeleteQuiz = (id: string) => {
+    setQuizzes(prev => prev.filter(q => q.id !== id));
+  };
+
+  const handleSaveQuiz = (data: QuizConfig) => {
+    if (data.id) {
+      setQuizzes(prev => prev.map(q => {
+        if (q.id === data.id) {
+          const { endDate, startDate, targetId, ...restData } = data;
+          return {
+            ...q,
+            ...restData,
+            courseId: targetId,
+            dueDate: endDate ? new Date(endDate) : q.dueDate,
+            timeLimit: data.timeLimit || q.timeLimit,
+          } as LocalQuiz;
+        }
+        return q;
+      }));
+    } else {
+      const { endDate, startDate, targetId, ...restData } = data;
+      const newQuiz = {
+        ...restData,
+        id: `quiz_${Date.now()}`,
+        description: `${data.type} Assessment`,
+        courseId: targetId,
+        lessonsCount: data.questionsAllowed,
+        durationMinutes: data.timeLimit || 0,
+        published: true,
+        dueDate: endDate ? new Date(endDate) : undefined,
+        attempts: [],
+        questions: [],
+        passingScore: 50,
+        createdAt: new Date(),
+      } as unknown as LocalQuiz;
+      setQuizzes(prev => [...prev, newQuiz]);
+    }
+    setIsFormModalOpen(false);
+  };
+
+  const executePreview = (quiz: LocalQuiz) => {
+    setActiveQuizForModals(quiz);
+    setIsPreviewOpen(true);
+  };
+
+  const executeOverride = (quiz: LocalQuiz) => {
+    setActiveQuizForModals(quiz);
+    setIsOverrideOpen(true);
+  };
+
+  // Helper flags mappings with fallbacks
+  const getFlagStr = (val?: boolean) => val || val === undefined ? "Yes" : "No";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 pb-12">
       <Breadcrumb 
         showHome={false}
         items={[
@@ -70,73 +132,133 @@ export default function QuizzesPage() {
           { label: "Quizzes & Exams" }
         ]} 
       />
-      <div className="pt-2">
+      <div>
         <PageHeader
           title="Quizzes & Exams"
-          description="Create and manage assessments for your courses"
+          description="Create and manage assessments for your courses via DataTable."
         >
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={handleOpenCreateModal}>
             <Plus className="h-4 w-4" />
             New Quiz
           </Button>
         </PageHeader>
       </div>
 
-      <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
-          <TabsTrigger value="upcoming">Upcoming ({upcomingQuizzes.length})</TabsTrigger>
-          <TabsTrigger value="active">Active ({activeQuizzes.length})</TabsTrigger>
-          <TabsTrigger value="completed">Completed ({completedQuizzes.length})</TabsTrigger>
-        </TabsList>
+      <div className="w-full overflow-x-auto border border-border rounded-md bg-card shadow-sm">
+        <Table className="w-full min-w-[max-content]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="whitespace-nowrap">Quiz Name</TableHead>
+              <TableHead className="whitespace-nowrap">Notification</TableHead>
+              <TableHead className="whitespace-nowrap">Randomize</TableHead>
+              <TableHead className="whitespace-nowrap">Attempts</TableHead>
+              <TableHead className="whitespace-nowrap">Gradable</TableHead>
+              <TableHead className="whitespace-nowrap">Active</TableHead>
+              <TableHead className="whitespace-nowrap">Duration</TableHead>
+              <TableHead className="whitespace-nowrap">Score</TableHead>
+              <TableHead className="whitespace-nowrap">Submissions</TableHead>
+              <TableHead className="text-right whitespace-nowrap min-w-[200px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {quizzes.length === 0 ? (
+               <TableRow>
+                 <TableCell colSpan={10} className="h-24 text-center text-muted-foreground">
+                   No quizzes found.
+                 </TableCell>
+               </TableRow>
+            ) : quizzes.map((quiz) => (
+              <TableRow key={quiz.id}>
+                <TableCell className="font-medium text-foreground">
+                  {quiz.title}
+                  <Link href={`/instructor/quizzes/${quiz.id}/questions`} className="block mt-1 text-[10px] text-primary hover:underline font-normal uppercase tracking-wider">
+                    Build Questions
+                  </Link>
+                </TableCell>
+                <TableCell>{getFlagStr(quiz.emailNotifications)}</TableCell>
+                <TableCell>{getFlagStr(quiz.randomizeQuestions)}</TableCell>
+                <TableCell>{quiz.attemptsAllowed || 1}</TableCell>
+                <TableCell>{quiz.isGradable === false ? "No" : "Yes"}</TableCell>
+                <TableCell>
+                  {quiz.published ? (
+                    <Badge variant="outline" className="text-emerald-500 border-emerald-500/30">Yes</Badge>
+                  ) : (
+                    <Badge variant="secondary">No</Badge>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {quiz.timeLimit ? `${quiz.timeLimit} mins` : <span className="text-muted-foreground">None</span>}
+                </TableCell>
+                <TableCell>
+                  <span className="font-semibold">{quiz.gradePoints || "10.00"}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center justify-center bg-primary/10 text-primary rounded-full h-6 px-2 text-xs font-semibold">
+                    {quiz.attempts?.length || 0}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => executePreview(quiz)} title="View Quiz">
+                      <Eye className="h-4 w-4 text-emerald-500" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleOpenEditModal(quiz)} title="Edit Form">
+                      <Edit className="h-4 w-4 text-primary" />
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive" title="Delete Quiz">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Quiz?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the quiz
+                            <span className="font-semibold text-foreground"> {quiz.title}</span> 
+                            and remove all of its data.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDeleteQuiz(quiz.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <Button variant="outline" size="sm" className="h-8 gap-1 ml-1 shrink-0" onClick={() => executeOverride(quiz)}>
+                      <ShieldAlert className="h-3.5 w-3.5 text-amber-500" />
+                      Override Student
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-        {/* Upcoming Quizzes */}
-        <TabsContent value="upcoming" className="space-y-4 mt-6">
-          {upcomingQuizzes.length > 0 ? (
-            <div className="grid gap-6">
-              {upcomingQuizzes.map((quiz) => (
-                <QuizCard key={quiz.id} quiz={quiz} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 rounded-lg border border-dashed border-border">
-              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No upcoming quizzes</p>
-            </div>
-          )}
-        </TabsContent>
+      <QuizFormModal 
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSave={handleSaveQuiz}
+        editingQuiz={editingQuiz}
+        courses={MOCK_INSTRUCTOR_COURSES.map(c => ({ id: c.id, title: c.title }))}
+      />
 
-        {/* Active Quizzes */}
-        <TabsContent value="active" className="space-y-4 mt-6">
-          {activeQuizzes.length > 0 ? (
-            <div className="grid gap-6">
-              {activeQuizzes.map((quiz) => (
-                <QuizCard key={quiz.id} quiz={quiz} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 rounded-lg border border-dashed border-border">
-              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No active quizzes</p>
-            </div>
-          )}
-        </TabsContent>
+      <QuizPreviewModal 
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        quizTitle={activeQuizForModals?.title || ""}
+      />
 
-        {/* Completed Quizzes */}
-        <TabsContent value="completed" className="space-y-4 mt-6">
-          {completedQuizzes.length > 0 ? (
-            <div className="grid gap-6">
-              {completedQuizzes.map((quiz) => (
-                <QuizCard key={quiz.id} quiz={quiz} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 rounded-lg border border-dashed border-border">
-              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground">No completed quizzes</p>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      <OverrideStudentModal 
+        isOpen={isOverrideOpen}
+        onClose={() => setIsOverrideOpen(false)}
+        quizTitle={activeQuizForModals?.title || ""}
+      />
     </div>
   );
 }
