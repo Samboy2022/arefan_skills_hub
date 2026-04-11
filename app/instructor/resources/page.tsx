@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, FolderPlus, Upload, Search, Download, Share2, Trash2, File as FileIcon, Image as ImageIcon, Music, Video as VideoIcon, HardDrive, Link as LinkIcon, FileText, FileArchive, Eye, ArrowLeft } from "lucide-react";
+import { Plus, FolderPlus, Upload, Search, Download, Trash2, File as FileIcon, Image as ImageIcon, Video as VideoIcon, Link as LinkIcon, FileText, FileArchive, Eye, ArrowLeft, Folder, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -34,6 +34,7 @@ type LocalFile = {
   type: "pdf" | "zip" | "document" | "image" | "link" | "video";
   size: string;
   date: string;
+  url?: string; // for preview simulation
 };
 
 // ── Dummy Pre-Seed ───────────────────────────────────────────────────────
@@ -47,10 +48,11 @@ const INITIAL_FOLDERS: LocalFolder[] = [
 ];
 
 const INITIAL_FILES: LocalFile[] = [
-  { id: "file1", course_id: "course-1", folder_id: "f1", target_level: "course", target_id: "course-1", name: "CS101_Intro.mp4", type: "video", size: "1.5 GB", date: "Feb 15, 2024" },
-  { id: "file2", course_id: "course-1", folder_id: "f2", target_level: "module", target_id: "module-1", name: "Week1_Slides.pdf", type: "pdf", size: "12 MB", date: "Feb 10, 2024" },
+  { id: "file1", course_id: "course-1", folder_id: "f1", target_level: "course", target_id: "course-1", name: "CS101_Intro.mp4", type: "video", size: "1.5 GB", date: "Feb 15, 2024", url: "https://www.w3schools.com/html/mov_bbb.mp4" },
+  { id: "file2", course_id: "course-1", folder_id: "f2", target_level: "module", target_id: "module-1", name: "Week1_Slides.pdf", type: "pdf", size: "12 MB", date: "Feb 10, 2024", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
   { id: "file3", course_id: "course-2", folder_id: "f3", target_level: "lesson", target_id: "lesson-3", name: "MySQL_Dump.zip", type: "zip", size: "45 MB", date: "Jan 12, 2024" },
-  { id: "file4", course_id: "course-1", folder_id: null, target_level: "course", target_id: "course-1", name: "Syllabus_Fallback.pdf", type: "pdf", size: "1.2 MB", date: "Jan 5, 2024" },
+  { id: "file4", course_id: "course-1", folder_id: null, target_level: "course", target_id: "course-1", name: "Syllabus_Fallback.pdf", type: "pdf", size: "1.2 MB", date: "Jan 5, 2024", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { id: "file5", course_id: "course-2", folder_id: null, target_level: "module", target_id: "module-3", name: "Reference Diagram.png", type: "image", size: "2.4 MB", date: "Jan 2, 2024", url: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3" },
 ];
 
 // ── UI Config ────────────────────────────────────────────────────────────
@@ -92,6 +94,7 @@ export default function ResourcesPage() {
   // Modals
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<LocalFile | null>(null);
 
   // Filter Variables
   const activeFolders = selectedCourseId === "all" 
@@ -125,35 +128,33 @@ export default function ResourcesPage() {
     const tc = getType(file.type);
     
     return (
-      <div className="flex items-center gap-4 px-5 py-4 border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors">
-        <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center shrink-0", tc.cls)}>
+      <div className="flex items-center gap-4 px-5 py-3 border-b border-border last:border-b-0 hover:bg-muted/30 transition-colors">
+        <div className={cn("h-10 w-10 flex shrink-0 items-center justify-center rounded-lg border", tc.cls)}>
           {tc.icon}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-foreground line-clamp-1">{file.name}</p>
-          <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground flex-wrap">
-            <span className="font-medium uppercase text-[10px] px-1.5 py-0.5 rounded border border-border bg-muted/30">{tc.label}</span>
+          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground flex-wrap">
+            <span className="font-bold tracking-widest uppercase text-[10px] text-muted-foreground">{tc.label}</span>
+            <span>&bull;</span>
             <span>{file.size}</span>
-            <span>·</span>
-            <span className="flex items-center gap-1 font-medium italic text-foreground"><LinkIcon className="h-3 w-3" />{getTargetName(file)}</span>
-            <span>·</span>
-            <span>Added {file.date}</span>
+            <span>&bull;</span>
+            <span className="font-medium text-foreground opacity-80">{getTargetName(file)}</span>
             {file.folder_id && !selectedFolderId && (
               <>
-                <span>·</span>
-                <span className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 px-1 py-0.5">Dir: {folders.find(f => f.id === file.folder_id)?.name}</span>
+                <span>&bull;</span>
+                <span className="flex items-center gap-1 font-medium bg-muted px-1.5 py-0.5 rounded text-foreground">
+                  <Folder className="h-3 w-3" /> {folders.find(f => f.id === file.folder_id)?.name}
+                </span>
               </>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground h-8 text-xs">
-            <Eye className="h-3.5 w-3.5" /> View
+        <div className="flex flex-wrap items-center gap-1 shrink-0 justify-end">
+          <Button variant="ghost" size="sm" className="gap-1.5 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30" onClick={() => setPreviewFile(file)}>
+            <Eye className="h-4 w-4" /> <span className="hidden sm:inline">View</span>
           </Button>
-          <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs hidden md:flex">
-            <Download className="h-3.5 w-3.5" /> Download
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => deleteFile(file.id)} className="h-8 w-8 p-0 text-red-600 dark:text-red-400 hover:text-white hover:bg-red-600 transition-colors">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950" onClick={() => deleteFile(file.id)}>
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
@@ -167,47 +168,47 @@ export default function ResourcesPage() {
     const folderFiles = files.filter(f => f.folder_id === selectedFolderId);
 
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 max-w-[1400px] mx-auto">
          <Breadcrumb 
           showHome={false}
           items={[
-            { label: "File Management", href: "#", onClick: () => setSelectedFolderId(null) },
+            { label: "Resource Library", href: "#", onClick: () => setSelectedFolderId(null) },
             { label: targetFolder.name }
           ]} 
         />
         
         <div>
-          <Button variant="ghost" size="sm" onClick={() => setSelectedFolderId(null)} className="gap-2 -ml-1 text-muted-foreground mb-1">
-            <ArrowLeft className="h-4 w-4" /> Back to Files Hub
+          <Button variant="ghost" size="sm" onClick={() => setSelectedFolderId(null)} className="gap-2 -ml-2 text-muted-foreground mb-4">
+            <ArrowLeft className="h-4 w-4" /> Back to Files
           </Button>
           <PageHeader
             title={targetFolder.name}
-            description={`Viewing explicit payload contents of this directory.`}
+            description="Manage the documents and files localized within this folder."
           >
-            <Button className="gap-2 shrink-0" onClick={() => setIsUploadModalOpen(true)}>
+            <Button className="gap-2" onClick={() => setIsUploadModalOpen(true)}>
               <Upload className="h-4 w-4" />
-              Upload into Flow
+              Upload Reference
             </Button>
           </PageHeader>
         </div>
 
-        <Card className="border-border overflow-hidden">
-          <div className="px-5 py-3 bg-muted/30 border-b border-border">
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Directory Documents</p>
-          </div>
+        <div className="border bg-card rounded-xl shadow-sm overflow-hidden">
           {folderFiles.length === 0 ? (
-            <div className="px-5 py-12 text-center bg-muted/5">
-              <FolderPlus className="h-8 w-8 opacity-20 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground">This directory is isolated and empty.</p>
+            <div className="px-5 py-16 text-center">
+              <div className="h-16 w-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FolderPlus className="h-8 w-8 text-muted-foreground opacity-50" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Empty Folder</h3>
+              <p className="text-sm font-medium text-muted-foreground mt-1 max-w-sm mx-auto">This folder doesn't have any files. Start uploading references, reading materials, or assets.</p>
+              <Button onClick={() => setIsUploadModalOpen(true)} className="mt-6" variant="secondary">Upload File</Button>
             </div>
           ) : (
-            <div className="divide-y divide-border bg-card">
+            <div className="divide-y divide-border">
                {folderFiles.map(file => <InstructorMaterialRow key={file.id} file={file} />)}
             </div>
           )}
-        </Card>
+        </div>
 
-        {/* Share Modal Subcomponents when drilled down */}
         <UploadFileModal 
           isOpen={isUploadModalOpen} 
           onClose={() => setIsUploadModalOpen(false)}
@@ -216,31 +217,49 @@ export default function ResourcesPage() {
           folders={folders}
           onCreate={(f) => setFiles(prev => [f, ...prev])}
         />
+
+        {previewFile && (
+            <FilePreviewModal file={previewFile} onClose={() => setPreviewFile(null)} />
+        )}
       </div>
     );
   }
 
   // ── Root View ──
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Breadcrumb 
-        showHome={false}
-        items={[
-          { label: "Dashboard", href: "/instructor" },
-          { label: "File Management" }
-        ]} 
-      />
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-12">
+      
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <Breadcrumb 
+            showHome={false}
+            items={[
+            { label: "Dashboard", href: "/instructor" },
+            { label: "Resource Library" }
+            ]} 
+          />
+          <div className="w-full md:w-auto relative max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Quick search by name..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9 w-full bg-card shadow-sm border-muted"
+            />
+          </div>
+      </div>
+
       <div>
         <PageHeader
-          title="Resources & File Explorer"
-          description="Organize rigid payload structures, define specific module dependencies, and upload heavy assets to student curriculums."
+          title="Resource Library"
+          description="A centralized hub to upload, structure, and dispatch curriculum assets to your students."
         >
-          <div className="flex gap-2 shrink-0">
-            <Button variant="outline" className="gap-2" onClick={() => setIsFolderModalOpen(true)}>
-              <FolderPlus className="h-4 w-4" />
+          <div className="flex gap-2">
+            <Button variant="outline" className="gap-2 shadow-sm" onClick={() => setIsFolderModalOpen(true)}>
+              <FolderPlus className="h-4 w-4 text-emerald-600" />
               New Folder
             </Button>
-            <Button className="gap-2" onClick={() => setIsUploadModalOpen(true)}>
+            <Button className="gap-2 shadow-sm" onClick={() => setIsUploadModalOpen(true)}>
               <Upload className="h-4 w-4" />
               Upload File
             </Button>
@@ -248,51 +267,33 @@ export default function ResourcesPage() {
         </PageHeader>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-card p-4 rounded-lg border border-border shadow-sm">
-        <div className="w-full md:w-72">
-          <Label className="text-xs uppercase font-semibold text-muted-foreground tracking-wider mb-1 block">Active Workspace</Label>
-          <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All Courses Overview" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">🌐 All Courses Overview</SelectItem>
-              {MOCK_INSTRUCTOR_COURSES.map(c => (
-                <SelectItem key={c.id} value={c.id}>{c.code} — {c.title}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="w-full md:w-96 relative">
-          <Label className="text-xs uppercase font-semibold text-muted-foreground tracking-wider mb-1 block">Local Filter</Label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search explicitly by filename..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9 w-full bg-background"
-            />
-          </div>
-        </div>
+      <div className="flex flex-col sm:flex-row items-center gap-4 py-2 border-b">
+        <Label className="font-semibold text-muted-foreground whitespace-nowrap">Filter Resources:</Label>
+        <Select value={selectedCourseId} onValueChange={setSelectedCourseId}>
+        <SelectTrigger className="w-[300px] bg-card border-muted font-medium">
+            <SelectValue placeholder="All Courses Overview" />
+        </SelectTrigger>
+        <SelectContent>
+            <SelectItem value="all">All Enlisted Courses</SelectItem>
+            {MOCK_INSTRUCTOR_COURSES.map(c => (
+            <SelectItem key={c.id} value={c.id}>{c.code} — {c.title}</SelectItem>
+            ))}
+        </SelectContent>
+        </Select>
       </div>
 
+      {/* Folders Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <HardDrive className="h-5 w-5 text-muted-foreground" />
-          <h3 className="text-lg font-semibold text-foreground">Active Directories</h3>
-        </div>
-        
+        <h3 className="text-xl font-bold tracking-tight text-foreground">Course Folders</h3>
         {activeFolders.length === 0 ? (
-          <div className="py-12 border border-dashed rounded-lg text-center bg-muted/10">
-            <FolderPlus className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm font-medium text-foreground">No folders instantiated</p>
-            <p className="text-xs text-muted-foreground">Isolate curriculums by creating a new directory mapped to this workspace.</p>
+          <div className="py-12 rounded-xl text-center border bg-muted/10">
+            <Folder className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-base font-semibold text-foreground">No folders structured yet</p>
+            <p className="text-sm text-muted-foreground mt-1 mb-4 hidden sm:block">Keep your modules tightly organized by clustering assets into specific directories.</p>
+            <Button variant="outline" size="sm" onClick={() => setIsFolderModalOpen(true)}>Create a New Folder</Button>
           </div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {activeFolders.map((folder) => {
               const fileCount = files.filter(f => f.folder_id === folder.id).length;
               const courseLabel = MOCK_INSTRUCTOR_COURSES.find(c => c.id === folder.course_id)?.code;
@@ -301,11 +302,12 @@ export default function ResourcesPage() {
                 <div
                   key={folder.id}
                   onClick={() => setSelectedFolderId(folder.id)}
-                  className="rounded-lg border border-border bg-card p-5 hover:border-blue-300 dark:hover:border-blue-800 transition-all cursor-pointer group shadow-sm flex flex-col justify-between h-32"
+                  className="rounded-xl border bg-card p-5 hover:border-emerald-300 dark:hover:border-emerald-800 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 flex items-center justify-center">
-                      <FolderPlus className="h-5 w-5 text-blue-700 dark:text-blue-400 group-hover:scale-110 transition-transform" />
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                      <Folder className="h-6 w-6 fill-current opacity-20 absolute" />
+                      <Folder className="h-6 w-6 relative z-10" />
                     </div>
                     <Button 
                        variant="ghost" 
@@ -317,15 +319,15 @@ export default function ResourcesPage() {
                     </Button>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" title={folder.name}>
+                    <h4 className="font-bold text-foreground text-lg group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-1" title={folder.name}>
                       {folder.name}
                     </h4>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-[11px] font-semibold text-muted-foreground">{fileCount} objects</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{fileCount} files</span>
                       {courseLabel && selectedCourseId === "all" && (
-                         <p className="text-[9px] uppercase font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/10 px-1 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+                         <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 truncate">
                            {courseLabel}
-                         </p>
+                         </span>
                       )}
                     </div>
                   </div>
@@ -336,31 +338,30 @@ export default function ResourcesPage() {
         )}
       </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <FileIcon className="h-5 w-5 text-muted-foreground" />
-          <h3 className="text-lg font-semibold text-foreground">Loose Payload Registry</h3>
-        </div>
+      {/* Files Section */}
+      <div className="space-y-4 pt-4 border-t">
+        <h3 className="text-xl font-bold tracking-tight text-foreground">Uncategorized Files</h3>
         
         {activeFiles.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border py-16 text-center bg-muted/10">
-             <Upload className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-             <p className="text-sm font-medium text-foreground">File Registry is empty</p>
-             <p className="text-xs text-muted-foreground mt-1 mb-4">You have not injected any binaries or assets here yet.</p>
-             <Button variant="outline" size="sm" onClick={() => setIsUploadModalOpen(true)}>Upload First Payload</Button>
+          <div className="rounded-xl border py-16 text-center bg-card shadow-sm">
+             <div className="h-16 w-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                 <FileIcon className="h-8 w-8 text-muted-foreground opacity-50" />
+             </div>
+             <p className="text-base font-semibold text-foreground">Resource library is empty</p>
+             <p className="text-sm text-muted-foreground mt-1 mb-4 hidden sm:block">Upload study materials directly to the workspace outside of specific folders.</p>
+             <Button variant="secondary" onClick={() => setIsUploadModalOpen(true)}>Upload Your First File</Button>
           </div>
         ) : (
-          <Card className="border-border bg-card shadow-sm overflow-hidden">
+          <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
             <div className="divide-y divide-border">
                {activeFiles.map((file) => (
                  <InstructorMaterialRow key={file.id} file={file} />
                ))}
             </div>
-          </Card>
+          </div>
         )}
       </div>
 
-      {/* ── Folder Creation Modal ── */}
       <CreateFolderModal 
         isOpen={isFolderModalOpen} 
         onClose={() => setIsFolderModalOpen(false)}
@@ -368,7 +369,6 @@ export default function ResourcesPage() {
         onCreate={(f) => setFolders(prev => [...prev, f])}
       />
 
-      {/* ── File Upload Modal ── */}
       <UploadFileModal 
         isOpen={isUploadModalOpen} 
         onClose={() => setIsUploadModalOpen(false)}
@@ -377,6 +377,10 @@ export default function ResourcesPage() {
         folders={folders}
         onCreate={(f) => setFiles(prev => [f, ...prev])}
       />
+
+      {previewFile && (
+          <FilePreviewModal file={previewFile} onClose={() => setPreviewFile(null)} />
+      )}
     </div>
   );
 }
@@ -413,32 +417,32 @@ function CreateFolderModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Instantiate Directory</DialogTitle>
+          <DialogTitle>Create New Folder</DialogTitle>
           <DialogDescription>
-            Create an architecture bounds for storing curriculums offline payloads.
+            Organize materials cleanly by keeping them in scoped folders.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-5 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="targetCourse">Bind to Course Hierarchy *</Label>
+            <Label className="font-semibold">Assign to Course Context <span className="text-red-500">*</span></Label>
             <Select value={targetCourse} onValueChange={setTargetCourse}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-muted/50">
                 <SelectValue placeholder="Select course scope" />
               </SelectTrigger>
               <SelectContent>
                 {MOCK_INSTRUCTOR_COURSES.map(c => (
-                  <SelectItem key={c.id} value={c.id}>{c.code}</SelectItem>
+                  <SelectItem key={c.id} value={c.id} className="font-medium">{c.code} — {c.title}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="folderName">Directory String *</Label>
+            <Label className="font-semibold">Folder Name <span className="text-red-500">*</span></Label>
             <Input
-              id="folderName"
               placeholder="e.g. Week 1 Archives"
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
+              className="bg-muted/50"
             />
           </div>
         </div>
@@ -467,7 +471,8 @@ function UploadFileModal({
   onCreate: (f: LocalFile) => void;
 }) {
   const [fileName, setFileName] = useState("");
-  // If we are drilled down into a folder, lock the initial states tightly.
+  const [fileUrl, setFileUrl] = useState("");
+  // Lock local states if we arrived via drilldown
   const [courseId, setCourseId] = useState(activeCourseId === "all" ? "" : activeCourseId);
   const [folderId, setFolderId] = useState<string>(activeFolderId);
   const [targetLevel, setTargetLevel] = useState<TargetLevel>("course");
@@ -500,59 +505,67 @@ function UploadFileModal({
       name: fileName,
       type: getFileType(fileName) as LocalFile["type"],
       size: getRandomSize(),
-      date: format(new Date(), "MMM dd, yyyy")
+      date: format(new Date(), "MMM dd, yyyy"),
+      url: fileUrl || undefined
     });
     setFileName("");
+    setFileUrl("");
     setTargetId("");
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[550px]">
         <DialogHeader>
-          <DialogTitle>Upload Pipeline Payload</DialogTitle>
+          <DialogTitle>Upload Resource File</DialogTitle>
           <DialogDescription>
-            Inject a file dependency into the routing hierarchy.
+            Attach a new document or asset to a course curriculum.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-5 py-4">
           
-          <div className="grid gap-2 border-b pb-4">
-            <Label>Mock File Selection *</Label>
-            <div className="flex gap-2 items-center">
-               <Input
-                  placeholder="Simulate a filename (e.g. report.pdf)"
-                  value={fileName}
-                  onChange={(e) => setFileName(e.target.value)}
-                  className="w-full"
-                />
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="fileUpload">Select File <span className="text-red-500">*</span></Label>
+            <Input
+                id="fileUpload"
+                type="file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setFileName(file.name);
+                    // Use a temporary local URL so the browser can preview the uploaded file
+                    setFileUrl(URL.createObjectURL(file));
+                  }
+                }}
+                className="bg-muted/50 cursor-pointer file:cursor-pointer file:text-blue-600"
+                required
+            />
           </div>
 
           <div className="grid gap-2">
-            <Label>Root Course *</Label>
+            <Label>Context Course <span className="text-red-500">*</span></Label>
             <Select value={courseId} onValueChange={(val) => {
               setCourseId(val);
               setTargetId("");
             }}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-muted/50">
                 <SelectValue placeholder="Select course scope" />
               </SelectTrigger>
               <SelectContent>
                 {MOCK_INSTRUCTOR_COURSES.map(c => (
-                  <SelectItem key={c.id} value={c.id}>{c.code}</SelectItem>
+                  <SelectItem key={c.id} value={c.id} className="font-medium">{c.code} — {c.title}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
           {courseId && (
-            <div className="grid grid-cols-2 gap-4 animate-in slide-in-from-top-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
               <div className="grid gap-2">
-                <Label>Directory Folder (Optional)</Label>
-                <Select value={folderId} onValueChange={setFolderId}>
-                  <SelectTrigger disabled={activeFolderId !== "none"}>
+                <Label>Directory Target</Label>
+                <Select value={folderId} onValueChange={setFolderId} disabled={activeFolderId !== "none"}>
+                  <SelectTrigger className="bg-muted/50">
                     <SelectValue placeholder="No Folder" />
                   </SelectTrigger>
                   <SelectContent>
@@ -564,17 +577,17 @@ function UploadFileModal({
                 </Select>
               </div>
 
-              <div className="grid gap-2 border-l pl-4">
-                <Label>Bind Target Hierarchy *</Label>
+              <div className="grid gap-2">
+                <Label>Curriculum Target</Label>
                 <Select value={targetLevel} onValueChange={(val: TargetLevel) => {
                   setTargetLevel(val);
                   setTargetId("");
                 }}>
-                  <SelectTrigger className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10">
+                  <SelectTrigger className="bg-muted/50">
                     <SelectValue placeholder="Target Level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="course">Entire Class</SelectItem>
+                    <SelectItem value="course">General Class Material</SelectItem>
                     <SelectItem value="module">Specific Module</SelectItem>
                     <SelectItem value="lesson">Specific Lesson</SelectItem>
                   </SelectContent>
@@ -584,10 +597,10 @@ function UploadFileModal({
           )}
 
           {targetLevel === "module" && courseId && (
-            <div className="grid gap-2 animate-in slide-in-from-right-4 bg-muted/30 p-3 rounded-lg border">
-              <Label className="text-blue-600 dark:text-blue-400">Select Specific Module Payload *</Label>
+            <div className="grid gap-2 animate-in fade-in slide-in-from-top-1">
+              <Label>Select Target Module <span className="text-red-500">*</span></Label>
               <Select value={targetId} onValueChange={setTargetId}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-muted/50">
                   <SelectValue placeholder="Choose Module dependency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -600,10 +613,10 @@ function UploadFileModal({
           )}
 
           {targetLevel === "lesson" && courseId && (
-             <div className="grid gap-2 animate-in slide-in-from-right-4 bg-muted/30 p-3 rounded-lg border">
-              <Label className="text-blue-600 dark:text-blue-400">Select Specific Lesson Payload *</Label>
+             <div className="grid gap-2 animate-in fade-in slide-in-from-top-1">
+              <Label>Select Target Lesson <span className="text-red-500">*</span></Label>
               <Select value={targetId} onValueChange={setTargetId}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-muted/50">
                   <SelectValue placeholder="Choose Lesson dependency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -616,15 +629,73 @@ function UploadFileModal({
           )}
 
         </div>
-        <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>Abort</Button>
+        <DialogFooter className="border-t pt-4">
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
           <Button 
             onClick={handleUpload} 
             disabled={!fileName.trim() || !courseId || (targetLevel !== "course" && !targetId)}
           >
-            Inject Payload
+            Upload File
           </Button>
         </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function FilePreviewModal({ 
+  file, 
+  onClose 
+}: { 
+  file: LocalFile; 
+  onClose: () => void; 
+}) {
+  const tc = getType(file.type);
+  const fallbackUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+  const renderViewer = () => {
+      if (file.type === "image") {
+          return <img src={file.url || "https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=2070"} alt="preview" className="max-w-full max-h-[70vh] object-contain rounded-xl border shadow-sm mx-auto bg-black/5" />
+      }
+      if (file.type === "video") {
+          return <video src={file.url || "https://www.w3schools.com/html/mov_bbb.mp4"} controls className="w-full max-h-[70vh] rounded-xl border shadow-sm bg-black" />
+      }
+      if (file.type === "pdf" || file.type === "document") {
+          return <iframe src={file.url || fallbackUrl} className="w-full h-[70vh] rounded-xl border shadow-sm bg-white" />
+      }
+      return (
+          <div className="py-24 px-12 border border-dashed rounded-xl bg-muted/20 text-center flex flex-col items-center justify-center">
+              <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                  {tc.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-2">No Native Preview Available</h3>
+              <p className="text-muted-foreground max-w-sm mb-6">This file type ({tc.label}) cannot be embedded directly in the browser preview frame.</p>
+              <Button asChild className="gap-2">
+                  <a href={file.url || "#"} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> Open Remotely</a>
+              </Button>
+          </div>
+      )
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-5xl p-0 overflow-hidden bg-muted/10">
+        <div className="flex items-center justify-between px-6 py-4 border-b bg-card">
+            <div className="flex items-center gap-3">
+                <div className={cn("h-10 w-10 flex items-center justify-center rounded-lg border", tc.cls)}>
+                    {tc.icon}
+                </div>
+                <div>
+                    <DialogTitle className="text-lg font-bold">{file.name}</DialogTitle>
+                    <DialogDescription className="mt-0.5">{tc.label} &bull; {file.size} &bull; {file.date}</DialogDescription>
+                </div>
+            </div>
+            <div className="flex gap-2 hidden sm:flex">
+                <Button variant="outline" size="sm" className="gap-2"><Download className="h-3.5 w-3.5" /> Download Asset</Button>
+            </div>
+        </div>
+        <div className="p-4 md:p-6 bg-muted/10 max-h-[80vh] overflow-y-auto">
+            {renderViewer()}
+        </div>
       </DialogContent>
     </Dialog>
   );

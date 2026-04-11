@@ -121,7 +121,7 @@ export function InstructorNavbar() {
           </DropdownMenu>
 
           {/* Theme Toggle */}
-          {mounted && (
+          {mounted ? (
             <Button
               variant="ghost"
               size="icon"
@@ -133,6 +133,10 @@ export function InstructorNavbar() {
               ) : (
                 <Moon className="h-4 w-4" />
               )}
+            </Button>
+          ) : (
+            <Button variant="ghost" size="icon" className="h-9 w-9 opacity-0 pointer-events-none">
+              <span className="h-4 w-4" />
             </Button>
           )}
 

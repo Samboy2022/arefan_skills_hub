@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 export interface BreadcrumbItem {
   label: string;
   href?: string;
+  onClick?: () => void;
 }
 
 interface BreadcrumbProps {
@@ -33,16 +34,25 @@ export function Breadcrumb({ items, className, showHome = true }: BreadcrumbProp
             )}
             
             {isLast ? (
-              <span className="text-foreground font-medium">
+              <span className="text-foreground font-medium" onClick={item.onClick} style={{ cursor: item.onClick ? 'pointer' : 'default' }}>
                 {item.label}
               </span>
             ) : item.href ? (
               <Link
                 href={item.href}
                 className="hover:text-primary transition-colors"
+                onClick={item.onClick}
               >
                 {item.label}
               </Link>
+            ) : item.onClick ? (
+              <button
+                type="button"
+                className="hover:text-primary transition-colors cursor-pointer"
+                onClick={item.onClick}
+              >
+                {item.label}
+              </button>
             ) : (
               <span>
                 {item.label}

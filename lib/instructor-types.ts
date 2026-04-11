@@ -43,6 +43,11 @@ export interface Assignment {
   title: string;
   description: string;
   type: "essay" | "file" | "online" | "discussion";
+  assignmentType?: string;
+  moduleId?: string;
+  lessonId?: string;
+  notifyOnSubmit?: boolean;
+  enableDeadline?: boolean;
   dueDate: Date;
   maxScore: number;
   submissions: Submission[];
@@ -114,6 +119,9 @@ export interface Grade {
   courseId: string;
   studentId: string;
   assignmentId?: string;
+  quizId?: string;
+  type?: "assignment" | "quiz" | "forum" | "course";
+  label?: string;
   score: number;
   maxScore: number;
   gradedAt: Date;

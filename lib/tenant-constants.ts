@@ -33,10 +33,10 @@ export const TENANT_NAV_ITEMS = [
         tooltip: "Manage Classes",
       },
       {
-        label: "Students",
+        label: "Users",
         href: "/school-admin/students",
         icon: Users,
-        tooltip: "Student Management",
+        tooltip: "User Management",
       },
       {
         label: "Faculty & Staff",

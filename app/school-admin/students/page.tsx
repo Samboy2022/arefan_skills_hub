@@ -106,12 +106,12 @@ export default function StudentsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Students"
-        description="Manage all students in your school"
+        title="Users"
+        description="Manage all users in your platform"
         titleAction={
           <Button onClick={() => router.push("/school-admin/students/create")}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Student
+            Add Users
           </Button>
         }
       />

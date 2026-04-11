@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { MOCK_INSTRUCTOR_COURSES } from "@/lib/instructor-mock-data";
-import { CurriculumBuilder } from "@/components/instructor/builder/CurriculumBuilder";
+import { CurriculumBuilder, Module } from "@/components/instructor/builder/CurriculumBuilder";
 import { PageHeader } from "@/components/instructor/page-header";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 
@@ -24,7 +24,7 @@ export default async function InstructorCurriculumPage({
 
   // Pre-process mock course data into the uniform struct expected by the builder
   // Based on your database schema notes, course -> modules -> lessons
-  const initialModules = [
+  const initialModules: Module[] = [
     {
       id: "mod_1",
       courseId: course.id,
