@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   BookOpen,
   Award,
@@ -14,19 +14,63 @@ import { PageHeader } from "@/components/student/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import { STUDENT_COURSES } from "@/lib/student-mock-data";
+import { StudentCourseCard } from "@/components/student/student-course-card";
+import { StudentCourseListItem } from "@/components/student/student-course-list-item";
+import { StudentCourseDataTable } from "@/components/student/student-course-data-table";
+import { CourseViewToolbar, ViewMode, SortOption } from "@/components/student/course-view-toolbar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function MyCoursesPage() {
-  // Memoized calculated values - fixes O(n) performance issues
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortBy, setSortBy] = useState<SortOption>("recent");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("student-course-view");
+    if (saved === "list" || saved === "table" || saved === "grid") {
+      setViewMode(saved as ViewMode);
+    }
+  }, []);
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    localStorage.setItem("student-course-view", mode);
+  };
+
+  const processedCourses = useMemo(() => {
+    let filtered = [...STUDENT_COURSES];
+
+    // Apply Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(c => 
+        c.name.toLowerCase().includes(q) || 
+        c.code.toLowerCase().includes(q)
+      );
+    }
+
+    // Apply Sort
+    return filtered.sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "code") return a.code.localeCompare(b.code);
+      if (sortBy === "progress_desc") return b.progress - a.progress;
+      if (sortBy === "due_assignments") return b.due_assignments - a.due_assignments;
+      
+      // Default: recent (enrollment_date)
+      return new Date(b.enrollment_date).getTime() - new Date(a.enrollment_date).getTime();
+    });
+  }, [searchQuery, sortBy]);
+
+  // Memoized calculated values
   const activeCourses = useMemo(() => 
-    STUDENT_COURSES.filter((c) => c.status === "active"), 
-  [STUDENT_COURSES]);
+    processedCourses.filter((c) => c.status === "active"), 
+  [processedCourses]);
   
   const completedCourses = useMemo(() => 
-    STUDENT_COURSES.filter((c) => c.status === "completed"), 
-  [STUDENT_COURSES]);
+    processedCourses.filter((c) => c.status === "completed"), 
+  [processedCourses]);
 
   // Calculate stats with proper null guards - fixes division by zero crash
   const totalCredits = useMemo(() => 
@@ -90,193 +134,107 @@ export default function MyCoursesPage() {
 
 
       {/* ── Active Courses ── */}
-      <div className="mb-10">
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Active Courses ({activeCourses.length})</h2>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {activeCourses.length === 0 ? (
-            <Card className="col-span-full py-12 px-6 flex flex-col items-center justify-center text-center">
-              <BookOpen className="h-12 w-12 text-muted-foreground mb-4 opacity-30" />
-              <h3 className="text-lg font-semibold mb-2">No active courses</h3>
-              <p className="text-muted-foreground text-sm max-w-md">You are not currently enrolled in any courses. Visit the course catalog to browse available courses.</p>
-            </Card>
-          ) : activeCourses.map((course) => (
-            <Link
-              key={course.id}
-              prefetch={false}
-              href={`/student/courses/${course.id}`}
-              className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
-              aria-label={`View active course: ${course.name}`}
-            >
-              <Card className="h-full border border-border bg-card hover:border-primary/50 transition-colors shadow-none rounded flex flex-col overflow-hidden relative">
-                
-                {/* Thumbnail Header */}
-                <div className="relative aspect-[16/9] w-full bg-muted border-b border-border">
-                  <Image 
-                    src={course.thumbnail} 
-                    alt={`Course thumbnail for ${course.name}`} 
-                    fill 
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover" 
-                  />
-                  {/* Overlay protecting the badge */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                  
-                  {/* Course Code Badge */}
-                  <div className="absolute top-4 left-4">
-                    <span className="text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-background text-foreground uppercase shadow-sm">
-                      {course.code}
-                    </span>
-                  </div>
-
-                  {/* Due Assignments Badge */}
-                  {course.due_assignments > 0 && (
-                    <div className="absolute top-4 right-4">
-                      <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-amber-500 text-white uppercase shadow-sm">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        {course.due_assignments} Task{course.due_assignments !== 1 ? 's' : ''} Due
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Circular Progress (floating) */}
-                  <div className="absolute -bottom-6 right-5 bg-card rounded-full p-1 border border-border flex items-center justify-center">
-                    <CircularProgress
-                      value={course.progress}
-                      size={48}
-                      strokeWidth={4}
-                      className="bg-card shrink-0"
-                      labelClassName="text-xs font-bold text-foreground"
-                    />
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-5 pt-10 flex flex-col flex-1 bg-card">
-                  <span className="text-[13px] text-muted-foreground font-medium mb-2 block">
-                    {course.credits} Credits
-                  </span>
-                  <h4 className="font-bold text-lg leading-snug group-hover:text-primary transition-colors text-foreground mb-6 line-clamp-2">
-                    {course.name}
-                  </h4>
-
-                  {/* Instructor */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <Avatar className="h-9 w-9 border border-border">
-                      <AvatarImage src={course.instructor_avatar} />
-                      <AvatarFallback className="text-xs font-semibold bg-muted text-muted-foreground">
-                        {course.instructor.split(" ").map((n) => n[0]).join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{course.instructor}</p>
-                      <p className="text-xs text-muted-foreground truncate">Instructor</p>
-                    </div>
-                  </div>
-
-                  {/* Assignment Status Banner */}
-                  <div className="mt-auto pt-4 border-t border-border">
-                    {course.due_assignments > 0 ? (
-                      <div className="flex items-center gap-2 text-[13px] font-medium text-amber-600 bg-amber-50/50 dark:bg-amber-950/20 dark:text-amber-500 px-3 py-2.5 rounded border border-amber-200/50 dark:border-amber-900/50">
-                        <AlertCircle className="h-4 w-4 shrink-0" />
-                        <span>{course.due_assignments} pending assignment{course.due_assignments !== 1 ? 's' : ''}</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-[13px] font-medium text-primary bg-primary/5 dark:bg-primary/10 px-3 py-2.5 rounded border border-primary/20 dark:border-primary/20">
-                        <CheckCircle className="h-4 w-4 shrink-0" />
-                        <span>Up to date</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
+      <div className="mb-10 space-y-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+             <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
+              <BookOpen className="h-5 w-5 text-primary" />
+              Active Courses
+              <span className="ml-1 text-sm font-normal text-muted-foreground">
+                ({activeCourses.length})
+              </span>
+            </h2>
+          </div>
+          <CourseViewToolbar 
+            viewMode={viewMode}
+            onViewModeChange={handleViewModeChange}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
         </div>
+
+        {activeCourses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-border rounded-xl bg-muted/30">
+            <BookOpen className="h-12 w-12 text-muted-foreground/50 mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No active courses found</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md">Try adjusting your search criteria or visit the course catalog to enroll.</p>
+          </div>
+        ) : viewMode === "grid" ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+             {activeCourses.map((course, index) => (
+              <div 
+                key={course.id}
+                className="transition-all duration-300"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <StudentCourseCard course={course} variant="active" />
+              </div>
+            ))}
+          </div>
+        ) : viewMode === "list" ? (
+           <div className="flex flex-col gap-4">
+              {activeCourses.map((course, index) => (
+                <div 
+                  key={course.id}
+                  className="transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <StudentCourseListItem course={course} variant="active" />
+                </div>
+              ))}
+           </div>
+        ) : (
+           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <StudentCourseDataTable courses={activeCourses} variant="active" />
+           </div>
+        )}
       </div>
+
 
       {/* ── Completed Courses ── */}
       {completedCourses.length > 0 && (
-        <div className="mt-10 pt-8 border-t border-border">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Completed Courses ({completedCourses.length})</h2>
-          
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {completedCourses.map((course) => (
-              <Link
-              key={course.id}
-              prefetch={false}
-              href={`/student/courses/${course.id}`}
-              className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
-              aria-label={`View completed course: ${course.name}`}
-            >
-                <Card className="h-full border border-border shadow-none rounded-md bg-card flex flex-col overflow-hidden hover:border-primary/50 transition-all group">
-                  
-                  {/* Header */}
-                  <div className="relative h-32 w-full bg-muted border-b border-border overflow-hidden">
-                    <Image 
-                    src={course.thumbnail} 
-                    alt={`Completed course thumbnail for ${course.name}`} 
-                    fill 
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover opacity-60 group-hover:opacity-100 transition-all duration-500 scale-105 group-hover:scale-100" 
-                  />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                    
-                    <div className="absolute top-4 left-4">
-                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 rounded-sm bg-background border border-border text-foreground">
-                        {course.code}
-                      </span>
-                    </div>
-
-                    <div className="absolute -bottom-6 right-6 bg-card rounded-full p-1 border border-border z-10 shadow-none">
-                      <CircularProgress
-                        value={100}
-                        size={42}
-                        strokeWidth={4}
-                        className="bg-card shrink-0"
-                        labelClassName="text-[10px] font-bold text-green-600"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Body */}
-                  <div className="p-6 pt-10 flex flex-col flex-1 bg-card">
-                    <h4 className="font-bold text-base leading-snug group-hover:text-primary transition-colors mb-4 line-clamp-2 text-foreground">
-                      {course.name}
-                    </h4>
-
-                    <div className="flex items-center gap-3 mb-6 bg-muted/20 p-2.5 rounded-md border border-border/50">
-                      <Avatar className="h-8 w-8 border border-border shadow-none">
-                        <AvatarImage src={course.instructor_avatar} />
-                        <AvatarFallback className="text-[9px] bg-primary/10 text-primary font-bold">
-                          {course.instructor.split(" ").map((n) => n[0]).join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-bold text-foreground truncate uppercase tracking-wider">{course.instructor}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-tight">{course.credits} Academic Credits</p>
-                      </div>
-                    </div>
-
-                    <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
-                      <div>
-                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 text-center">
-                          Final Result
-                        </p>
-                        <p className="text-xl font-black text-primary leading-none text-center">
-                          {course.grade}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">
-                        Syllabus & Details
-                        <ArrowRight className="h-3 w-3" />
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+        <div className="mt-10 pt-8 border-t border-border space-y-6">
+          <div className="flex items-center justify-between">
+             <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
+              <Award className="h-5 w-5 text-green-600" />
+              Completed Courses
+              <span className="ml-1 text-sm font-normal text-muted-foreground">
+                ({completedCourses.length})
+              </span>
+            </h2>
           </div>
+          
+          {viewMode === "grid" ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {completedCourses.map((course, index) => (
+                 <div 
+                    key={course.id}
+                    className="transition-all duration-300"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <StudentCourseCard course={course} variant="completed" />
+                  </div>
+              ))}
+            </div>
+          ) : viewMode === "list" ? (
+            <div className="flex flex-col gap-4">
+              {completedCourses.map((course, index) => (
+                 <div 
+                    key={course.id}
+                    className="transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <StudentCourseListItem course={course} variant="completed" />
+                  </div>
+              ))}
+            </div>
+          ) : (
+             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <StudentCourseDataTable courses={completedCourses} variant="completed" />
+             </div>
+          )}
         </div>
       )}
     </div>

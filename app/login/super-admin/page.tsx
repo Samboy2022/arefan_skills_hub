@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+import { LoginImageSlider } from '@/components/ui/login-image-slider';
 
 interface LoginFormData {
   email: string;
@@ -84,178 +86,137 @@ export default function SuperAdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 py-12 relative">
-        {/* Watermark Icon */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.02] dark:opacity-[0.03]">
-          <Shield className="w-[500px] h-[500px]" strokeWidth={0.5} />
-        </div>
-
-        <div className="max-w-md mx-auto w-full relative z-10">
-          {/* Logo & Title */}
-          <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 mb-4">
-              <Shield className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-3xl font-bold mb-2">Super Admin</h1>
-            <p className="text-muted-foreground">Sign in to manage your platform</p>
-          </div>
-
-          {/* Demo Credentials */}
-          <div className="mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
-            <div className="flex items-start gap-2">
-              <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-primary mb-1">Demo Account Ready</p>
-                <p className="text-xs text-muted-foreground">Credentials are pre-filled. Click "Sign In" to continue.</p>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8">
+      <div className="w-full max-w-6xl">
+        <div className="flex flex-col lg:flex-row gap-6 lg:h-[700px] items-stretch">
+          
+          {/* Left Column - Form Card */}
+          <div className="w-full lg:w-1/2 flex-1 relative">
+            <Card className="p-8 md:p-12 bg-card border-border shadow-sm w-full h-full flex flex-col justify-center">
+              
+              {/* Logo & Title Inside Card */}
+              <div className="space-y-3 mb-10 text-center md:text-left flex flex-col items-center md:items-start">
+                <img src="/fnskillslogo11W.png" alt="FN Skills Logo" className="h-12 w-auto dark:hidden" />
+                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-12 w-auto hidden dark:block" />
+                <p className="text-muted-foreground font-medium">Sign in to manage your platform</p>
               </div>
-            </div>
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email Address
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="admin@fnskills.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  className={`pl-10 h-11 ${errors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
-                  <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                  {errors.email}
-                </p>
-              )}
-            </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground mb-6">Super Admin</h2>
+                </div>
 
-            {/* Password Field */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleInputChange}
+                {/* Email Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-foreground text-sm font-medium">
+                    Email Address
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="admin@fnskills.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      disabled={isLoading}
+                      className="pl-10 h-11 bg-background border-input text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
+                </div>
+
+                {/* Password Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-foreground text-sm font-medium">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      disabled={isLoading}
+                      className="pl-10 pr-10 h-11 bg-background border-input text-foreground placeholder:text-muted-foreground"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                      disabled={isLoading}
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
+                </div>
+
+                {/* Remember Me & Forgot Password */}
+                <div className="flex items-center justify-between pt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="rememberMe"
+                      checked={formData.rememberMe}
+                      onChange={handleInputChange}
+                      disabled={isLoading}
+                      className="w-4 h-4 rounded border-input bg-background"
+                    />
+                    <span className="text-sm text-muted-foreground">Remember me</span>
+                  </label>
+                  <a href="#" className="text-sm text-primary hover:underline">
+                    Forgot password?
+                  </a>
+                </div>
+
+                {/* Error Message */}
+                {errors.submit && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-destructive mt-1.5 flex-shrink-0" />
+                    <p className="text-sm text-destructive">{errors.submit}</p>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
                   disabled={isLoading}
-                  className={`pl-10 pr-11 h-11 ${errors.password ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg flex items-center justify-center gap-2 mt-4"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                      Signing in...
+                    </>
                   ) : (
-                    <Eye className="w-4 h-4" />
+                    <>
+                      Sign In <ArrowRight className="w-4 h-4" />
+                    </>
                   )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
-                  <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                  {errors.password}
-                </p>
-              )}
-            </div>
+                </Button>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 group">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                  className="w-4 h-4 rounded border-input transition-colors"
-                />
-                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">Remember me</span>
-              </label>
-              <a href="#" className="text-sm text-primary hover:underline transition-colors">
-                Forgot password?
-              </a>
-            </div>
-
-            {/* Error Message */}
-            {errors.submit && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-start gap-2">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-destructive mt-1.5 flex-shrink-0" />
-                <p className="text-sm text-destructive">{errors.submit}</p>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-11 text-base font-medium mt-6"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Signing in...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  Sign In
-                  <ArrowRight className="w-4 h-4" />
-                </span>
-              )}
-            </Button>
-          </form>
-
-          {/* Support Link */}
-          <div className="mt-6 pt-6 border-t text-center">
-            <p className="text-xs text-muted-foreground">
-              Need help? <a href="#" className="text-primary hover:underline font-medium transition-colors">Contact support</a>
-            </p>
+                {/* Demo Credentials */}
+                <div 
+                  onClick={() => setFormData({ ...formData, email: 'admin@fnskills.com', password: 'admin123' })}
+                  className="bg-muted/50 border border-border rounded-lg p-3 mt-6 text-xs text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
+                >
+                  <p className="font-semibold text-foreground mb-1">Demo Credentials (Click to fill):</p>
+                  <p>Email: admin@fnskills.com</p>
+                  <p>Password: admin123</p>
+                </div>
+              </form>
+            </Card>
           </div>
-        </div>
-      </div>
 
-      {/* Right Side - Branding */}
-      <div className="hidden lg:flex w-1/2 bg-primary flex-col justify-center items-center px-12 py-12 relative overflow-hidden">
-        {/* Watermark Icon */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
-          <Shield className="w-[600px] h-[600px]" strokeWidth={0.5} />
-        </div>
-
-        {/* Subtle Background Decoration */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl" />
-        </div>
-
-        <div className="relative z-10 text-primary-foreground text-center max-w-md">
-          <Shield className="w-20 h-20 mx-auto mb-6 opacity-90" />
-          <h2 className="text-4xl font-bold mb-4">Platform Administration</h2>
-          <p className="text-primary-foreground/80 text-lg">
-            Manage your entire LMS platform with powerful tools and comprehensive insights
-          </p>
+          {/* Right Column - Image Slider */}
+          <div className="hidden lg:block lg:w-1/2 flex-1 h-full min-h-[500px]">
+             <LoginImageSlider />
+          </div>
         </div>
       </div>
     </div>

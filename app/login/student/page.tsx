@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { LoginImageSlider } from '@/components/ui/login-image-slider';
 
 interface LoginFormData {
   email: string;
@@ -19,28 +20,7 @@ interface FormErrors {
   password?: string;
 }
 
-const FEATURES = [
-  {
-    icon: <BookOpen className="w-5 h-5 text-purple-400" />,
-    title: 'Interactive Learning',
-    description: 'Access courses, lessons, and learning materials anytime',
-  },
-  {
-    icon: <Zap className="w-5 h-5 text-indigo-400" />,
-    title: 'Assignments & Quizzes',
-    description: 'Complete assignments and test your knowledge with quizzes',
-  },
-  {
-    icon: <Award className="w-5 h-5 text-purple-500" />,
-    title: 'Track Grades',
-    description: 'Monitor your progress and view detailed grade reports',
-  },
-  {
-    icon: <TrendingUp className="w-5 h-5 text-violet-400" />,
-    title: 'Performance Insights',
-    description: 'Get detailed analytics on your academic performance',
-  },
-];
+
 
 export default function StudentLoginPage() {
   const router = useRouter();
@@ -94,36 +74,33 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          {/* Left Column - Login Form */}
-          <div className="space-y-8">
-            {/* Logo & Title */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-white" />
-                </div>
-                <h1 className="text-2xl font-bold text-white">FN Skills</h1>
+        <div className="flex flex-col lg:flex-row gap-6 lg:h-[700px] items-stretch">
+          
+          {/* Left Column - Form Card */}
+          <div className="w-full lg:w-1/2 flex-1 relative">
+            <Card className="p-8 md:p-12 bg-card border-border shadow-sm w-full h-full flex flex-col justify-center">
+              
+              {/* Logo & Title Inside Card */}
+              <div className="space-y-3 mb-10 text-center md:text-left flex flex-col items-center md:items-start">
+                <img src="/fnskillslogo11W.png" alt="FN Skills Logo" className="h-12 w-auto dark:hidden" />
+                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-12 w-auto hidden dark:block" />
+                <p className="text-muted-foreground font-medium">Student Learning Platform</p>
               </div>
-              <p className="text-slate-400">Student Learning Platform</p>
-            </div>
 
-            {/* Form Card */}
-            <Card className="p-8 bg-slate-800/50 border-slate-700">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-semibold text-white mb-6">Student Login</h2>
+                  <h2 className="text-2xl font-bold text-foreground mb-6">Student Login</h2>
                 </div>
 
                 {/* Email Input */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-200 text-sm font-medium">
+                  <Label htmlFor="email" className="text-foreground text-sm font-medium">
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+                    <Mail className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
@@ -134,19 +111,19 @@ export default function StudentLoginPage() {
                         setErrors({ ...errors, email: '' });
                       }}
                       disabled={isLoading}
-                      className="pl-10 bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                      className="pl-10 h-11 bg-background border-input text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
-                  {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+                  {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
                 </div>
 
                 {/* Password Input */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-slate-200 text-sm font-medium">
+                  <Label htmlFor="password" className="text-foreground text-sm font-medium">
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
+                    <Lock className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
@@ -157,33 +134,33 @@ export default function StudentLoginPage() {
                         setErrors({ ...errors, password: '' });
                       }}
                       disabled={isLoading}
-                      className="pl-10 pr-10 bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                      className="pl-10 pr-10 h-11 bg-background border-input text-foreground placeholder:text-muted-foreground"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-300"
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
                       disabled={isLoading}
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+                  {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
                 </div>
 
                 {/* Remember Me & Forgot Password */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between pt-2">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={formData.rememberMe}
                       onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
                       disabled={isLoading}
-                      className="w-4 h-4 rounded border-slate-600 bg-slate-700"
+                      className="w-4 h-4 rounded border-input bg-background"
                     />
-                    <span className="text-sm text-slate-300">Remember me</span>
+                    <span className="text-sm text-muted-foreground">Remember me</span>
                   </label>
-                  <a href="#" className="text-sm text-purple-400 hover:text-purple-300">
+                  <a href="#" className="text-sm text-primary hover:underline">
                     Forgot password?
                   </a>
                 </div>
@@ -192,11 +169,11 @@ export default function StudentLoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2"
+                  className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg flex items-center justify-center gap-2 mt-4"
                 >
                   {isLoading ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                       Signing in...
                     </>
                   ) : (
@@ -207,8 +184,11 @@ export default function StudentLoginPage() {
                 </Button>
 
                 {/* Demo Credentials */}
-                <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-3 text-xs text-slate-300">
-                  <p className="font-semibold text-slate-200 mb-2">Demo Credentials:</p>
+                <div 
+                  onClick={() => setFormData({ ...formData, email: 'student@fnskills.com', password: 'student123' })}
+                  className="bg-muted/50 border border-border rounded-lg p-3 mt-6 text-xs text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
+                >
+                  <p className="font-semibold text-foreground mb-1">Demo Credentials (Click to fill):</p>
                   <p>Email: student@fnskills.com</p>
                   <p>Password: student123</p>
                 </div>
@@ -216,28 +196,9 @@ export default function StudentLoginPage() {
             </Card>
           </div>
 
-          {/* Right Column - Features (Hidden on Mobile) */}
-          <div className="hidden lg:block space-y-6">
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Your Learning Journey</h2>
-              <p className="text-slate-400">Achieve your academic goals with us</p>
-            </div>
-
-            <div className="space-y-4">
-              {FEATURES.map((feature, index) => (
-                <div key={index} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 hover:border-purple-500/50 transition-colors">
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 bg-slate-700/50 rounded-lg flex items-center justify-center">
-                      {feature.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white mb-1">{feature.title}</h3>
-                      <p className="text-sm text-slate-400">{feature.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* Right Column - Image Slider */}
+          <div className="hidden lg:block lg:w-1/2 flex-1 h-full min-h-[500px]">
+             <LoginImageSlider />
           </div>
         </div>
       </div>

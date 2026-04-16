@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
 import { MOCK_INSTRUCTOR_COURSES } from "@/lib/instructor-mock-data";
 import { InstructorCourseCard } from "@/components/instructor/instructor-course-card";
+import { CourseListItem } from "@/components/instructor/course-list-item";
+import { CourseDataTable } from "@/components/instructor/course-data-table";
+import { CourseViewToolbar, ViewMode, SortOption } from "@/components/instructor/course-view-toolbar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { Course } from "@/lib/instructor-types";
 
@@ -26,15 +29,56 @@ function enrollmentPct(course: Course) {
 
 export default function MyCoursesPage() {
   const [courses, setCourses] = useState<Course[]>(MOCK_INSTRUCTOR_COURSES);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const activeCourses = useMemo(
-    () => courses.filter((c) => c.status === "active"),
-    [courses]
-  );
-  const archivedCourses = useMemo(
-    () => courses.filter((c) => c.status === "archived"),
-    [courses]
-  );
+  useEffect(() => {
+    const saved = localStorage.getItem("instructor-course-view");
+    if (saved === "list" || saved === "table" || saved === "grid") {
+      setViewMode(saved as ViewMode);
+    }
+  }, []);
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    localStorage.setItem("instructor-course-view", mode);
+  };
+
+  const activeCourses = useMemo(() => {
+    let filtered = courses.filter((c) => c.status === "active");
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(c => 
+        c.title.toLowerCase().includes(q) || 
+        c.code.toLowerCase().includes(q)
+      );
+    }
+
+    return filtered.sort((a, b) => {
+      if (sortBy === "title") return a.title.localeCompare(b.title);
+      if (sortBy === "code") return a.code.localeCompare(b.code);
+      if (sortBy === "enrollment") {
+        const pctA = a.maxStudents ? a.enrollmentCount / a.maxStudents : 0;
+        const pctB = b.maxStudents ? b.enrollmentCount / b.maxStudents : 0;
+        return pctB - pctA;
+      }
+      return parseInt(b.id) - parseInt(a.id); // Newest heuristic since no date
+    });
+  }, [courses, searchQuery, sortBy]);
+
+  const archivedCourses = useMemo(() => {
+    let filtered = courses.filter((c) => c.status === "archived");
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(c => 
+        c.title.toLowerCase().includes(q) || 
+        c.code.toLowerCase().includes(q)
+      );
+    }
+    return filtered;
+  }, [courses, searchQuery]);
 
   const avgEnrollmentFill =
     activeCourses.length > 0
@@ -66,9 +110,16 @@ export default function MyCoursesPage() {
         title="My Courses"
         description="Manage and organize your teaching courses"
         action={
-          <Link href="/instructor/courses/create">
-            <Button className="transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">Create New Course</Button>
-          </Link>
+          <div className="flex items-center gap-3">
+             <Link href="/instructor/course-groups">
+              <Button variant="outline" className="transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] border-primary/20 text-primary hover:bg-primary/5">
+                Manage Course Groups
+              </Button>
+            </Link>
+            <Link href="/instructor/courses/create">
+              <Button className="transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">Create New Course</Button>
+            </Link>
+          </div>
         }
       />
 
@@ -139,26 +190,34 @@ export default function MyCoursesPage() {
 
       {/* Active Courses Section */}
       <section className="space-y-6">
-        <div className="flex items-center justify-between border-b border-border pb-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-            <BookOpen className="h-5 w-5 text-primary" />
-            Active Courses
-            <span className="ml-1 text-sm font-normal text-muted-foreground">
-              ({activeCourses.length})
-            </span>
-          </h2>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
+              <BookOpen className="h-5 w-5 text-primary" />
+              Active Courses
+              <span className="ml-1 text-sm font-normal text-muted-foreground">
+                ({activeCourses.length})
+              </span>
+            </h2>
+          </div>
+
+          <CourseViewToolbar 
+            viewMode={viewMode}
+            onViewModeChange={handleViewModeChange}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+          />
         </div>
 
         {activeCourses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-border rounded-xl bg-muted/30">
             <BookOpen className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No active courses yet</h3>
-            <p className="text-sm text-muted-foreground mb-6 max-w-md">Create your first course to start teaching students and managing your class content.</p>
-            <Link href="/instructor/courses/create">
-              <Button>Create Your First Course</Button>
-            </Link>
+            <h3 className="text-lg font-medium text-foreground mb-2">No active courses found</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-md">Try adjusting your search criteria or create a new course.</p>
           </div>
-        ) : (
+        ) : viewMode === "grid" ? (
           <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
             {activeCourses.map((course, index) => (
               <div 
@@ -173,6 +232,22 @@ export default function MyCoursesPage() {
                 />
               </div>
             ))}
+          </div>
+        ) : viewMode === "list" ? (
+          <div className="flex flex-col gap-4">
+            {activeCourses.map((course, index) => (
+               <div 
+                key={course.id}
+                className="transition-all duration-300 animate-in fade-in slide-in-from-bottom-2" 
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                 <CourseListItem course={course} variant="active" onDelete={handleDelete} />
+               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <CourseDataTable courses={activeCourses} variant="active" onDelete={handleDelete} />
           </div>
         )}
       </section>
@@ -190,21 +265,33 @@ export default function MyCoursesPage() {
             </h2>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-            {archivedCourses.map((course, index) => (
-              <div 
-                key={course.id} 
-                className="transition-all duration-300 opacity-90"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <InstructorCourseCard
-                  course={course}
-                  variant="archived"
-                  onDelete={handleDelete}
-                />
-              </div>
-            ))}
-          </div>
+          {viewMode === "grid" ? (
+             <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              {archivedCourses.map((course, index) => (
+                <div 
+                  key={course.id} 
+                  className="transition-all duration-300 opacity-90"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <InstructorCourseCard course={course} variant="archived" onDelete={handleDelete} />
+                </div>
+              ))}
+            </div>
+          ) : viewMode === "list" ? (
+            <div className="flex flex-col gap-4">
+              {archivedCourses.map((course, index) => (
+                <div 
+                  key={course.id} 
+                  className="transition-all duration-300 opacity-90"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <CourseListItem course={course} variant="archived" onDelete={handleDelete} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <CourseDataTable courses={archivedCourses} variant="archived" onDelete={handleDelete} />
+          )}
         </section>
       )}
     </div>

@@ -576,40 +576,179 @@ export const MOCK_DISCUSSIONS: DiscussionThread[] = [
   },
 ];
 
+// Helper: build a Date at today+offsetDays at a given hour:minute
+const _today = new Date();
+const _d = (offsetDays: number, hour: number, minute = 0) => {
+  const dt = new Date(_today);
+  dt.setDate(dt.getDate() + offsetDays);
+  dt.setHours(hour, minute, 0, 0);
+  return dt;
+};
+
 export const MOCK_SCHEDULE_EVENTS: ScheduleEvent[] = [
   {
     id: "event-1",
     courseId: "course-1",
-    title: "Lecture: Introduction to Variables",
+    title: "CS101 — Variables & Control Flow Lecture",
     type: "lecture",
-    startTime: new Date("2024-02-22 10:00"),
-    endTime: new Date("2024-02-22 11:30"),
-    location: "Room 101",
+    startTime: _d(0, 10),
+    endTime: _d(0, 11, 30),
+    location: "Room 101, Main Building",
+    description: "Introduction to variables, data types and conditional statements.",
   },
   {
     id: "event-2",
     courseId: "course-1",
-    title: "Assignment 1 Due",
+    title: "Assignment 1 Due — Hello World Program",
     type: "deadline",
-    startTime: new Date("2024-02-15 23:59"),
-    endTime: new Date("2024-02-15 23:59"),
+    startTime: _d(2, 23, 59),
+    endTime: _d(2, 23, 59),
+    description: "Deadline for submission of Assignment 1 via the course portal.",
   },
   {
     id: "event-3",
     courseId: "course-1",
-    title: "Midterm Exam",
+    title: "CS101 Midterm Exam",
     type: "exam",
-    startTime: new Date("2024-03-21 14:00"),
-    endTime: new Date("2024-03-21 16:00"),
-    location: "Exam Hall",
+    startTime: _d(5, 14),
+    endTime: _d(5, 16),
+    location: "Exam Hall A",
+    description: "Covers weeks 1–6: variables, loops, functions, and basic data structures.",
   },
   {
     id: "event-4",
     courseId: "course-1",
-    title: "Office Hours",
+    title: "Office Hours — Open Q&A",
     type: "office-hours",
-    startTime: new Date("2024-02-21 16:00"),
-    endTime: new Date("2024-02-21 18:00"),
-    location: "Office 304",
+    startTime: _d(1, 16),
+    endTime: _d(1, 18),
+    location: "Office 304, Faculty Block",
+    description: "Drop-in for any questions about coursework or assignments.",
+  },
+  {
+    id: "event-5",
+    courseId: "course-2",
+    title: "CS201 — Binary Trees Lecture",
+    type: "lecture",
+    startTime: _d(1, 9),
+    endTime: _d(1, 10, 30),
+    location: "Room 202, Engineering Block",
+    description: "Deep dive into binary search trees and AVL trees.",
+  },
+  {
+    id: "event-6",
+    courseId: "course-2",
+    title: "Linked List Assignment Due",
+    type: "deadline",
+    startTime: _d(3, 23, 59),
+    endTime: _d(3, 23, 59),
+    description: "Submission deadline for doubly linked list implementation.",
+  },
+  {
+    id: "event-7",
+    courseId: "course-3",
+    title: "CS301 — React & Component Architecture",
+    type: "lecture",
+    startTime: _d(2, 11),
+    endTime: _d(2, 12, 30),
+    location: "Lab 1, CS Department",
+    meetingLink: "https://meet.google.com/abc-def-xyz",
+    description: "Hands-on session on React hooks and state management.",
+  },
+  {
+    id: "event-8",
+    courseId: "course-1",
+    title: "Faculty Dept. Meeting",
+    type: "meeting",
+    startTime: _d(4, 13),
+    endTime: _d(4, 14),
+    location: "Conference Room B",
+    description: "Monthly faculty meeting to discuss curriculum updates.",
+  },
+  {
+    id: "event-9",
+    courseId: "course-3",
+    title: "Web Dev Final Project Deadline",
+    type: "deadline",
+    startTime: _d(7, 23, 59),
+    endTime: _d(7, 23, 59),
+    description: "Final project submission — full-stack web app with React and REST API.",
+  },
+  {
+    id: "event-10",
+    courseId: "course-2",
+    title: "CS201 Office Hours",
+    type: "office-hours",
+    startTime: _d(6, 15),
+    endTime: _d(6, 17),
+    location: "Office 304, Faculty Block",
+    description: "Review session for upcoming binary tree exam.",
+  },
+  {
+    id: "event-11",
+    courseId: "course-1",
+    title: "CS101 — Functions & Methods",
+    type: "lecture",
+    startTime: _d(-2, 10),
+    endTime: _d(-2, 11, 30),
+    location: "Room 101, Main Building",
+    description: "Function definitions, parameters, return values and scope.",
+  },
+  {
+    id: "event-12",
+    courseId: "course-3",
+    title: "CS301 Guest Lecture — Industry Expert",
+    type: "meeting",
+    startTime: _d(10, 14),
+    endTime: _d(10, 15, 30),
+    meetingLink: "https://zoom.us/j/123456789",
+    description: "Guest lecture by a senior engineer on real-world web development.",
   },
 ];
+
+// ── Course Groups ─────────────────────────────────────────────────────────────
+
+import { CourseGroup } from "./instructor-types";
+
+export const MOCK_COURSE_GROUPS: CourseGroup[] = [
+  {
+    id: "group-1",
+    courseId: "course-1",
+    courseTitle: "Introduction to Computer Science",
+    courseCode: "CS101",
+    name: "Alpha Team",
+    description: "First project group focused on Python fundamentals.",
+    members: [
+      { studentId: "student-1", name: "Alice Johnson", email: "alice.johnson@school.edu", avatar: "/placeholder.svg?height=40&width=40" },
+      { studentId: "student-2", name: "Bob Smith", email: "bob.smith@school.edu", avatar: "/placeholder.svg?height=40&width=40" },
+    ],
+    createdAt: new Date("2024-02-01"),
+  },
+  {
+    id: "group-2",
+    courseId: "course-1",
+    courseTitle: "Introduction to Computer Science",
+    courseCode: "CS101",
+    name: "Beta Team",
+    description: "Second project group exploring control flow exercises.",
+    members: [
+      { studentId: "student-3", name: "Carol Davis", email: "carol.davis@school.edu", avatar: "/placeholder.svg?height=40&width=40" },
+      { studentId: "student-5", name: "Eve Martinez", email: "eve.martinez@school.edu", avatar: "/placeholder.svg?height=40&width=40" },
+    ],
+    createdAt: new Date("2024-02-01"),
+  },
+  {
+    id: "group-3",
+    courseId: "course-2",
+    courseTitle: "Data Structures",
+    courseCode: "CS201",
+    name: "DS Study Group",
+    description: "Collaborative study group covering trees and linked lists.",
+    members: [
+      { studentId: "student-1", name: "Alice Johnson", email: "alice.johnson@school.edu", avatar: "/placeholder.svg?height=40&width=40" },
+      { studentId: "student-4", name: "David Wilson", email: "david.wilson@school.edu", avatar: "/placeholder.svg?height=40&width=40" },
+    ],
+    createdAt: new Date("2024-03-10"),
+  },
+];
+

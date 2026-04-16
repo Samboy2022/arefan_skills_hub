@@ -184,3 +184,24 @@ export interface InstructorProfile {
   profileImage?: string;
   contactPhone?: string;
 }
+
+// ── Course Grouping ──────────────────────────────────────────────────────────
+
+export interface CourseGroupMember {
+  studentId: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface CourseGroup {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  courseCode: string;
+  name: string;
+  description: string;
+  members: CourseGroupMember[];
+  createdAt: Date;
+}
+

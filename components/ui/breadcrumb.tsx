@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface BreadcrumbItem {
@@ -18,29 +18,37 @@ interface BreadcrumbProps {
 }
 
 export function Breadcrumb({ items, className, showHome = true }: BreadcrumbProps) {
-  const allItems = showHome 
+  const allItems = showHome
     ? [{ label: "Dashboard", href: "/student" }, ...items]
     : items;
 
   return (
-    <nav className={cn("flex items-center space-x-1 text-sm text-muted-foreground", className)}>
+    <nav
+      aria-label="Breadcrumb"
+      className={cn("flex items-center flex-wrap gap-y-1 text-sm text-muted-foreground", className)}
+    >
       {allItems.map((item, index) => {
         const isLast = index === allItems.length - 1;
 
         return (
           <React.Fragment key={index}>
             {index > 0 && (
-              <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
+              <ChevronRight className="h-3.5 w-3.5 mx-1 text-muted-foreground/50 shrink-0" />
             )}
-            
+
             {isLast ? (
-              <span className="text-foreground font-medium" onClick={item.onClick} style={{ cursor: item.onClick ? 'pointer' : 'default' }}>
+              <span
+                className="text-foreground font-medium truncate max-w-[200px]"
+                style={{ cursor: item.onClick ? "pointer" : "default" }}
+                onClick={item.onClick}
+                aria-current="page"
+              >
                 {item.label}
               </span>
             ) : item.href ? (
               <Link
                 href={item.href}
-                className="hover:text-primary transition-colors"
+                className="hover:text-primary transition-colors truncate max-w-[160px] shrink-0"
                 onClick={item.onClick}
               >
                 {item.label}
@@ -48,15 +56,13 @@ export function Breadcrumb({ items, className, showHome = true }: BreadcrumbProp
             ) : item.onClick ? (
               <button
                 type="button"
-                className="hover:text-primary transition-colors cursor-pointer"
+                className="hover:text-primary transition-colors cursor-pointer truncate max-w-[160px]"
                 onClick={item.onClick}
               >
                 {item.label}
               </button>
             ) : (
-              <span>
-                {item.label}
-              </span>
+              <span className="truncate max-w-[160px]">{item.label}</span>
             )}
           </React.Fragment>
         );

@@ -1,9 +1,15 @@
 "use client";
 
-import { Bell, Plus, Search, Menu, Moon, Sun } from "lucide-react";
+import { Bell, Plus, Search, Menu, Moon, Sun, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +24,16 @@ export function InstructorNavbar() {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Mock user data - in real app this would come from auth context
+  const user = {
+    name: "Dr. Jane Smith",
+    email: "jane.smith@school.edu",
+    role: "Instructor",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
+    initials: "JS"
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -39,35 +55,17 @@ export function InstructorNavbar() {
           </Button>
           
           <div className="flex-1 flex items-center gap-2 bg-muted rounded-lg px-3 py-2 max-w-md">
-            <Search className="h-4 w-4 text-muted-foreground" />
+            <Search className="h-4 w-4 text-muted-foreground ml-1" />
             <input
               type="text"
               placeholder="Search courses, students, assignments..."
-              className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground"
+              className="bg-transparent text-[13px] outline-none w-full placeholder:text-muted-foreground/70"
             />
           </div>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2">
-          {/* Quick Create Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="ghost" className="gap-2">
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Create</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Quick Create</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>New Lesson</DropdownMenuItem>
-              <DropdownMenuItem>New Assignment</DropdownMenuItem>
-              <DropdownMenuItem>New Quiz</DropdownMenuItem>
-              <DropdownMenuItem>New Announcement</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+        <div className="flex items-center gap-3">
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -101,27 +99,8 @@ export function InstructorNavbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Course Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="outline" className="gap-2">
-                <span className="hidden sm:inline">CS101</span>
-                <span className="text-xs">▼</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Switch Course</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>CS101 - Intro to CS (45 students)</DropdownMenuItem>
-              <DropdownMenuItem>CS201 - Data Structures (38 students)</DropdownMenuItem>
-              <DropdownMenuItem>CS301 - Web Dev (52 students)</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>All Courses</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           {/* Theme Toggle */}
-          {mounted ? (
+          {mounted && (
             <Button
               variant="ghost"
               size="icon"
@@ -129,36 +108,49 @@ export function InstructorNavbar() {
               className="h-9 w-9"
             >
               {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
+                <Sun className="h-5 w-5" />
               ) : (
-                <Moon className="h-4 w-4" />
+                <Moon className="h-5 w-5" />
               )}
-            </Button>
-          ) : (
-            <Button variant="ghost" size="icon" className="h-9 w-9 opacity-0 pointer-events-none">
-              <span className="h-4 w-4" />
             </Button>
           )}
 
-          {/* Profile Dropdown */}
-          <DropdownMenu>
+          {/* Profile Menu */}
+          <DropdownMenu open={isProfileOpen} onOpenChange={setIsProfileOpen}>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="ghost" className="rounded-full h-9 w-9 p-0">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white">
-                  JS
+              <button 
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
+                onMouseEnter={() => setIsProfileOpen(true)}
+                onMouseLeave={() => setIsProfileOpen(false)}
+              >
+                <Avatar className="h-10 w-10 border border-border">
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-sm font-bold">
+                    {user.initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="hidden sm:block text-left">
+                  <p className="text-sm font-medium text-foreground">{user.name}</p>
+                  <p className="text-xs text-muted-foreground">{user.role}</p>
                 </div>
-              </Button>
+              </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Dr. Jane Smith</DropdownMenuLabel>
-              <DropdownMenuLabel className="font-normal text-xs text-muted-foreground">
-                jane.smith@school.edu
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-              <DropdownMenuItem>Preferences</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuContent 
+              align="end" 
+              className="w-48 mt-2"
+              onMouseEnter={() => setIsProfileOpen(true)}
+              onMouseLeave={() => setIsProfileOpen(false)}
+            >
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/instructor/profile">
+                  <User className="h-4 w-4 mr-2" />
+                  My Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950">
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
