@@ -2,10 +2,10 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Check, Search, X } from "lucide-react";
+import { ArrowLeft, Check, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MOCK_INSTRUCTOR_COURSES, MOCK_STUDENTS } from "@/lib/instructor-mock-data";
 
-export default function CreateGroupPage() {
+function CreateGroupContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const courseId = searchParams.get("courseId") ?? "";
@@ -221,5 +221,13 @@ export default function CreateGroupPage() {
         </form>
       )}
     </div>
+  );
+}
+
+export default function CreateGroupPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-32 text-muted-foreground text-sm">Loading…</div>}>
+      <CreateGroupContent />
+    </Suspense>
   );
 }

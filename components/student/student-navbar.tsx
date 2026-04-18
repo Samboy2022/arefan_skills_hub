@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Bell, Settings, LogOut, User, Menu, Mail, ChevronDown, Calendar, BookOpen, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,7 @@ import {
 import { useSidebar } from "@/components/student/sidebar-context";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-export function StudentNavbar() {
+function StudentNavbarInner() {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -278,5 +278,17 @@ export function StudentNavbar() {
         </div>
       </div>
     </nav>
+  );
+}
+
+export function StudentNavbar() {
+  return (
+    <Suspense fallback={
+      <nav className="sticky top-0 z-30 border-b border-border bg-background">
+        <div className="flex h-16 items-center justify-between px-6" />
+      </nav>
+    }>
+      <StudentNavbarInner />
+    </Suspense>
   );
 }

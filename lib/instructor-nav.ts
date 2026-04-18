@@ -13,6 +13,7 @@ import {
   ScheduleIcon,
   ResourcesIcon,
   SettingsIcon,
+  VideoIcon,
 } from "@/components/shared/colored-icons";
 
 export type InstructorNavItem = {
@@ -105,6 +106,12 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
         href: "/instructor/schedule",
         icon: ScheduleIcon,
         tooltip: "View and manage schedule",
+      },
+      {
+        label: "Live Classes",
+        href: "/instructor/live-classes",
+        icon: VideoIcon,
+        tooltip: "Host live Zoom sessions",
       },
     ],
   },

@@ -752,3 +752,116 @@ export const MOCK_COURSE_GROUPS: CourseGroup[] = [
   },
 ];
 
+// ── Live Classes Mock Data ─────────────────────────────────────────────────────
+
+const _mnow = new Date();
+const _md = (daysOffset: number, hour: number) => {
+  const d = new Date(_mnow);
+  d.setDate(d.getDate() + daysOffset);
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+};
+
+export type MeetingStatus = "upcoming" | "live" | "ended";
+
+export interface AttendanceRecord {
+  student_id: string;
+  student_name: string;
+  avatar_url: string;
+  joined_at: string;
+  left_at: string;
+  minutes_present: number;
+  percentage: number;
+  status: "present" | "partial" | "absent" | "did_not_join";
+}
+
+export interface AttendanceSettings {
+  tracking_enabled: boolean;
+  threshold_percentage: number;
+  threshold_minutes: number;
+  grace_period_minutes: number;
+  allow_partial_credit: boolean;
+  notify_students: boolean;
+}
+
+export interface InstructorMeeting {
+  id: string;
+  name: string;
+  description: string;
+  creator: { id: string; name: string; avatar_url: string };
+  attendees: { id: string; name: string; avatar_url: string }[];
+  start_time: string;
+  duration: number;
+  password: string;
+  status: MeetingStatus;
+  attendance: AttendanceSettings;
+  zoom: { meeting_id: string };
+  attendance_report?: {
+    summary: { present: number; partial: number; absent: number; did_not_join: number };
+    records: AttendanceRecord[];
+  };
+}
+
+export const MOCK_MEETINGS: InstructorMeeting[] = [
+  {
+    id: "m1",
+    name: "Introduction to React Hooks",
+    description: "A hands-on session covering useState, useEffect, and custom hooks. We will build a small project together and explore common hook patterns used in production React apps.",
+    creator: { id: "3", name: "Dr. Sarah Johnson", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
+    attendees: [
+      { id: "12", name: "Alice Smith", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice" },
+      { id: "34", name: "Bob Jones", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob" },
+      { id: "56", name: "Carol White", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carol" },
+      { id: "78", name: "Dan Brown", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dan" },
+    ],
+    start_time: _md(2, 10),
+    duration: 60,
+    password: "react123",
+    status: "upcoming",
+    attendance: { tracking_enabled: true, threshold_percentage: 80, threshold_minutes: 48, grace_period_minutes: 5, allow_partial_credit: false, notify_students: true },
+    zoom: { meeting_id: "84123456789" },
+  },
+  {
+    id: "m2",
+    name: "Advanced CSS Animations",
+    description: "Deep dive into keyframes, transitions, and the Web Animations API. Bring your creativity — we will animate real UI components live during the session.",
+    creator: { id: "3", name: "Dr. Sarah Johnson", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
+    attendees: [
+      { id: "12", name: "Alice Smith", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice" },
+      { id: "34", name: "Bob Jones", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob" },
+    ],
+    start_time: _md(5, 14),
+    duration: 90,
+    password: "css456",
+    status: "upcoming",
+    attendance: { tracking_enabled: true, threshold_percentage: 80, threshold_minutes: 72, grace_period_minutes: 10, allow_partial_credit: true, notify_students: true },
+    zoom: { meeting_id: "84987654321" },
+  },
+  {
+    id: "m3",
+    name: "Node.js & Express Fundamentals",
+    description: "Building REST APIs with Node.js, Express, and MongoDB. We will cover routing, middleware, authentication, and connecting to a database.",
+    creator: { id: "3", name: "Dr. Sarah Johnson", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
+    attendees: [
+      { id: "12", name: "Alice Smith", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice" },
+      { id: "34", name: "Bob Jones", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob" },
+      { id: "56", name: "Carol White", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carol" },
+    ],
+    start_time: _md(-3, 9),
+    duration: 60,
+    password: "",
+    status: "ended",
+    attendance: { tracking_enabled: true, threshold_percentage: 80, threshold_minutes: 48, grace_period_minutes: 5, allow_partial_credit: false, notify_students: true },
+    zoom: { meeting_id: "84111222333" },
+    attendance_report: {
+      summary: { present: 2, partial: 0, absent: 1, did_not_join: 0 },
+      records: [
+        { student_id: "12", student_name: "Alice Smith", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice", joined_at: _md(-3, 9), left_at: _md(-3, 10), minutes_present: 52, percentage: 87, status: "present" },
+        { student_id: "34", student_name: "Bob Jones", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob", joined_at: _md(-3, 9), left_at: _md(-3, 9), minutes_present: 27, percentage: 45, status: "absent" },
+        { student_id: "56", student_name: "Carol White", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carol", joined_at: _md(-3, 9), left_at: _md(-3, 10), minutes_present: 55, percentage: 92, status: "present" },
+      ],
+    },
+  },
+];
+
+
