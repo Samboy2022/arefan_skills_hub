@@ -1217,3 +1217,80 @@ export const STUDENT_PROGRESS: StudentProgress[] = [
     last_activity: "2024-02-04T16:20:00",
   },
 ];
+
+// ── Live Classes Mock Data ──────────────────────────────────────────────────
+const _now = new Date();
+const _d = (daysOffset: number, hour: number) => {
+  const d = new Date(_now);
+  d.setDate(d.getDate() + daysOffset);
+  d.setHours(hour, 0, 0, 0);
+  return d.toISOString();
+};
+
+export type MeetingStatus = "upcoming" | "live" | "ended";
+export type AttendanceStatus = "pending" | "present" | "absent" | "partial";
+
+export interface StudentMeeting {
+  id: string;
+  name: string;
+  description: string;
+  creator: { id: string; name: string; avatar_url: string };
+  start_time: string;
+  duration: number; // minutes
+  status: MeetingStatus;
+  zoom: { meeting_id: string; password: string };
+  attendance: {
+    status: AttendanceStatus;
+    minutes_present: number;
+    percentage: number;
+    threshold_minutes: number;
+  };
+}
+
+export const STUDENT_MOCK_MEETINGS: StudentMeeting[] = [
+  {
+    id: "m1",
+    name: "Introduction to React Hooks",
+    description: "A hands-on session covering useState, useEffect, and custom hooks. We will build a small project together and explore common hook patterns used in production apps.",
+    creator: { id: "3", name: "Dr. Sarah Johnson", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
+    start_time: _d(1, 10),
+    duration: 60,
+    status: "upcoming",
+    zoom: { meeting_id: "84123456789", password: "abc123" },
+    attendance: { status: "pending", minutes_present: 0, percentage: 0, threshold_minutes: 48 },
+  },
+  {
+    id: "m2",
+    name: "Advanced CSS Animations",
+    description: "Deep dive into keyframes, transitions, and the Web Animations API. Bring your creativity — we will animate real UI components live during the session.",
+    creator: { id: "3", name: "Dr. Sarah Johnson", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
+    start_time: _d(-5, 14),
+    duration: 90,
+    status: "ended",
+    zoom: { meeting_id: "84987654321", password: "xyz789" },
+    attendance: { status: "present", minutes_present: 74, percentage: 82, threshold_minutes: 72 },
+  },
+  {
+    id: "m3",
+    name: "Node.js & Express Fundamentals",
+    description: "Building REST APIs with Node.js, Express, and MongoDB. We will cover routing, middleware, authentication, and connecting to a database.",
+    creator: { id: "4", name: "Prof. Michael Chen", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael" },
+    start_time: _d(-10, 9),
+    duration: 60,
+    status: "ended",
+    zoom: { meeting_id: "84111222333", password: "" },
+    attendance: { status: "absent", minutes_present: 20, percentage: 33, threshold_minutes: 48 },
+  },
+  {
+    id: "m4",
+    name: "Calculus II — Integration Techniques Review",
+    description: "A focused review session on integration by parts, trigonometric substitution, and partial fractions before the upcoming exam.",
+    creator: { id: "4", name: "Prof. Michael Chen", avatar_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael" },
+    start_time: _d(3, 15),
+    duration: 45,
+    status: "upcoming",
+    zoom: { meeting_id: "84444555666", password: "math45" },
+    attendance: { status: "pending", minutes_present: 0, percentage: 0, threshold_minutes: 36 },
+  },
+];
+

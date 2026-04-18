@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { STUDENT_NAV_ITEMS } from "@/lib/student-constants";
-import { COURSE_ANNOUNCEMENTS } from "@/lib/student-mock-data";
+import { COURSE_ANNOUNCEMENTS, STUDENT_MOCK_MEETINGS } from "@/lib/student-mock-data";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -48,9 +48,21 @@ export function StudentSidebar() {
     return pathname === href || pathname.startsWith(href + "/");
   };
 
+  // Badge for live-classes: upcoming sessions starting within 60 min
+  const liveClassesBadge = (() => {
+    const now = new Date();
+    const in60min = new Date(now.getTime() + 60 * 60 * 1000);
+    return STUDENT_MOCK_MEETINGS.filter(
+      (m) => m.status === "upcoming" && new Date(m.start_time) >= now && new Date(m.start_time) <= in60min
+    ).length;
+  })();
+
   const getItemBadge = (href: string) => {
     if (href === "/student/announcements" && unreadAnnouncementsCount > 0) {
       return unreadAnnouncementsCount;
+    }
+    if (href === "/student/live-classes" && liveClassesBadge > 0) {
+      return liveClassesBadge;
     }
     return null;
   };

@@ -10,6 +10,7 @@ import {
   DownloadIcon as Download,
   UserIcon as User,
   MessageIcon as Inbox,
+  VideoIcon,
 } from "@/components/shared/colored-icons";
 
 export const STUDENT_NAV_ITEMS = [
@@ -44,6 +45,12 @@ export const STUDENT_NAV_ITEMS = [
         href: "/student/quizzes",
         icon: Award,
         tooltip: "Tests & Assessments",
+      },
+      {
+        label: "Live Classes",
+        href: "/student/live-classes",
+        icon: VideoIcon,
+        tooltip: "Join Live Sessions",
       },
     ],
   },
