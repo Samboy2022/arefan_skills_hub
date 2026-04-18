@@ -4,6 +4,7 @@ import { Bell, Plus, Search, Menu, Moon, Sun, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Avatar,
@@ -23,6 +24,7 @@ import { useSidebar } from "./sidebar-context";
 export function InstructorNavbar() {
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -147,7 +149,10 @@ export function InstructorNavbar() {
                   My Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950">
+              <DropdownMenuItem
+                className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950"
+                onClick={() => router.push("/login/instructor")}
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </DropdownMenuItem>

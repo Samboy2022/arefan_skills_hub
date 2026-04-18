@@ -2,6 +2,7 @@
 
 import { Search, Bell, Moon, Sun, LogOut, Menu } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,6 +22,7 @@ import { useSidebar } from "./sidebar-context";
 export function TenantNavbar() {
   const { theme, setTheme } = useTheme();
   const { isCollapsed, toggleSidebar } = useSidebar();
+  const router = useRouter();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 backdrop-blur-sm px-6">
@@ -91,7 +93,10 @@ export function TenantNavbar() {
             <DropdownMenuItem>Change Password</DropdownMenuItem>
             <DropdownMenuItem>School Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950">
+            <DropdownMenuItem
+              className="text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950 cursor-pointer"
+              onClick={() => router.push("/login/school-admin")}
+            >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
             </DropdownMenuItem>

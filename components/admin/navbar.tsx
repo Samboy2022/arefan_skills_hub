@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   Bell,
@@ -51,6 +52,7 @@ type NotificationItem = {
 export function AdminNavbar() {
   const { theme, setTheme } = useTheme()
   const { isCollapsed, toggleSidebar } = useSidebar()
+  const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState<NotificationItem[]>([
@@ -197,7 +199,10 @@ export function AdminNavbar() {
               Account Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-600 focus:bg-red-50 focus:text-red-600 dark:focus:bg-red-950 cursor-pointer"
+              onClick={() => router.push('/login/super-admin')}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </DropdownMenuItem>
