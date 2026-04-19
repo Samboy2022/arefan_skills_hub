@@ -22,6 +22,7 @@ interface LessonItemProps {
   moduleId: string;
   onEdit: (moduleId: string, lessonId: string) => void;
   onDelete: (moduleId: string, lessonId: string) => void;
+  onTogglePublish: (moduleId: string, lessonId: string, published: boolean) => void;
 }
 
 const LESSON_META: Record<LessonType, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
@@ -33,7 +34,7 @@ const LESSON_META: Record<LessonType, { icon: React.ReactNode; color: string; bg
   assignment: { icon: <FileCheck className="w-3.5 h-3.5" />,  color: "text-emerald-500",   bg: "bg-emerald-500/10",   label: "Assignment" },
 };
 
-export function LessonItem({ lesson, moduleId, onEdit, onDelete }: LessonItemProps) {
+export function LessonItem({ lesson, moduleId, onEdit, onDelete, onTogglePublish }: LessonItemProps) {
   const {
     attributes,
     listeners,
@@ -97,6 +98,22 @@ export function LessonItem({ lesson, moduleId, onEdit, onDelete }: LessonItemPro
         <p className="text-sm font-medium text-foreground truncate leading-tight mt-0.5">
           {lesson.title}
         </p>
+      </div>
+
+      {/* Publish Badge Toggle */}
+      <div className="shrink-0 mr-4">
+        <button
+          type="button"
+          onClick={() => onTogglePublish(moduleId, lesson.id, !lesson.published)}
+          className="transition-colors hover:opacity-80"
+          title={lesson.published ? "Click to set to Draft" : "Click to Publish"}
+        >
+          {lesson.published ? (
+            <Badge className="bg-emerald-500/10 text-emerald-500 border-0 hover:bg-emerald-500/20 text-[10px] uppercase cursor-pointer">Published</Badge>
+          ) : (
+            <Badge variant="secondary" className="text-muted-foreground border-border text-[10px] uppercase shadow-none cursor-pointer">Draft</Badge>
+          )}
+        </button>
       </div>
 
       {/* Actions — only visible on hover */}

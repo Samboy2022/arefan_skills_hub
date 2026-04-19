@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/student/page-header";
+import { PageHeader } from "@/components/instructor/page-header";
 import { MOCK_INSTRUCTOR_COURSES } from "@/lib/instructor-mock-data";
 import { InstructorCourseCard } from "@/components/instructor/instructor-course-card";
 import { CourseListItem } from "@/components/instructor/course-list-item";
@@ -80,16 +80,9 @@ export default function MyCoursesPage() {
     return filtered;
   }, [courses, searchQuery]);
 
-  const avgEnrollmentFill =
-    activeCourses.length > 0
-      ? Math.round(
-          activeCourses.reduce((sum, c) => sum + enrollmentPct(c), 0) /
-            activeCourses.length
-        )
-      : 0;
-  const needAttention = activeCourses.filter(
-    (c) => c.enrollmentCount >= c.maxStudents
-  ).length;
+  const draftCourses = useMemo(() => {
+    return courses.filter((c) => c.status === "inactive" || c.status === ("draft" as any));
+  }, [courses]);
 
   const handleDelete = (id: string) => {
     setCourses((prev) => prev.filter((c) => c.id !== id));
@@ -125,7 +118,7 @@ export default function MyCoursesPage() {
 
       {/* Stats row */}
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6 mt-2">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-center p-6 bg-muted/20">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 items-center justify-center p-6 bg-muted/20">
           <div className="flex flex-col items-center justify-center gap-3 text-center">
             <img src="https://img.icons8.com/scribby/96/book.png" alt="Total Courses" className="h-12 w-12" />
             <div>
@@ -141,17 +134,10 @@ export default function MyCoursesPage() {
             </div>
           </div>
           <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
-            <img src="https://img.icons8.com/scribby/96/todo-list.png" alt="Avg Enrollment" className="h-12 w-12" />
+            <img src="https://img.icons8.com/scribby/96/edit-file.png" alt="Draft Courses" className="h-12 w-12" />
             <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg Enrollment %</p>
-              <p className="text-3xl font-extrabold text-blue-600 dark:text-blue-400 leading-none">{avgEnrollmentFill}%</p>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
-            <img src="https://img.icons8.com/scribby/96/error.png" alt="Need Attention" className="h-12 w-12" />
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Need Attention</p>
-              <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{needAttention}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Draft Courses</p>
+              <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{draftCourses.length}</p>
             </div>
           </div>
         </div>

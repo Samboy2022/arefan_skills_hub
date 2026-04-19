@@ -151,6 +151,7 @@ export default async function InstructorCourseViewPage({
   const contentHref = `/instructor/lessons?courseId=${encodeURIComponent(course.id)}`;
   const rosterHref = `/instructor/students?courseId=${encodeURIComponent(course.id)}`;
   const gradingEditHref = `/instructor/courses/${course.id}/grading`;
+  const publishHref = `/instructor/courses/${course.id}/publish`;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -159,7 +160,7 @@ export default async function InstructorCourseViewPage({
         <Breadcrumb 
           items={[
             { label: "My Courses", href: "/instructor/courses" },
-            { label: course.title }
+            { label: course.title.length > 30 ? course.title.slice(0, 30) + "…" : course.title }
           ]}
           className="mb-4"
         />
@@ -208,6 +209,12 @@ export default async function InstructorCourseViewPage({
                     <Link href={rosterHref}>
                       <Users className="mr-2 h-4 w-4" />
                       Class Roster
+                    </Link>
+                  </Button>
+                  <Button variant="secondary" className="w-full justify-start" size="lg" asChild>
+                    <Link href={publishHref}>
+                      <Globe className="mr-2 h-4 w-4 text-primary" />
+                      Publish Settings
                     </Link>
                   </Button>
                 </CardContent>

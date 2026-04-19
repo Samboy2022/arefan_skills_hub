@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   DndContext,
   closestCenter,
@@ -20,12 +20,11 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Save } from "lucide-react";
+import { PlusCircle, Save, CheckCircle2, Loader2, Circle } from "lucide-react";
 import { ModuleItem } from "./ModuleItem";
 import { LessonFormModal } from "./LessonFormModal";
 import { ModuleFormModal } from "./ModuleFormModal";
 
-// Types
 export type LessonType = "video" | "audio" | "pdf" | "text" | "quiz" | "assignment";
 
 export interface Lesson {
@@ -33,6 +32,7 @@ export interface Lesson {
   title: string;
   lessonType: LessonType;
   order: number;
+  published?: boolean;
 }
 
 export interface Module {
@@ -53,12 +53,14 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
   const [modules, setModules] = useState<Module[]>(initialModules);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
-  // Lesson modal state
+  // Save states
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved">("saved");
+  const [lastSaved, setLastSaved] = useState<Date | null>(new Date());
+
+  // Modals
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   const [modalTargetModuleId, setModalTargetModuleId] = useState<string | null>(null);
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
-
-  // Module modal state
   const [isModuleModalOpen, setIsModuleModalOpen] = useState(false);
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
 
@@ -67,7 +69,18 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // ─── Module DnD ───────────────────────────────────────────────────
+  // Auto-save logic
+  const handleDataChange = useCallback((updater: React.SetStateAction<Module[]>) => {
+    setModules(updater);
+    setSaveStatus("saving");
+    
+    // Simulate network latency / fake save
+    setTimeout(() => {
+      setSaveStatus("saved");
+      setLastSaved(new Date());
+    }, 800);
+  }, []);
+
   const handleDragStart = (event: DragStartEvent) => {
     setActiveModuleId(event.active.id as string);
   };
@@ -76,7 +89,7 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
     const { active, over } = event;
     setActiveModuleId(null);
     if (over && active.id !== over.id) {
-      setModules((items) => {
+      handleDataChange((items) => {
         const oldIndex = items.findIndex((m) => m.id === active.id);
         const newIndex = items.findIndex((m) => m.id === over.id);
         return arrayMove(items, oldIndex, newIndex).map((mod, i) => ({
@@ -87,7 +100,6 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
     }
   };
 
-  // ─── Module CRUD ──────────────────────────────────────────────────
   const handleAddModuleClick = () => {
     setEditingModuleId(null);
     setIsModuleModalOpen(true);
@@ -100,7 +112,7 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
 
   const handleSaveModule = (data: { title: string; description: string }) => {
     if (editingModuleId) {
-      setModules((curr) =>
+      handleDataChange((curr) =>
         curr.map((m) =>
           m.id === editingModuleId ? { ...m, title: data.title, description: data.description } : m
         )
@@ -114,20 +126,19 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
         order: modules.length + 1,
         lessons: [],
       };
-      setModules((curr) => [...curr, newModule]);
+      handleDataChange((curr) => [...curr, newModule]);
     }
     setIsModuleModalOpen(false);
   };
 
   const handleDeleteModule = (moduleId: string) => {
-    setModules((curr) =>
+    handleDataChange((curr) =>
       curr.filter((m) => m.id !== moduleId).map((m, i) => ({ ...m, order: i + 1 }))
     );
   };
 
-  // ─── Lesson CRUD ──────────────────────────────────────────────────
   const handleLessonsReordered = (moduleId: string, updatedLessons: Lesson[]) => {
-    setModules((curr) =>
+    handleDataChange((curr) =>
       curr.map((m) => (m.id === moduleId ? { ...m, lessons: updatedLessons } : m))
     );
   };
@@ -145,7 +156,7 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
   };
 
   const handleSaveLesson = (moduleId: string, data: any) => {
-    setModules((curr) =>
+    handleDataChange((curr) =>
       curr.map((mod) => {
         if (mod.id !== moduleId) return mod;
         let lessons = [...mod.lessons];
@@ -159,6 +170,7 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
             title: data.title,
             lessonType: data.lessonType,
             order: lessons.length + 1,
+            published: false,
           });
         }
         return { ...mod, lessons };
@@ -168,7 +180,7 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
   };
 
   const handleDeleteLesson = (moduleId: string, lessonId: string) => {
-    setModules((curr) =>
+    handleDataChange((curr) =>
       curr.map((mod) => {
         if (mod.id !== moduleId) return mod;
         return {
@@ -180,10 +192,36 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
       })
     );
   };
+  
+  const handleTogglePublishLesson = (moduleId: string, lessonId: string, published: boolean) => {
+    handleDataChange((curr) =>
+      curr.map((mod) => {
+        if (mod.id !== moduleId) return mod;
+        return {
+          ...mod,
+          lessons: mod.lessons.map((l) =>
+            l.id === lessonId ? { ...l, published } : l
+          ),
+        };
+      })
+    );
+  };
 
-  const handleSaveAll = () => {
-    console.log("Saving curriculum:", modules);
-    alert("Curriculum saved successfully!");
+  const handleManualSaveAll = () => {
+    setSaveStatus("saving");
+    setTimeout(() => {
+      setSaveStatus("saved");
+      setLastSaved(new Date());
+      // Toast notification simulation
+      if (typeof window !== "undefined") {
+        import("@/hooks/use-toast").then(({ toast }) => {
+          toast({
+            title: "Curriculum saved",
+            description: "Your changes have been documented.",
+          });
+        }).catch(() => console.log("Mock toast: saved"));
+      }
+    }, 600);
   };
 
   const activeModule = modules.find((m) => m.id === activeModuleId);
@@ -193,18 +231,37 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
     <div className="space-y-0">
       {/* Sticky Top Save Bar */}
       <div className="flex items-center justify-between px-6 py-3 bg-background border border-border rounded-t-md sticky top-0 z-10 shadow-sm">
-        <div className="text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">{modules.length}</span> section{modules.length !== 1 ? "s" : ""} &nbsp;·&nbsp;{" "}
-          <span className="font-semibold text-foreground">
-            {modules.reduce((sum, m) => sum + m.lessons.length, 0)}
-          </span>{" "}
-          lessons total
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5 text-sm font-medium">
+            {saveStatus === "saved" && (
+              <span className="text-emerald-600 flex items-center gap-1.5 bg-emerald-50 px-2 py-0.5 rounded-sm">
+                <CheckCircle2 className="w-4 h-4" /> All changes saved
+              </span>
+            )}
+            {saveStatus === "saving" && (
+              <span className="text-primary flex items-center gap-1.5">
+                <Loader2 className="w-4 h-4 animate-spin" /> Saving...
+              </span>
+            )}
+            {saveStatus === "unsaved" && (
+              <span className="text-amber-600 flex items-center gap-1.5">
+                <Circle className="w-4 h-4" /> Unsaved changes
+              </span>
+            )}
+            
+            {saveStatus === "saved" && lastSaved && (
+              <span className="text-muted-foreground text-xs font-normal ml-2">
+                Last saved {lastSaved.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+              </span>
+            )}
+          </div>
         </div>
+        
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleSaveAll}>
+          <Button variant="outline" size="sm" onClick={handleManualSaveAll}>
             Save Draft
           </Button>
-          <Button size="sm" onClick={handleSaveAll} className="gap-1.5">
+          <Button size="sm" onClick={handleManualSaveAll} className="gap-1.5">
             <Save className="w-3.5 h-3.5" />
             Save &amp; Publish
           </Button>
@@ -244,6 +301,7 @@ export function CurriculumBuilder({ initialModules, courseId }: CurriculumBuilde
                   onDeleteLesson={handleDeleteLesson}
                   onDeleteModule={handleDeleteModule}
                   onEditModule={handleEditModuleClick}
+                  onTogglePublish={handleTogglePublishLesson}
                 />
               ))}
             </div>

@@ -41,6 +41,7 @@ interface ModuleItemProps {
   onDeleteLesson: (moduleId: string, lessonId: string) => void;
   onDeleteModule: (moduleId: string) => void;
   onEditModule: (moduleId: string) => void;
+  onTogglePublish: (moduleId: string, lessonId: string, published: boolean) => void;
 }
 
 export function ModuleItem({
@@ -52,6 +53,7 @@ export function ModuleItem({
   onDeleteLesson,
   onDeleteModule,
   onEditModule,
+  onTogglePublish,
 }: ModuleItemProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -198,6 +200,7 @@ export function ModuleItem({
                       moduleId={module.id}
                       onEdit={onEditLesson}
                       onDelete={onDeleteLesson}
+                      onTogglePublish={onTogglePublish}
                     />
                   ))}
                 </div>
