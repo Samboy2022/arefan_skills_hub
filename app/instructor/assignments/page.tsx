@@ -155,14 +155,15 @@ export default function AssignmentsPage() {
         <PageHeader
           title="Assignments Database"
           description="Create, manage, and grade student assignments efficiently using the data table."
-        >
-          <Button asChild className="gap-2 shadow-sm">
-            <Link href="/instructor/assignments/create">
-              <Plus className="h-4 w-4" />
-              Create Assignment
-            </Link>
-          </Button>
-        </PageHeader>
+          action={
+            <Button asChild className="gap-2 shadow-sm">
+              <Link href="/instructor/assignments/create">
+                <Plus className="h-4 w-4" />
+                Create Assignment
+              </Link>
+            </Button>
+          }
+        />
       </div>
 
       <Tabs defaultValue="active" className="w-full">

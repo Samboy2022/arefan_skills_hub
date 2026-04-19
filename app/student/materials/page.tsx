@@ -32,36 +32,35 @@ const getType = (t: string) => typeConfig[t] ?? typeConfig.document;
 function MaterialRow({ mat }: { mat: StudentMaterial }) {
   const tc = getType(mat.type);
   return (
-    <div className="flex items-center gap-4 px-5 py-4 border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors">
-      {/* Icon */}
-      <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center shrink-0", tc.cls)}>
-        {tc.icon}
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-foreground line-clamp-1">{mat.name}</p>
-        {mat.description && (
-          <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{mat.description}</p>
-        )}
-        <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-          <span className="font-medium uppercase text-[10px] px-1.5 py-0.5 rounded border border-border bg-muted/30">{tc.label}</span>
-          <span>{mat.size}</span>
-          <span>·</span>
-          <span>{mat.uploaded_by}</span>
-          <span>·</span>
-          <span>Added {format(new Date(mat.uploaded_date), "MMM dd, yyyy")}</span>
-          <span>·</span>
-          <span className="flex items-center gap-1"><Download className="h-3 w-3" />{mat.download_count}</span>
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border last:border-b-0 hover:bg-muted/20 transition-colors">
+      {/* Icon + Info */}
+      <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+        <div className={cn("h-9 w-9 sm:h-10 sm:w-10 rounded-lg flex items-center justify-center shrink-0", tc.cls)}>
+          {tc.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground line-clamp-1">{mat.name}</p>
+          {mat.description && (
+            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{mat.description}</p>
+          )}
+          <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs text-muted-foreground flex-wrap">
+            <span className="font-medium uppercase text-[10px] px-1.5 py-0.5 rounded border border-border bg-muted/30">{tc.label}</span>
+            <span>{mat.size}</span>
+            <span className="hidden sm:inline">·</span>
+            <span className="hidden sm:inline">{mat.uploaded_by}</span>
+            <span className="hidden sm:inline">·</span>
+            <span className="hidden sm:inline">Added {format(new Date(mat.uploaded_date), "MMM dd, yyyy")}</span>
+            <span className="flex items-center gap-1"><Download className="h-3 w-3" />{mat.download_count}</span>
+          </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 shrink-0">
-        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground h-8 text-xs">
+      <div className="flex items-center gap-2 shrink-0 pl-12 sm:pl-0">
+        <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground h-7 sm:h-8 text-xs">
           <Eye className="h-3.5 w-3.5" /> View
         </Button>
-        <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs">
+        <Button variant="outline" size="sm" className="gap-1.5 h-7 sm:h-8 text-xs">
           <Download className="h-3.5 w-3.5" /> Download
         </Button>
       </div>
@@ -209,31 +208,33 @@ export default function MaterialsPage() {
         description="Access and download course resources and module documents"
       />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total Documents</p>
-            <p className="text-2xl font-bold text-foreground">{totalMaterials}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/document.png" alt="Total Documents" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Documents</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{totalMaterials}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/document.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total Documents" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Courses</p>
-            <p className="text-2xl font-bold text-foreground">{enrolledCourseIds.length}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
+          <img src="https://img.icons8.com/scribby/96/book.png" alt="Courses" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Courses</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{enrolledCourseIds.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/open-book.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Courses" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Modules</p>
-            <p className="text-2xl font-bold text-foreground">
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/stack.png" alt="Modules" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Modules</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">
               {STUDENT_MODULES.filter(m => enrolledCourseIds.includes(m.course_id)).length}
             </p>
           </div>
-          <img src="https://img.icons8.com/color/96/opened-folder.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Modules" />
-        </Card>
+        </div>
       </div>
 
       {/* Course Cards Grid */}

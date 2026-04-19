@@ -93,7 +93,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Breadcrumb */}
-      <div className="max-w-6xl mx-auto w-full px-6 pt-6">
+      <div className="max-w-6xl mx-auto w-full px-3 md:px-6 pt-4 md:pt-6">
         <Breadcrumb 
           items={[
             { label: "My Courses", href: "/student/courses" },
@@ -110,8 +110,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
       />
       
       {/* Constrained layout for content */}
-      <div className="max-w-6xl mx-auto w-full px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="max-w-6xl mx-auto w-full px-3 md:px-6 py-6 md:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-10">
           
           {/* Main Content Column (Left) */}
           <div className="lg:col-span-2">
@@ -160,36 +160,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
                     <span className="capitalize font-medium text-foreground">{course.language}</span>
                   </div>
 
-                  {/* Grading & Mark Breakdown */}
-                  <div className="pt-4 border-t border-border">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Grading &amp; Mark Breakdown</p>
-                    <table className="w-full text-xs">
-                      <tbody className="divide-y divide-border">
-                        <tr>
-                          <td className="py-2 text-muted-foreground flex items-center gap-1.5">
-                            <MessageSquare className="h-3.5 w-3.5 text-emerald-500" /> Forum
-                          </td>
-                          <td className="py-2 text-right font-medium text-foreground">10.00 pts</td>
-                        </tr>
-                        <tr>
-                          <td className="py-2 text-muted-foreground flex items-center gap-1.5">
-                            <CheckCircle2 className="h-3.5 w-3.5 text-sky-500" /> Quiz
-                          </td>
-                          <td className="py-2 text-right font-medium text-foreground">30.00 pts</td>
-                        </tr>
-                        <tr>
-                          <td className="py-2 text-muted-foreground flex items-center gap-1.5">
-                            <CheckCircle2 className="h-3.5 w-3.5 text-primary" /> Assignment
-                          </td>
-                          <td className="py-2 text-right font-medium text-foreground">60.00 pts</td>
-                        </tr>
-                        <tr className="border-t border-border">
-                          <td className="pt-2 font-bold text-foreground">Total</td>
-                          <td className="pt-2 font-bold text-right text-primary">100.00 pts</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+
                 </CardContent>
               </Card>
             </div>

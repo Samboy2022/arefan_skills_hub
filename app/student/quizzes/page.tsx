@@ -113,35 +113,37 @@ export default function QuizzesPage() {
         description="Track and take your assessments"
       />
 
-      {/* Summary Strip */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total Assigned</p>
-            <p className="text-2xl font-bold text-foreground">{counts.all}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/document.png" alt="Total Assigned" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Assigned</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{counts.all}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/exam.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Upcoming</p>
-            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{counts.not_started + counts.in_progress}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
+          <img src="https://img.icons8.com/scribby/96/clock.png" alt="Upcoming" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Upcoming</p>
+            <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{counts.not_started + counts.in_progress}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/hourglass.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Upcoming" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Completed</p>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{counts.submitted}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/check.png" alt="Completed" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Completed</p>
+            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.submitted}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/approval.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Completed" />
-        </Card>
+        </div>
       </div>
 
       {/* Filter Tabs + Table */}
       <Card className="border-border overflow-hidden">
         {/* Tab Row */}
-        <div className="flex items-center gap-1 px-4 pt-4 border-b border-border">
+        <div className="flex items-center gap-1 px-4 pt-4 border-b border-border overflow-x-auto">
           {tabs.map(tab => (
             <button
               key={tab.key}
@@ -164,8 +166,57 @@ export default function QuizzesPage() {
           ))}
         </div>
 
-        {/* Table */}
-        <Table>
+        {/* Mobile card layout */}
+        <div className="lg:hidden divide-y divide-border">
+          {filtered.length === 0 ? (
+            <div className="py-16 text-center">
+              <HelpCircle className="h-8 w-8 opacity-30 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">No quizzes in this category.</p>
+            </div>
+          ) : (
+            filtered.map((quiz) => {
+              const course = STUDENT_COURSES.find(c => c.id === quiz.course_id);
+              return (
+                <Link
+                  key={quiz.id}
+                  href={`/student/quizzes/${quiz.id}`}
+                  className="block px-4 py-4 hover:bg-muted/20 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border", getCategoryColor(quiz.category))}>
+                          {getCategoryLabel(quiz.category)}
+                        </span>
+                        {getStatusBadge(quiz.status)}
+                      </div>
+                      <p className="font-medium text-sm text-foreground line-clamp-2">{quiz.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                        <BookOpen className="h-3 w-3" />{course?.code} · {quiz.target_name}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1"><HelpCircle className="h-3 w-3" />{quiz.total_questions} Qs</span>
+                      <span className="flex items-center gap-1"><Timer className="h-3 w-3" />{quiz.time_limit}m</span>
+                      <span>{quiz.attempts.length}/{quiz.attempts_allowed} attempts</span>
+                    </div>
+                    {quiz.best_score !== null && (
+                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <Award className="h-3 w-3" />{quiz.best_score}%
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop table layout */}
+        <Table className="hidden lg:table w-full">
           <TableHeader>
             <TableRow className="bg-muted/30 hover:bg-muted/30">
               <TableHead className="w-[40%] pl-6">Quiz</TableHead>

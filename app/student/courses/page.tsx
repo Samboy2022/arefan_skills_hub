@@ -100,36 +100,39 @@ export default function MyCoursesPage() {
         description="View all your enrolled courses and track your progress"
       />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total Enrolled</p>
-            <p className="text-2xl font-bold text-foreground">{STUDENT_COURSES.length}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/book.png" alt="Total Enrolled" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Enrolled</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{STUDENT_COURSES.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/books.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Active</p>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{activeCourses.length}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/play.png" alt="Active" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Active</p>
+            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{activeCourses.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/open-book.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Active" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Avg. Progress</p>
-            <p className="text-2xl font-bold text-primary">{averageProgress}%</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/line-chart.png" alt="Avg. Progress" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg. Progress</p>
+            <p className="text-3xl font-extrabold text-primary leading-none">{averageProgress}%</p>
           </div>
-          <img src="https://img.icons8.com/color/96/line-chart.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Progress" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Need Attention</p>
-            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{coursesWithDueAssignments}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/error.png" alt="Need Attention" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Need Attention</p>
+            <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{coursesWithDueAssignments}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/error.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Attention" />
-        </Card>
+        </div>
       </div>
 
 
@@ -138,8 +141,7 @@ export default function MyCoursesPage() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
              <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-              <BookOpen className="h-5 w-5 text-primary" />
-              Active Courses
+              Registered Courses
               <span className="ml-1 text-sm font-normal text-muted-foreground">
                 ({activeCourses.length})
               </span>
@@ -164,11 +166,7 @@ export default function MyCoursesPage() {
         ) : viewMode === "grid" ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
              {activeCourses.map((course, index) => (
-              <div 
-                key={course.id}
-                className="transition-all duration-300"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
+              <div key={course.id}>
                 <StudentCourseCard course={course} variant="active" />
               </div>
             ))}
@@ -176,17 +174,13 @@ export default function MyCoursesPage() {
         ) : viewMode === "list" ? (
            <div className="flex flex-col gap-4">
               {activeCourses.map((course, index) => (
-                <div 
-                  key={course.id}
-                  className="transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
+                <div key={course.id}>
                   <StudentCourseListItem course={course} variant="active" />
                 </div>
               ))}
            </div>
         ) : (
-           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+           <div>
               <StudentCourseDataTable courses={activeCourses} variant="active" />
            </div>
         )}
@@ -209,11 +203,7 @@ export default function MyCoursesPage() {
           {viewMode === "grid" ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {completedCourses.map((course, index) => (
-                 <div 
-                    key={course.id}
-                    className="transition-all duration-300"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
+                 <div key={course.id}>
                     <StudentCourseCard course={course} variant="completed" />
                   </div>
               ))}
@@ -221,17 +211,13 @@ export default function MyCoursesPage() {
           ) : viewMode === "list" ? (
             <div className="flex flex-col gap-4">
               {completedCourses.map((course, index) => (
-                 <div 
-                    key={course.id}
-                    className="transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
+                 <div key={course.id}>
                     <StudentCourseListItem course={course} variant="completed" />
                   </div>
               ))}
             </div>
           ) : (
-             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+             <div>
                 <StudentCourseDataTable courses={completedCourses} variant="completed" />
              </div>
           )}

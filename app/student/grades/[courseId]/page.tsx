@@ -113,7 +113,7 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
               </span>
             </div>
           </div>
-          <img src="https://img.icons8.com/color/96/quality.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-15 pointer-events-none" alt="Final" />
+          <img src="https://img.icons8.com/scribby/96/trophy.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-15 pointer-events-none" alt="Final" />
         </Card>
 
         {/* Assignments Card */}
@@ -126,7 +126,7 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
               </span>
             </div>
           </div>
-          <img src="https://img.icons8.com/color/96/list.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Assignments" />
+          <img src="https://img.icons8.com/scribby/96/todo-list.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Assignments" />
         </Card>
 
         {/* Quizzes Card */}
@@ -139,7 +139,7 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
               </span>
             </div>
           </div>
-          <img src="https://img.icons8.com/color/96/exam.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Quizzes" />
+          <img src="https://img.icons8.com/scribby/96/document.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Quizzes" />
         </Card>
 
         {/* Participation Card */}
@@ -152,15 +152,14 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
               </span>
             </div>
           </div>
-          <img src="https://img.icons8.com/color/96/raised-hand.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Participation" />
+          <img src="https://img.icons8.com/scribby/96/hand.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Participation" />
         </Card>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-4">
         {/* ── Assignments Detail Section ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold flex items-center gap-2 text-foreground">
-            <img src="https://img.icons8.com/color/48/list.png" className="h-6 w-6" alt="Assignments" />
+          <h3 className="text-lg font-bold text-foreground">
             Assignment Breakdown
           </h3>
           <Card className="border border-border bg-card overflow-hidden">
@@ -227,8 +226,7 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
 
         {/* ── Quizzes Detail Section ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold flex items-center gap-2 text-foreground">
-            <img src="https://img.icons8.com/color/48/exam.png" className="h-6 w-6" alt="Quizzes" />
+          <h3 className="text-lg font-bold text-foreground">
             Quiz & Exam Breakdown
           </h3>
           <Card className="border border-border bg-card overflow-hidden">

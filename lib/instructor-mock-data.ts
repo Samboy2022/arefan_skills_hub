@@ -864,4 +864,35 @@ export const MOCK_MEETINGS: InstructorMeeting[] = [
   },
 ];
 
+export interface MessageThread {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderRole: "student" | "instructor";
+  body: string;
+  sentAt: Date;
+  readAt?: Date;
+}
+
+export const MOCK_MESSAGES: Record<string, MessageThread[]> = {
+  "student-1": [
+    {
+      id: "msg-1",
+      senderId: "student-1",
+      senderName: "Alice Johnson",
+      senderRole: "student",
+      body: "Hi, can you clarify the deadline for Module 3?",
+      sentAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    },
+    {
+      id: "msg-2",
+      senderId: "instructor-1",
+      senderName: "Jane Doe",
+      senderRole: "instructor",
+      body: "The deadline is Friday at midnight. Let me know if you need an extension.",
+      sentAt: new Date(Date.now() - 1000 * 60 * 90), // 90 min ago
+    },
+  ],
+};
+
 

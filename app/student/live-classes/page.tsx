@@ -57,12 +57,12 @@ function ActionButton({ meeting }: { meeting: StudentMeeting }) {
   const minsUntilStart = (startTime.getTime() - now.getTime()) / 60_000;
 
   if (meeting.status === "ended") return (
-    <Button size="sm" variant="ghost" asChild className="text-muted-foreground">
+    <Button size="sm" variant="ghost" asChild className="text-muted-foreground shadow-none hover:bg-muted font-medium">
       <Link href={`/student/live-classes/${meeting.id}`}>View Summary</Link>
     </Button>
   );
   if (meeting.status === "live" || (meeting.status === "upcoming" && minsUntilStart <= 15)) return (
-    <Button size="sm" asChild className="bg-emerald-600 hover:bg-emerald-700 text-white animate-pulse">
+    <Button size="sm" asChild className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-none transition-colors font-semibold">
       <Link href={`/student/live-classes/${meeting.id}/join`}>
         <span className="h-2 w-2 rounded-full bg-white mr-1.5 animate-pulse" />
         Join Now
@@ -70,7 +70,7 @@ function ActionButton({ meeting }: { meeting: StudentMeeting }) {
     </Button>
   );
   return (
-    <Button size="sm" variant="outline" asChild>
+    <Button size="sm" variant="outline" asChild className="shadow-none hover:bg-muted font-medium text-muted-foreground">
       <Link href={`/student/live-classes/${meeting.id}`}>
         View Details <ArrowRight className="h-3.5 w-3.5 ml-1" />
       </Link>
@@ -108,42 +108,45 @@ export default function LiveClassesPage() {
         description="Your scheduled and past live sessions with instructors."
       />
 
-      {/* KPI Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-5 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Upcoming Sessions</p>
-            <p className="text-3xl font-bold text-sky-600 dark:text-sky-400">{counts.upcoming}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/clock.png" alt="Upcoming Sessions" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Upcoming Sessions</p>
+            <p className="text-3xl font-extrabold text-sky-600 dark:text-sky-400 leading-none">{counts.upcoming}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/video-conference.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-5 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Attended</p>
-            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{counts.attended}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/check.png" alt="Attended" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Attended</p>
+            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.attended}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/approval.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-5 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Missed</p>
-            <p className="text-3xl font-bold text-red-600 dark:text-red-400">{counts.missed}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/error.png" alt="Missed" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Missed</p>
+            <p className="text-3xl font-extrabold text-red-600 dark:text-red-400 leading-none">{counts.missed}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/cancel.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-5 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total Sessions</p>
-            <p className="text-3xl font-bold text-foreground">{counts.total}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/webcam.png" alt="Total Sessions" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Sessions</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{counts.total}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/video-call.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
+        </div>
       </div>
 
       {/* Table Card */}
       <Card className="border-border overflow-hidden">
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1 px-4 pt-4 border-b border-border">
+        <div className="flex items-center gap-1 px-4 pt-4 border-b border-border overflow-x-auto">
           {tabs.map(tab => (
             <button
               key={tab.key}
@@ -176,58 +179,98 @@ export default function LiveClassesPage() {
             <p className="text-sm">No live classes scheduled yet. Your instructor will notify you when a session is created.</p>
           </div>
         ) : (
-          <Table className="w-full table-fixed">
-            <TableHeader className="bg-muted/30">
-              <TableRow>
-                <TableHead className="w-[28%] pl-5">Session Name</TableHead>
-                <TableHead className="w-[18%]">Instructor</TableHead>
-                <TableHead className="w-[18%]">Date & Time</TableHead>
-                <TableHead className="w-[8%] text-center">Duration</TableHead>
-                <TableHead className="w-[12%] text-center">Status</TableHead>
-                <TableHead className="w-[10%] text-center">Attendance</TableHead>
-                <TableHead className="w-[10%] text-right pr-5">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <>
+            {/* Mobile card layout */}
+          <div className="lg:hidden divide-y divide-border">
               {filtered.map(meeting => {
                 const startDate = new Date(meeting.start_time);
                 const validDate = isValid(startDate);
                 return (
-                  <TableRow key={meeting.id} className="hover:bg-muted/20">
-                    <TableCell className="pl-5 py-4 font-medium">
-                      <Link
-                        href={`/student/live-classes/${meeting.id}`}
-                        className="hover:text-primary transition-colors hover:underline line-clamp-1"
-                      >
-                        {meeting.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="py-4 text-sm text-muted-foreground">
-                      {meeting.creator.name}
-                    </TableCell>
-                    <TableCell className="py-4 text-sm">
-                      {validDate ? format(startDate, "MMM dd, yyyy · hh:mm a") : "—"}
-                    </TableCell>
-                    <TableCell className="py-4 text-center text-sm text-muted-foreground">
-                      {meeting.duration} min
-                    </TableCell>
-                    <TableCell className="py-4 text-center">
+                  <div key={meeting.id} className="px-4 py-4 space-y-2.5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <Link
+                          href={`/student/live-classes/${meeting.id}`}
+                          className="font-medium text-sm text-foreground hover:text-primary transition-colors line-clamp-2"
+                        >
+                          {meeting.name}
+                        </Link>
+                        <p className="text-xs text-muted-foreground mt-0.5">{meeting.creator.name}</p>
+                      </div>
                       <StatusBadge status={meeting.status} />
-                    </TableCell>
-                    <TableCell className="py-4 text-center">
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>{validDate ? format(startDate, "MMM dd · hh:mm a") : "—"}</span>
+                        <span>{meeting.duration} min</span>
+                      </div>
                       <AttendanceBadge
                         status={meeting.attendance.status}
                         percentage={meeting.attendance.percentage}
                       />
-                    </TableCell>
-                    <TableCell className="py-4 text-right pr-5">
+                    </div>
+                    <div className="flex justify-end pt-1">
                       <ActionButton meeting={meeting} />
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                  </div>
                 );
               })}
-            </TableBody>
-          </Table>
+            </div>
+
+            {/* Desktop table layout */}
+            <Table className="w-full table-fixed hidden lg:table">
+              <TableHeader className="bg-muted/30">
+                <TableRow>
+                  <TableHead className="w-[25%] pl-5">Session Name</TableHead>
+                  <TableHead className="w-[15%]">Instructor</TableHead>
+                  <TableHead className="w-[15%]">Date & Time</TableHead>
+                  <TableHead className="w-[10%] text-center">Duration</TableHead>
+                  <TableHead className="w-[10%] text-center">Status</TableHead>
+                  <TableHead className="w-[10%] text-center">Attendance</TableHead>
+                  <TableHead className="w-[15%] text-right pr-5">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.map(meeting => {
+                  const startDate = new Date(meeting.start_time);
+                  const validDate = isValid(startDate);
+                  return (
+                    <TableRow key={meeting.id} className="hover:bg-muted/20">
+                      <TableCell className="pl-5 py-4 font-medium">
+                        <Link
+                          href={`/student/live-classes/${meeting.id}`}
+                          className="hover:text-primary transition-colors hover:underline line-clamp-1"
+                        >
+                          {meeting.name}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="py-4 text-sm text-muted-foreground">
+                        {meeting.creator.name}
+                      </TableCell>
+                      <TableCell className="py-4 text-sm">
+                        {validDate ? format(startDate, "MMM dd, yyyy · hh:mm a") : "—"}
+                      </TableCell>
+                      <TableCell className="py-4 text-center text-sm text-muted-foreground">
+                        {meeting.duration} min
+                      </TableCell>
+                      <TableCell className="py-4 text-center">
+                        <StatusBadge status={meeting.status} />
+                      </TableCell>
+                      <TableCell className="py-4 text-center">
+                        <AttendanceBadge
+                          status={meeting.attendance.status}
+                          percentage={meeting.attendance.percentage}
+                        />
+                      </TableCell>
+                      <TableCell className="py-4 text-right pr-5">
+                        <ActionButton meeting={meeting} />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </>
         )}
       </Card>
     </div>

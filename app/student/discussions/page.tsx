@@ -570,29 +570,31 @@ export default function DiscussionsPage() {
         <p className="text-sm text-muted-foreground mt-1">Connect with classmates and participate in course discussions.</p>
       </div>
 
-      {/* Summary strip */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total Threads</p>
-            <p className="text-2xl font-bold text-foreground">{DISCUSSION_THREADS.length}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/chat.png" alt="Total Threads" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Threads</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{DISCUSSION_THREADS.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/chat.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total Threads" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Unread</p>
-            <p className="text-2xl font-bold text-primary">{DISCUSSION_THREADS.filter(t => t.has_unread).length}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
+          <img src="https://img.icons8.com/scribby/96/news.png" alt="Unread" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Unread</p>
+            <p className="text-3xl font-extrabold text-primary leading-none">{DISCUSSION_THREADS.filter(t => t.has_unread).length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/new-message.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Unread" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Course Forums</p>
-            <p className="text-2xl font-bold text-foreground">{courseIds.length}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/book.png" alt="Course Forums" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Course Forums</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{courseIds.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/books.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Course Forums" />
-        </Card>
+        </div>
       </div>
 
       {/* Forum Panes */}

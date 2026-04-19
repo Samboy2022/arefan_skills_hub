@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduGuard AI — RegTech Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1A6B1A;
+    --dkgreen: #0D4A0D;
+    --ltgreen: #D4EED4;
+    --vltgreen: #EAF5EA;
+    --gold: #C9A84C;
+    --ltgold: #FFF3D0;
+    --white: #FFFFFF;
+    --off: #F6FAF6;
+    --dkgray: #1E2121;
+    --midgray: #4A4E4A;
+    --ltgray: #E8EDE8;
+    --border: #C8D8C8;
+    --red: #B91C1C;
+    --ltred: #FEE2E2;
+    --blue: #1A4F8A;
+    --ltblue: #E8F0FA;
+    --amber: #D97706;
+    --ltamber: #FEF3C7;
+    --teal: #0F766E;
+    --ltteal: #CCFBF1;
+    --purple: #5B2D8E;
+    --ltpurple: #F0EAF9;
+    --sidebar-w: 240px;
+    --topbar-h: 64px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off);
+    color: var(--dkgray);
+    overflow-x: hidden;
+  }
+
+  /* ── LANDING PAGE ─────────────────────────────────── */
+  #landing {
+    display: flex; flex-direction: column; min-height: 100vh;
+    background: var(--dkgreen);
+    position: relative; overflow: hidden;
+  }
+  #landing::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, #2a7a1a55 0%, transparent 70%),
+                radial-gradient(circle 300px at 10% 90%, #c9a84c22 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .land-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px; position: relative; z-index: 2;
+  }
+  .land-logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white);
+  }
+  .land-logo-icon {
+    width: 36px; height: 36px; background: var(--gold); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .land-badge {
+    background: #ffffff18; border: 1px solid #ffffff30; border-radius: 20px;
+    padding: 6px 16px; font-size: 12px; color: #aaddaa; letter-spacing: 1px;
+  }
+  .land-hero {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center; padding: 40px 48px; position: relative; z-index: 2;
+  }
+  .land-eyebrow {
+    font-size: 12px; letter-spacing: 3px; color: var(--gold); font-weight: 500;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .land-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 900; color: var(--white); line-height: 1.0;
+    margin-bottom: 20px;
+  }
+  .land-title span { color: var(--gold); }
+  .land-sub {
+    font-size: 18px; color: #aaddaa; max-width: 560px; line-height: 1.6;
+    margin-bottom: 48px;
+  }
+  .land-ctas { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--gold); color: var(--dkgreen); border: none;
+    padding: 14px 32px; border-radius: 6px; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all .2s; letter-spacing: .3px;
+  }
+  .btn-primary:hover { background: #e0b85a; transform: translateY(-1px); box-shadow: 0 8px 24px #c9a84c44; }
+  .btn-ghost {
+    background: transparent; color: var(--white);
+    border: 1px solid #ffffff40; padding: 14px 32px; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: #ffffff88; background: #ffffff10; }
+
+  .land-stats {
+    display: flex; gap: 0; border-top: 1px solid #ffffff18;
+    position: relative; z-index: 2;
+  }
+  .land-stat {
+    flex: 1; padding: 28px 32px; border-right: 1px solid #ffffff18;
+    text-align: center;
+  }
+  .land-stat:last-child { border-right: none; }
+  .land-stat-val {
+    font-family: 'Playfair Display', serif; font-size: 32px;
+    color: var(--gold); font-weight: 700; display: block;
+  }
+  .land-stat-lbl { font-size: 12px; color: #77aa77; margin-top: 4px; }
+
+  /* ── ROLE SELECTOR ───────────────────────────────── */
+  #role-select {
+    display: none; min-height: 100vh;
+    background: var(--off); padding: 60px 48px;
+    flex-direction: column; align-items: center;
+  }
+  .role-title {
+    font-family: 'Playfair Display', serif; font-size: 36px;
+    color: var(--dkgreen); margin-bottom: 8px; text-align: center;
+  }
+  .role-sub { color: var(--midgray); margin-bottom: 48px; text-align: center; }
+  .role-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px; width: 100%; max-width: 900px;
+  }
+  .role-card {
+    background: var(--white); border: 2px solid var(--border);
+    border-radius: 12px; padding: 32px 24px; cursor: pointer;
+    transition: all .25s; text-align: center;
+  }
+  .role-card:hover { border-color: var(--green); transform: translateY(-3px); box-shadow: 0 12px 32px #1a6b1a22; }
+  .role-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 16px;
+  }
+  .role-card h3 { font-size: 16px; font-weight: 600; color: var(--dkgreen); margin-bottom: 6px; }
+  .role-card p { font-size: 13px; color: var(--midgray); line-height: 1.5; }
+
+  /* ── APP SHELL ───────────────────────────────────── */
+  #app { display: none; }
+  .app-layout { display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--dkgreen); flex-shrink: 0;
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid #ffffff18;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar-logo-icon {
+    width: 32px; height: 32px; background: var(--gold); border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .sidebar-logo-text {
+    font-family: 'Playfair Display', serif; font-size: 16px; color: var(--white); font-weight: 700;
+  }
+  .sidebar-role-badge {
+    margin: 12px 16px; background: #ffffff15; border-radius: 6px;
+    padding: 8px 12px;
+  }
+  .sidebar-role-badge .role-label { font-size: 10px; color: #88bb88; letter-spacing: 1px; text-transform: uppercase; }
+  .sidebar-role-badge .role-name { font-size: 13px; color: var(--white); font-weight: 500; margin-top: 2px; }
+  .sidebar-nav { flex: 1; padding: 8px 0; }
+  .nav-section-label {
+    font-size: 10px; letter-spacing: 1.5px; color: #88aa88; text-transform: uppercase;
+    padding: 16px 20px 6px; font-weight: 500;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 20px; cursor: pointer; border-radius: 0;
+    transition: background .15s; color: #aaddaa; font-size: 14px;
+    position: relative;
+  }
+  .nav-item:hover { background: #ffffff12; color: var(--white); }
+  .nav-item.active { background: #ffffff20; color: var(--white); }
+  .nav-item.active::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--gold); border-radius: 0 2px 2px 0;
+  }
+  .nav-icon { font-size: 16px; width: 18px; text-align: center; }
+  .nav-badge {
+    margin-left: auto; background: var(--red); color: var(--white);
+    font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+  }
+  .nav-badge.amber { background: var(--amber); }
+  .sidebar-footer {
+    padding: 16px; border-top: 1px solid #ffffff18;
+  }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    padding: 8px; border-radius: 8px; transition: background .15s;
+  }
+  .sidebar-user:hover { background: #ffffff12; }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--dkgreen); flex-shrink: 0;
+  }
+  .user-info .user-name { font-size: 13px; color: var(--white); font-weight: 500; }
+  .user-info .user-inst { font-size: 11px; color: #88aa88; }
+
+  /* MAIN AREA */
+  .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar {
+    height: var(--topbar-h); background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 28px; gap: 16px;
+    flex-shrink: 0;
+  }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dkgreen); font-weight: 700; }
+  .topbar-breadcrumb { font-size: 13px; color: var(--midgray); }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .topbar-btn {
+    background: var(--green); color: var(--white); border: none;
+    padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .15s;
+  }
+  .topbar-btn:hover { background: var(--dkgreen); }
+  .topbar-notif {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--off);
+    border: 1px solid var(--border); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; position: relative; font-size: 16px;
+  }
+  .notif-dot {
+    width: 8px; height: 8px; background: var(--red); border-radius: 50%;
+    position: absolute; top: 6px; right: 6px; border: 2px solid var(--white);
+  }
+  .content-area { flex: 1; overflow-y: auto; padding: 28px; }
+
+  /* ── VIEWS ─────────────────────────────────────────── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* KPI ROW */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; position: relative; overflow: hidden;
+  }
+  .kpi-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.amber::before { background: var(--amber); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-label { font-size: 12px; color: var(--midgray); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+  .kpi-val { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; margin: 8px 0 4px; }
+  .kpi-val.green { color: var(--green); }
+  .kpi-val.red { color: var(--red); }
+  .kpi-val.amber { color: var(--amber); }
+  .kpi-val.blue { color: var(--blue); }
+  .kpi-sub { font-size: 12px; color: var(--midgray); }
+  .kpi-icon { position: absolute; right: 16px; top: 16px; font-size: 28px; opacity: .15; }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+
+  /* CARDS */
+  .card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; margin-bottom: 0;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 600; color: var(--dkgreen);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .ct-icon { font-size: 16px; }
+
+  /* COMPLIANCE SCORE DONUT */
+  .score-wrap { display: flex; align-items: center; gap: 24px; }
+  .donut-wrap { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+  .donut-wrap svg { transform: rotate(-90deg); }
+  .donut-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .donut-score { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--green); }
+  .donut-max { font-size: 11px; color: var(--midgray); }
+  .score-breakdown { flex: 1; }
+  .score-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .score-row-label { font-size: 12px; color: var(--midgray); width: 110px; flex-shrink: 0; }
+  .score-bar-wrap { flex: 1; height: 6px; background: var(--ltgray); border-radius: 3px; }
+  .score-bar { height: 100%; border-radius: 3px; background: var(--green); transition: width .8s; }
+  .score-bar.amber { background: var(--amber); }
+  .score-bar.red { background: var(--red); }
+  .score-pct { font-size: 12px; font-weight: 600; color: var(--dkgreen); width: 32px; text-align: right; }
+
+  /* VIOLATIONS FEED */
+  .violation-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--ltgray);
+  }
+  .violation-item:last-child { border-bottom: none; }
+  .sev-badge {
+    padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 700;
+    letter-spacing: .5px; flex-shrink: 0; margin-top: 2px;
+  }
+  .sev-badge.critical { background: var(--ltred); color: var(--red); }
+  .sev-badge.medium { background: var(--ltamber); color: var(--amber); }
+  .sev-badge.low { background: var(--ltgreen); color: var(--green); }
+  .viol-title { font-size: 13px; font-weight: 500; color: var(--dkgray); margin-bottom: 3px; }
+  .viol-meta { font-size: 11px; color: var(--midgray); }
+
+  /* CAL */
+  .cal-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--ltgray); }
+  .cal-item:last-child { border-bottom: none; }
+  .cal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cal-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--midgray); width: 90px; flex-shrink: 0; }
+  .cal-name { font-size: 13px; font-weight: 500; color: var(--dkgray); }
+  .cal-days { margin-left: auto; font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+
+  /* TABLES */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    text-align: left; padding: 10px 14px; background: var(--vltgreen);
+    color: var(--dkgreen); font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid var(--ltgreen);
+  }
+  .data-table td { padding: 11px 14px; border-bottom: 1px solid var(--ltgray); }
+  .data-table tr:hover td { background: var(--vltgreen); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .status-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-pill.verified { background: var(--ltgreen); color: var(--green); }
+  .status-pill.pending { background: var(--ltamber); color: var(--amber); }
+  .status-pill.flagged { background: var(--ltred); color: var(--red); }
+  .status-pill.compliant { background: var(--ltgreen); color: var(--green); }
+  .status-pill.at-risk { background: var(--ltamber); color: var(--amber); }
+  .status-pill.overdue { background: var(--ltred); color: var(--red); }
+  .status-pill.submitted { background: var(--ltblue); color: var(--blue); }
+
+  /* SEARCH BAR */
+  .search-wrap { display: flex; gap: 10px; margin-bottom: 20px; }
+  .search-input {
+    flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none;
+    transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--green); }
+  .search-btn {
+    background: var(--green); color: var(--white); border: none;
+    padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .15s;
+  }
+  .search-btn:hover { background: var(--dkgreen); }
+
+  /* VERIFY RESULT */
+  .verify-result {
+    margin-top: 20px; border-radius: 12px; padding: 28px;
+    display: none; animation: fadeSlide .4s ease;
+  }
+  .verify-result.success { background: var(--ltgreen); border: 2px solid var(--green); }
+  .verify-result.fail { background: var(--ltred); border: 2px solid var(--red); }
+  .verify-result-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .verify-badge { font-size: 40px; }
+  .verify-status-text { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; }
+  .verify-status-text.ok { color: var(--green); }
+  .verify-status-text.err { color: var(--red); }
+  .verify-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .verify-field label { font-size: 11px; color: var(--midgray); text-transform: uppercase; letter-spacing: .5px; }
+  .verify-field span { display: block; font-size: 14px; font-weight: 600; color: var(--dkgray); margin-top: 4px; }
+  .blockchain-confirm {
+    margin-top: 16px; background: #ffffff80; border-radius: 8px; padding: 12px 16px;
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--midgray);
+  }
+
+  /* SCANNER */
+  .scanner-anim {
+    height: 6px; background: var(--ltgray); border-radius: 3px;
+    overflow: hidden; margin: 12px 0;
+  }
+  .scanner-bar {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--gold));
+    border-radius: 3px; transition: width 2s ease;
+  }
+  .db-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .db-node {
+    padding: 14px; border-radius: 10px; border: 2px solid;
+    cursor: pointer; transition: transform .15s;
+    position: relative;
+  }
+  .db-node:hover { transform: scale(1.02); }
+  .db-node.green { border-color: var(--green); background: var(--vltgreen); }
+  .db-node.amber { border-color: var(--amber); background: var(--ltamber); }
+  .db-node.red { border-color: var(--red); background: var(--ltred); }
+  .db-node-name { font-size: 13px; font-weight: 600; color: var(--dkgray); }
+  .db-node-records { font-size: 11px; color: var(--midgray); margin: 3px 0; }
+  .db-node-status { font-size: 11px; font-weight: 600; }
+  .db-node.green .db-node-status { color: var(--green); }
+  .db-node.amber .db-node-status { color: var(--amber); }
+  .db-node.red .db-node-status { color: var(--red); }
+
+  /* REMEDIATION */
+  .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .kanban-col-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .8px; margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  .task-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; margin-bottom: 10px; cursor: pointer;
+    transition: box-shadow .15s;
+  }
+  .task-card:hover { box-shadow: 0 4px 12px #0002; }
+  .task-priority { width: 4px; height: 100%; border-radius: 2px; position: absolute; left: 0; top: 0; }
+  .task-card { position: relative; }
+  .task-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 8px 0 0 8px; }
+  .task-card.high::before { background: var(--red); }
+  .task-card.medium::before { background: var(--amber); }
+  .task-card.low::before { background: var(--green); }
+  .task-card h4 { font-size: 13px; font-weight: 600; color: var(--dkgray); margin-bottom: 6px; padding-left: 8px; }
+  .task-card .task-meta { font-size: 11px; color: var(--midgray); padding-left: 8px; }
+  .task-card .task-due { font-size: 11px; color: var(--midgray); padding-left: 8px; margin-top: 8px; font-family: 'DM Mono', monospace; }
+
+  /* SECTOR / REGULATOR */
+  .league-bar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .league-rank { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--midgray); width: 24px; flex-shrink: 0; text-align: right; }
+  .league-name { font-size: 13px; font-weight: 500; color: var(--dkgray); width: 180px; flex-shrink: 0; }
+  .league-bar-wrap { flex: 1; height: 18px; background: var(--ltgray); border-radius: 4px; overflow: hidden; }
+  .league-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; }
+  .league-fill span { font-size: 11px; font-weight: 700; color: var(--white); }
+  .league-score { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; width: 40px; text-align: right; }
+
+  /* MAP PLACEHOLDER */
+  .map-placeholder {
+    background: linear-gradient(135deg, var(--vltgreen) 0%, var(--ltgreen) 100%);
+    border-radius: 12px; height: 260px; display: flex; align-items: center;
+    justify-content: center; flex-direction: column; gap: 8px;
+    border: 1px solid var(--ltgreen); position: relative; overflow: hidden;
+  }
+  .map-nigeria {
+    font-size: 80px; opacity: .3; line-height: 1;
+  }
+  .map-label { font-size: 13px; color: var(--green); font-weight: 600; }
+  .map-dots { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 300px; }
+  .map-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green); opacity: .6; animation: pulse 2s infinite;
+  }
+  .map-dot:nth-child(odd) { animation-delay: .5s; background: var(--red); opacity: .5; }
+  .map-dot:nth-child(3n) { background: var(--amber); opacity: .7; }
+  @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.4)} }
+
+  /* NOTIFICATIONS */
+  .alert-bar {
+    padding: 12px 16px; border-radius: 8px; margin-bottom: 12px;
+    display: flex; align-items: flex-start; gap: 12px; border: 1px solid;
+  }
+  .alert-bar.critical { background: var(--ltred); border-color: #fca5a5; }
+  .alert-bar.warning { background: var(--ltamber); border-color: #fcd34d; }
+  .alert-bar.info { background: var(--ltblue); border-color: #93c5fd; }
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+  .alert-title { font-size: 13px; font-weight: 600; color: var(--dkgray); margin-bottom: 2px; }
+  .alert-desc { font-size: 12px; color: var(--midgray); }
+  .alert-action { margin-left: auto; flex-shrink: 0; }
+  .btn-sm {
+    background: var(--green); color: var(--white); border: none;
+    padding: 6px 14px; border-radius: 5px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background .15s;
+  }
+  .btn-sm:hover { background: var(--dkgreen); }
+  .btn-sm.outline { background: transparent; color: var(--green); border: 1px solid var(--green); }
+  .btn-sm.outline:hover { background: var(--vltgreen); }
+  .btn-sm.red { background: var(--red); }
+  .btn-sm.red:hover { background: #991b1b; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: #00000060; z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 16px; padding: 32px;
+    max-width: 520px; width: 90%; box-shadow: 0 24px 64px #00000030;
+    animation: fadeSlide .3s ease;
+  }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--dkgreen); margin-bottom: 8px; }
+  .modal-sub { font-size: 14px; color: var(--midgray); margin-bottom: 24px; }
+  .modal-field { margin-bottom: 16px; }
+  .modal-field label { font-size: 12px; font-weight: 600; color: var(--dkgray); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; display: block; }
+  .modal-field input, .modal-field select, .modal-field textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none;
+    transition: border-color .15s;
+  }
+  .modal-field input:focus, .modal-field select:focus { border-color: var(--green); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px; background: none; border: none;
+    font-size: 20px; cursor: pointer; color: var(--midgray);
+  }
+
+  /* REPORT SCREEN */
+  .report-steps { display: flex; gap: 0; margin-bottom: 24px; }
+  .report-step {
+    flex: 1; text-align: center; padding: 16px; background: var(--ltgray);
+    position: relative; font-size: 13px; color: var(--midgray);
+  }
+  .report-step:not(:last-child)::after {
+    content: '▶'; position: absolute; right: -10px; top: 50%;
+    transform: translateY(-50%); z-index: 1; font-size: 12px; color: var(--midgray);
+  }
+  .report-step.done { background: var(--ltgreen); color: var(--green); font-weight: 600; }
+  .report-step.active { background: var(--green); color: var(--white); font-weight: 600; }
+  .report-step-num { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  }
+  .section-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--dkgreen); }
+  .section-header p { font-size: 13px; color: var(--midgray); margin-top: 2px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fadeSlide .4s ease; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: var(--dkgreen); color: var(--white); padding: 14px 20px;
+    border-radius: 10px; font-size: 14px; font-weight: 500;
+    box-shadow: 0 8px 24px #00000030; display: none;
+    animation: fadeSlide .3s ease;
+    border-left: 4px solid var(--gold);
+  }
+  .toast.show { display: block; }
+
+  /* UPLOAD AREA */
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: 12px; padding: 40px;
+    text-align: center; cursor: pointer; transition: all .2s;
+    background: var(--vltgreen);
+  }
+  .upload-zone:hover { border-color: var(--green); background: var(--ltgreen); }
+  .upload-icon { font-size: 40px; margin-bottom: 12px; }
+  .upload-text { font-size: 15px; font-weight: 500; color: var(--dkgreen); margin-bottom: 4px; }
+  .upload-sub { font-size: 13px; color: var(--midgray); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .kanban { grid-template-columns: repeat(2, 1fr); }
+    .verify-details { grid-template-columns: 1fr 1fr; }
+    .land-stat-val { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ LANDING ════════════════════ -->
+<div id="landing">
+  <nav class="land-nav">
+    <div class="land-logo">
+      <div class="land-logo-icon">🛡️</div>
+      EduGuard AI
+    </div>
+    <div class="land-badge">REGTECH HACKATHON 2026</div>
+  </nav>
+
+  <div class="land-hero">
+    <p class="land-eyebrow">Microsoft AI Skills Week · Nigeria</p>
+    <h1 class="land-title">Edu<span>Guard</span> AI</h1>
+    <p class="land-sub">AI-Driven Credential Integrity & Data Privacy Compliance for Nigeria's 1,000+ tertiary institutions.</p>
+    <div class="land-ctas">
+      <button class="btn-primary" onclick="showRoleSelect()">🚀 Launch Platform Demo</button>
+      <button class="btn-ghost" onclick="showRoleSelect()">View as Regulator →</button>
+    </div>
+  </div>
+
+  <div class="land-stats">
+    <div class="land-stat">
+      <span class="land-stat-val">1,000+</span>
+      <div class="land-stat-lbl">Nigerian HEIs addressable</div>
+    </div>
+    <div class="land-stat">
+      <span class="land-stat-val">10 sec</span>
+      <div class="land-stat-lbl">Credential verification time</div>
+    </div>
+    <div class="land-stat">
+      <span class="land-stat-val">3 Modules</span>
+      <div class="land-stat-lbl">PrivacyShield · CredVerify · RegReport</div>
+    </div>
+    <div class="land-stat">
+      <span class="land-stat-val">₦2B+</span>
+      <div class="land-stat-lbl">Year 3 revenue target</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ ROLE SELECT ════════════════════ -->
+<div id="role-select">
+  <h2 class="role-title">Who are you today?</h2>
+  <p class="role-sub">Select your role to enter the platform with the right dashboard and permissions.</p>
+  <div class="role-grid">
+    <div class="role-card" onclick="enterApp('dpo')">
+      <div class="role-icon" style="background:#EAF5EA">🔐</div>
+      <h3>Data Protection Officer</h3>
+      <p>Run NDPA compliance audits, manage violations, file regulatory returns</p>
+    </div>
+    <div class="role-card" onclick="enterApp('registrar')">
+      <div class="role-icon" style="background:#E8F0FA">🎓</div>
+      <h3>University Registrar</h3>
+      <p>Upload graduate credentials, manage the blockchain credential registry</p>
+    </div>
+    <div class="role-card" onclick="enterApp('employer')">
+      <div class="role-icon" style="background:#CCFBF1">🏢</div>
+      <h3>Employer / HR Manager</h3>
+      <p>Verify candidate credentials instantly via NCID or QR code scan</p>
+    </div>
+    <div class="role-card" onclick="enterApp('regulator')">
+      <div class="role-icon" style="background:#EAF0FE">🏛️</div>
+      <h3>NDPC Regulator</h3>
+      <p>Monitor sector-wide compliance, manage overdue submissions, issue notices</p>
+    </div>
+  </div>
+  <button class="btn-ghost" style="margin-top:32px;color:var(--midgray);border-color:var(--border)" onclick="showLanding()">← Back</button>
+</div>
+
+<!-- ════════════════════ APP ════════════════════ -->
+<div id="app">
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🛡️</div>
+        <div class="sidebar-logo-text">EduGuard AI</div>
+      </div>
+      <div class="sidebar-role-badge">
+        <div class="role-label" id="sb-role-label">Role</div>
+        <div class="role-name" id="sb-role-name">Loading...</div>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="showLanding()">
+          <div class="user-avatar" id="user-avatar">M</div>
+          <div class="user-info">
+            <div class="user-name" id="user-name">Muazu</div>
+            <div class="user-inst" id="user-inst">ABU Zaria</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-area">
+      <header class="topbar">
+        <div>
+          <div class="topbar-title" id="topbar-title">Overview</div>
+          <div class="topbar-breadcrumb" id="topbar-breadcrumb">EduGuard AI / Dashboard</div>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-btn" id="topbar-action" onclick="handleTopbarAction()">+ Run Scan</button>
+          <div class="topbar-notif" onclick="showToast('📬 You have 3 new alerts')">
+            🔔<div class="notif-dot"></div>
+          </div>
+        </div>
+      </header>
+      <div class="content-area" id="content-area">
+        <!-- Views injected here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+let currentRole = 'dpo';
+let currentView = 'overview';
+
+const roleConfig = {
+  dpo: {
+    label: 'Institution Portal',
+    name: 'Data Protection Officer',
+    user: 'Dr. A. Ibrahim',
+    inst: 'ABU Zaria',
+    avatar: 'A',
+    topbarAction: '+ Run New Scan',
+    navSections: [
+      { label: 'Overview', items: [
+        { id: 'overview', icon: '📊', label: 'Dashboard', badge: null },
+        { id: 'notifications', icon: '🔔', label: 'Alerts', badge: '3', badgeClass: 'red' },
+      ]},
+      { label: 'PrivacyShield AI', items: [
+        { id: 'pii-scanner', icon: '🔍', label: 'PII Scanner', badge: null },
+        { id: 'violations', icon: '⚠️', label: 'Violations', badge: '14', badgeClass: 'red' },
+        { id: 'remediation', icon: '🛠️', label: 'Remediation Board', badge: null },
+      ]},
+      { label: 'RegReport Engine', items: [
+        { id: 'reports', icon: '📄', label: 'Compliance Returns', badge: '1', badgeClass: 'amber' },
+      ]},
+    ]
+  },
+  registrar: {
+    label: 'Institution Portal',
+    name: 'University Registrar',
+    user: 'Mrs. F. Bello',
+    inst: 'ABU Zaria',
+    avatar: 'F',
+    topbarAction: '+ Bulk Upload',
+    navSections: [
+      { label: 'Overview', items: [
+        { id: 'overview', icon: '📊', label: 'Dashboard', badge: null },
+      ]},
+      { label: 'CredVerify Chain', items: [
+        { id: 'credential-registry', icon: '🎓', label: 'Credential Registry', badge: null },
+        { id: 'upload-credentials', icon: '⬆️', label: 'Upload Credentials', badge: null },
+      ]},
+    ]
+  },
+  employer: {
+    label: 'Employer Portal',
+    name: 'HR Manager',
+    user: 'Mr. C. Okonkwo',
+    inst: 'Dangote Group',
+    avatar: 'C',
+    topbarAction: '🔍 Verify Credential',
+    navSections: [
+      { label: 'Verification', items: [
+        { id: 'verify', icon: '✅', label: 'Verify Credential', badge: null },
+        { id: 'verify-history', icon: '📋', label: 'Verification History', badge: null },
+        { id: 'fraud-alerts', icon: '🚨', label: 'Fraud Alerts', badge: '2', badgeClass: 'red' },
+      ]},
+    ]
+  },
+  regulator: {
+    label: 'Regulator Dashboard',
+    name: 'NDPC Officer',
+    user: 'Dr. K. Okafor',
+    inst: 'NDPC Abuja',
+    avatar: 'K',
+    topbarAction: '📨 Send Bulk Reminder',
+    navSections: [
+      { label: 'Intelligence', items: [
+        { id: 'sector-overview', icon: '🗺️', label: 'Sector Overview', badge: null },
+        { id: 'pending-submissions', icon: '📥', label: 'Pending Submissions', badge: '16', badgeClass: 'red' },
+        { id: 'enforcement', icon: '⚖️', label: 'Enforcement Alerts', badge: '4', badgeClass: 'red' },
+      ]},
+    ]
+  }
+};
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function showLanding() {
+  document.getElementById('landing').style.display = 'flex';
+  document.getElementById('role-select').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+}
+function showRoleSelect() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('role-select').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+function enterApp(role) {
+  currentRole = role;
+  const cfg = roleConfig[role];
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('role-select').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  document.getElementById('sb-role-label').textContent = cfg.label;
+  document.getElementById('sb-role-name').textContent = cfg.name;
+  document.getElementById('user-name').textContent = cfg.user;
+  document.getElementById('user-inst').textContent = cfg.inst;
+  document.getElementById('user-avatar').textContent = cfg.avatar;
+  document.getElementById('topbar-action').textContent = cfg.topbarAction;
+
+  buildNav(cfg);
+
+  // Default view per role
+  const defaultViews = { dpo: 'overview', registrar: 'overview', employer: 'verify', regulator: 'sector-overview' };
+  navigateTo(defaultViews[role]);
+}
+
+function buildNav(cfg) {
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = '';
+  cfg.navSections.forEach(section => {
+    nav.innerHTML += `<div class="nav-section-label">${section.label}</div>`;
+    section.items.forEach(item => {
+      nav.innerHTML += `
+        <div class="nav-item" id="nav-${item.id}" onclick="navigateTo('${item.id}')">
+          <span class="nav-icon">${item.icon}</span>
+          ${item.label}
+          ${item.badge ? `<span class="nav-badge ${item.badgeClass||''}">${item.badge}</span>` : ''}
+        </div>`;
+    });
+  });
+}
+
+function navigateTo(viewId) {
+  currentView = viewId;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + viewId);
+  if (navEl) navEl.classList.add('active');
+
+  const titles = {
+    'overview': ['Dashboard Overview', 'EduGuard AI / Overview'],
+    'pii-scanner': ['PII Scanner', 'PrivacyShield AI / Scanner'],
+    'violations': ['Violations', 'PrivacyShield AI / Violations'],
+    'remediation': ['Remediation Board', 'PrivacyShield AI / Remediation'],
+    'reports': ['Compliance Returns', 'RegReport Engine / Returns'],
+    'notifications': ['Alerts & Notifications', 'EduGuard AI / Alerts'],
+    'credential-registry': ['Credential Registry', 'CredVerify Chain / Registry'],
+    'upload-credentials': ['Upload Credentials', 'CredVerify Chain / Upload'],
+    'verify': ['Verify Credential', 'Employer Portal / Verify'],
+    'verify-history': ['Verification History', 'Employer Portal / History'],
+    'fraud-alerts': ['Fraud Alerts', 'Employer Portal / Alerts'],
+    'sector-overview': ['Sector Overview', 'NDPC Intelligence / Overview'],
+    'pending-submissions': ['Pending Submissions', 'NDPC Intelligence / Submissions'],
+    'enforcement': ['Enforcement Alerts', 'NDPC Intelligence / Enforcement'],
+  };
+  const [t, b] = titles[viewId] || [viewId, ''];
+  document.getElementById('topbar-title').textContent = t;
+  document.getElementById('topbar-breadcrumb').textContent = b;
+
+  const renders = {
+    overview: () => currentRole === 'registrar' ? renderRegistrarOverview() : renderOverview(),
+    'pii-scanner': renderPIIScanner,
+    violations: renderViolations,
+    remediation: renderRemediation,
+    reports: renderReports,
+    notifications: renderNotifications,
+    'credential-registry': renderCredentialRegistry,
+    'upload-credentials': renderUploadCredentials,
+    verify: renderVerify,
+    'verify-history': renderVerifyHistory,
+    'fraud-alerts': renderFraudAlerts,
+    'sector-overview': renderSectorOverview,
+    'pending-submissions': renderPendingSubmissions,
+    enforcement: renderEnforcement,
+  };
+  const content = document.getElementById('content-area');
+  content.innerHTML = '';
+  if (renders[viewId]) {
+    content.innerHTML = renders[viewId]();
+    if (viewId === 'pii-scanner') setTimeout(animateScanner, 100);
+    content.classList.add('fade-in');
+    setTimeout(() => content.classList.remove('fade-in'), 500);
+  }
+}
+
+function handleTopbarAction() {
+  if (currentRole === 'dpo') navigateTo('pii-scanner');
+  else if (currentRole === 'registrar') navigateTo('upload-credentials');
+  else if (currentRole === 'employer') navigateTo('verify');
+  else if (currentRole === 'regulator') sendBulkReminder();
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────
+function renderOverview() {
+  return `
+  <div class="kpi-row fade-in">
+    <div class="kpi-card green"><span class="kpi-icon">🛡️</span><div class="kpi-label">Compliance Score</div><div class="kpi-val green">78<small style="font-size:18px">/100</small></div><div class="kpi-sub">▲ +6 pts this month</div></div>
+    <div class="kpi-card red"><span class="kpi-icon">⚠️</span><div class="kpi-label">Open Violations</div><div class="kpi-val red">14</div><div class="kpi-sub">3 Critical · 11 Medium</div></div>
+    <div class="kpi-card blue"><span class="kpi-icon">🎓</span><div class="kpi-label">Credentials Issued</div><div class="kpi-val blue">4,832</div><div class="kpi-sub">This academic year</div></div>
+    <div class="kpi-card amber"><span class="kpi-icon">📄</span><div class="kpi-label">Pending Returns</div><div class="kpi-val amber">1</div><div class="kpi-sub">NDPC due in 12 days</div></div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📈</span> NDPA Compliance Score</div>
+      <div class="score-wrap">
+        <div class="donut-wrap">
+          <svg viewBox="0 0 120 120" width="120" height="120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E8EDE8" stroke-width="12"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#1A6B1A" stroke-width="12"
+              stroke-dasharray="${2*Math.PI*52*0.78} ${2*Math.PI*52*(1-0.78)}"
+              stroke-linecap="round"/>
+          </svg>
+          <div class="donut-center"><div class="donut-score">78</div><div class="donut-max">out of 100</div></div>
+        </div>
+        <div class="score-breakdown">
+          ${[['Encryption',85,''],['Consent Mgmt',72,'amber'],['Access Control',80,''],['ROPA',70,'amber'],['Vendor Risk',65,'red']].map(([l,v,cls])=>`
+          <div class="score-row">
+            <span class="score-row-label">${l}</span>
+            <div class="score-bar-wrap"><div class="score-bar ${cls}" style="width:${v}%"></div></div>
+            <span class="score-pct">${v}%</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">🚨</span> Recent Violations
+        <button class="btn-sm outline" style="margin-left:auto" onclick="navigateTo('violations')">View All →</button>
+      </div>
+      ${[
+        ['critical','Unencrypted student health records in MedicalDB','MedicalDB · 3,847 records','2 hours ago'],
+        ['medium','23 staff accounts with excessive PII access','HR System · Access Control','Yesterday'],
+        ['medium','Missing consent records for 412 students','StudentDB · Consent','3 days ago'],
+        ['low','DPA missing for 2 third-party vendors','Vendor Management','5 days ago'],
+      ].map(([sev,title,meta,time])=>`
+      <div class="violation-item">
+        <span class="sev-badge ${sev}">${sev.toUpperCase()}</span>
+        <div><div class="viol-title">${title}</div><div class="viol-meta">${meta} · ${time}</div></div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">📅</span> Regulatory Calendar</div>
+      ${[
+        ['var(--red)','NDPC Annual Return','16 Apr 2026','12 days','var(--ltred)','var(--red)'],
+        ['var(--amber)','NUC Data Governance Report','30 May 2026','46 days','var(--ltamber)','var(--amber)'],
+        ['var(--green)','Internal Privacy Audit','15 Jun 2026','61 days','var(--ltgreen)','var(--green)'],
+      ].map(([dc,name,date,days,bg,col])=>`
+      <div class="cal-item">
+        <div class="cal-dot" style="background:${dc}"></div>
+        <div class="cal-date">${date}</div>
+        <div class="cal-name">${name}</div>
+        <span class="cal-days" style="background:${bg};color:${col};border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600">${days}</span>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">✅</span> Credential Verification Activity</div>
+      <div style="display:flex;gap:16px;margin-bottom:16px">
+        <div style="flex:1;text-align:center;padding:14px;background:var(--vltgreen);border-radius:8px">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--green);font-weight:700">247</div>
+          <div style="font-size:12px;color:var(--midgray)">Total Verified</div>
+        </div>
+        <div style="flex:1;text-align:center;padding:14px;background:var(--ltred);border-radius:8px">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--red);font-weight:700">3</div>
+          <div style="font-size:12px;color:var(--midgray)">Fraud Flags</div>
+        </div>
+        <div style="flex:1;text-align:center;padding:14px;background:var(--ltblue);border-radius:8px">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--blue);font-weight:700">98.8%</div>
+          <div style="font-size:12px;color:var(--midgray)">Success Rate</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:3px;height:60px">
+        ${[12,8,15,22,18,30,14,25,20,28,35,24,18,22,30].map(v=>`
+        <div style="flex:1;height:${Math.round(v/35*100)}%;background:var(--ltgreen);border-radius:2px 2px 0 0;min-height:4px" title="${v} verifications"></div>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--midgray);margin-top:6px">Last 15 days</div>
+    </div>
+  </div>`;
+}
+
+function renderRegistrarOverview() {
+  return `
+  <div class="kpi-row fade-in">
+    <div class="kpi-card blue"><span class="kpi-icon">🎓</span><div class="kpi-label">Total Credentials</div><div class="kpi-val blue">4,832</div><div class="kpi-sub">On blockchain</div></div>
+    <div class="kpi-card green"><span class="kpi-icon">✅</span><div class="kpi-label">Verified This Month</div><div class="kpi-val green">247</div><div class="kpi-sub">By employers & regulators</div></div>
+    <div class="kpi-card red"><span class="kpi-icon">🚨</span><div class="kpi-label">Fraud Flagged</div><div class="kpi-val red">3</div><div class="kpi-sub">Pending investigation</div></div>
+    <div class="kpi-card amber"><span class="kpi-icon">⏳</span><div class="kpi-label">Pending Upload</div><div class="kpi-val amber">18</div><div class="kpi-sub">Records awaiting upload</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="ct-icon">🎓</span> Recent Credentials
+      <button class="btn-sm outline" style="margin-left:auto" onclick="navigateTo('credential-registry')">View Registry →</button>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Student Name</th><th>Degree</th><th>Class</th><th>Year</th><th>NCID</th><th>Status</th></tr></thead>
+      <tbody>
+        ${[
+          ['Amina Yusuf Ibrahim','B.Sc. Computer Science','Second Class Upper','2023','NG-23-ABU-00482917'],
+          ['Chukwuemeka Obi','B.Eng. Electrical Engineering','First Class','2023','NG-23-ABU-00482918'],
+          ['Fatima Al-Hassan','B.Sc. Biochemistry','Second Class Upper','2023','NG-23-ABU-00482919'],
+          ['David Adesanya','MBA','Pass','2022','NG-22-ABU-00381204'],
+          ['Ngozi Eze','LLB Law','Second Class Lower','2023','NG-23-ABU-00482920'],
+        ].map(([name,deg,cls,yr,ncid])=>`
+        <tr>
+          <td style="font-weight:500">${name}</td><td>${deg}</td><td>${cls}</td><td>${yr}</td>
+          <td><code style="font-family:'DM Mono',monospace;font-size:11px;background:var(--vltgreen);padding:2px 6px;border-radius:4px">${ncid}</code></td>
+          <td><span class="status-pill verified">✓ Verified</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderPIIScanner() {
+  return `
+  <div class="section-header">
+    <div><h2>PII Scanner</h2><p>Automated scan of all connected university databases for NDPA compliance</p></div>
+    <button class="btn-sm" onclick="runScan()">▶ Run New Scan</button>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">⚡ Scan Status</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:13px;color:var(--midgray)" id="scan-status-text">Last scan: Today 07:42 AM — 847,293 records scanned</span>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--green);background:var(--vltgreen);padding:4px 10px;border-radius:4px" id="scan-pct">100%</span>
+    </div>
+    <div class="scanner-anim"><div class="scanner-bar" id="scanner-bar" style="width:100%"></div></div>
+    <div style="display:flex;gap:20px;margin-top:12px;font-size:12px;color:var(--midgray)">
+      <span>✅ Compliant: <b style="color:var(--green)">5</b></span>
+      <span>⚠️ At Risk: <b style="color:var(--amber)">3</b></span>
+      <span>🔴 Violations: <b style="color:var(--red)">3</b></span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🗄️ Database Map — Click a database to inspect</div>
+    <div class="db-map">
+      ${[
+        ['green','StudentDB','423,847 records','✓ Compliant'],
+        ['green','EnrollmentDB','98,234 records','✓ Compliant'],
+        ['amber','HRSystem','12,847 records','⚠️ Weak Encryption'],
+        ['amber','FinanceDB','89,203 records','⚠️ Access Issues'],
+        ['red','MedicalDB','8,472 records','🔴 CRITICAL: No Encryption'],
+        ['green','LibraryDB','214,690 records','✓ Compliant'],
+        ['red','ResearchDB','45,891 records','🔴 Missing Consent'],
+        ['amber','AlumniDB','31,207 records','⚠️ DPA Missing'],
+        ['red','ExamsDB','56,433 records','🔴 Excessive Access'],
+      ].map(([cls,name,recs,status])=>`
+      <div class="db-node ${cls}" onclick="showDBModal('${name}','${cls}','${recs}','${status}')">
+        <div class="db-node-name">🗄️ ${name}</div>
+        <div class="db-node-records">${recs}</div>
+        <div class="db-node-status">${status}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function animateScanner() {
+  const bar = document.getElementById('scanner-bar');
+  if (bar) { bar.style.width = '0%'; setTimeout(() => bar.style.width = '100%', 100); }
+}
+
+function runScan() {
+  const bar = document.getElementById('scanner-bar');
+  const txt = document.getElementById('scan-status-text');
+  const pct = document.getElementById('scan-pct');
+  if (!bar) return;
+  bar.style.width = '0%';
+  txt.textContent = 'Scanning databases...';
+  pct.textContent = '0%';
+  let p = 0;
+  const interval = setInterval(() => {
+    p += Math.random() * 15;
+    if (p >= 100) { p = 100; clearInterval(interval); txt.textContent = 'Scan complete — 847,293 records scanned'; }
+    bar.style.width = p + '%';
+    pct.textContent = Math.round(p) + '%';
+  }, 180);
+}
+
+function showDBModal(name, cls, recs, status) {
+  const issues = {
+    green: ['All PII fields encrypted with AES-256', 'Access control properly configured', 'Consent records complete', 'DPA in place'],
+    amber: ['⚠️ 3 PII fields use weak RC4 encryption', '⚠️ 8 user accounts have excessive privileges', 'Consent records require update'],
+    red: ['🔴 CRITICAL: No encryption on PII fields', '🔴 Student health data stored in plaintext', '🔴 Missing consent records for 847 students', 'Immediate remediation required'],
+  };
+  const colors = { green: 'var(--green)', amber: 'var(--amber)', red: 'var(--red)' };
+  openModal(`
+    <h2 class="modal-title">🗄️ ${name}</h2>
+    <p class="modal-sub">${recs} · Status: <span style="color:${colors[cls]};font-weight:600">${status}</span></p>
+    <div style="background:var(--off);border-radius:8px;padding:16px;margin-bottom:20px">
+      ${issues[cls].map(i => `<div style="font-size:13px;padding:6px 0;border-bottom:1px solid var(--ltgray)">${i}</div>`).join('')}
+    </div>
+    <div class="modal-actions">
+      ${cls !== 'green' ? `<button class="btn-sm" onclick="assignRemediation('${name}');closeModal()">Assign Remediation Task</button>` : ''}
+      <button class="btn-sm outline" onclick="closeModal()">Close</button>
+    </div>`);
+}
+
+function renderViolations() {
+  return `
+  <div class="section-header">
+    <div><h2>Violations</h2><p>14 active violations requiring attention</p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm outline" onclick="showToast('📥 Export started')">Export</button>
+      <button class="btn-sm" onclick="navigateTo('remediation')">View Remediation Board</button>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      ${['All (14)','Critical (3)','Medium (8)','Low (3)','Resolved (12)'].map((f,i)=>`
+      <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='');this.style.background='var(--ltgreen)'"
+        style="background:${i===0?'var(--ltgreen)':'none'};border:1px solid var(--border);padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">${f}</button>`).join('')}
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Severity</th><th>Violation</th><th>Database</th><th>Records</th><th>Detected</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        ${[
+          ['critical','Unencrypted student health data','MedicalDB','3,847','2h ago','Open'],
+          ['critical','No consent records — 412 students','StudentDB','412','3d ago','Open'],
+          ['critical','Excessive root access — 3 admins','HRSystem','—','1d ago','Open'],
+          ['medium','Weak encryption on finance records','FinanceDB','89,203','5d ago','In Progress'],
+          ['medium','DPA missing — CloudPay vendor','Vendor Mgmt','—','1w ago','In Progress'],
+          ['medium','Missing ROPA entry — ResearchDB','ResearchDB','45,891','1w ago','Open'],
+          ['medium','Dormant accounts with PII access','HRSystem','28','2w ago','Open'],
+          ['low','Outdated privacy notice','Website','—','3w ago','Open'],
+        ].map(([sev,viol,db,recs,dt,status])=>`
+        <tr>
+          <td><span class="sev-badge ${sev}">${sev.toUpperCase()}</span></td>
+          <td style="font-weight:500;max-width:200px">${viol}</td>
+          <td>${db}</td><td>${recs}</td><td>${dt}</td>
+          <td><span class="status-pill ${status==='Open'?'flagged':status==='In Progress'?'pending':'verified'}">${status}</span></td>
+          <td><button class="btn-sm outline" onclick="showViolationDetail('${viol.replace(/'/g,"\\'")}')">View</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function showViolationDetail(viol) {
+  openModal(`
+    <h2 class="modal-title">⚠️ Violation Detail</h2>
+    <p class="modal-sub">${viol}</p>
+    <div style="background:var(--ltred);border-left:4px solid var(--red);padding:12px 16px;border-radius:8px;margin-bottom:20px">
+      <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px">NDPA Reference</div>
+      <div style="font-size:13px;color:var(--dkgray)">Section 24(1)(c) — Personal data shall be processed in a manner that ensures appropriate security</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--dkgreen);margin-bottom:10px">Remediation Steps:</div>
+    ${['Identify all unencrypted data fields in the affected database','Apply AES-256 encryption to all PII fields','Update database access policies and test encryption','Run verification scan to confirm remediation','Submit updated ROPA to compliance record'].map((s,i)=>`
+    <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--ltgray);font-size:13px">
+      <span style="width:20px;height:20px;background:var(--green);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</span>
+      ${s}
+    </div>`).join('')}
+    <div class="modal-field" style="margin-top:16px">
+      <label>Assign To</label>
+      <select><option>IT Security Team</option><option>Database Admin</option><option>DPO Office</option></select>
+    </div>
+    <div class="modal-field">
+      <label>Due Date</label>
+      <input type="date" value="2026-04-30">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="assignRemediation('Violation');closeModal()">Assign Task</button>
+      <button class="btn-sm outline" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function assignRemediation(name) {
+  showToast(`✅ Remediation task assigned for ${name}`);
+}
+
+function renderRemediation() {
+  return `
+  <div class="section-header">
+    <div><h2>Remediation Board</h2><p>Track all compliance fix tasks across departments</p></div>
+    <button class="btn-sm" onclick="openNewTaskModal()">+ New Task</button>
+  </div>
+  <div class="kanban">
+    ${[
+      { col: 'To Do', items: [
+        {title:'Encrypt MedicalDB PII fields',dept:'IT Security',due:'Apr 25',pri:'high'},
+        {title:'Update vendor DPA — CloudPay',dept:'Legal',due:'Apr 28',pri:'medium'},
+        {title:'Update privacy notice on website',dept:'Comms',due:'May 5',pri:'low'},
+      ]},
+      { col: 'In Progress', items: [
+        {title:'Remove excessive admin access — HRSystem',dept:'IT',due:'Apr 22',pri:'high'},
+        {title:'Generate missing ROPA entries',dept:'DPO Office',due:'Apr 23',pri:'medium'},
+      ]},
+      { col: 'Under Review', items: [
+        {title:'FinanceDB weak encryption fix',dept:'IT Security',due:'Apr 20',pri:'medium'},
+      ]},
+      { col: 'Resolved ✓', items: [
+        {title:'StudentDB consent collection forms',dept:'Registrar',due:'Apr 15',pri:'medium'},
+        {title:'JAMB integration DPA signed',dept:'Legal',due:'Apr 10',pri:'low'},
+      ]},
+    ].map(({col, items}) => `
+    <div>
+      <div class="kanban-col-title" style="color:var(--dkgreen)">${col} <span style="font-weight:400;color:var(--midgray)">(${items.length})</span></div>
+      ${items.map(({title,dept,due,pri}) => `
+      <div class="task-card ${pri}" onclick="showToast('📋 Task: ${title.replace(/'/g,"\\'")}')">
+        <h4>${title}</h4>
+        <div class="task-meta">👤 ${dept}</div>
+        <div class="task-due">📅 Due: ${due}</div>
+      </div>`).join('')}
+    </div>`).join('')}
+  </div>`;
+}
+
+function openNewTaskModal() {
+  openModal(`
+    <h2 class="modal-title">+ New Remediation Task</h2>
+    <p class="modal-sub">Create a new compliance remediation task</p>
+    <div class="modal-field"><label>Task Title</label><input type="text" placeholder="Describe the remediation needed"></div>
+    <div class="modal-field"><label>Priority</label><select><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+    <div class="modal-field"><label>Assign To</label><select><option>IT Security Team</option><option>DPO Office</option><option>Legal Team</option><option>Registrar Office</option></select></div>
+    <div class="modal-field"><label>Due Date</label><input type="date"></div>
+    <div class="modal-field"><label>Notes</label><textarea rows="3" placeholder="Additional context..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal();showToast('✅ Task created successfully')">Create Task</button>
+      <button class="btn-sm outline" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function renderReports() {
+  return `
+  <div class="section-header">
+    <div><h2>Compliance Returns</h2><p>Auto-generate and submit reports to NDPC, NUC & NBTE</p></div>
+  </div>
+  <div class="report-steps" style="margin-bottom:24px;border-radius:8px;overflow:hidden">
+    <div class="report-step done"><span class="report-step-num">✓</span>Data Collected</div>
+    <div class="report-step done"><span class="report-step-num">✓</span>AI Pre-Fill</div>
+    <div class="report-step active"><span class="report-step-num">3</span>Review & Submit</div>
+    <div class="report-step"><span class="report-step-num">4</span>Accepted</div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    ${[
+      {title:'NDPC Annual Compliance Return',reg:'NDPC',due:'16 Apr 2026',status:'pending',days:'12 days',color:'var(--amber)'},
+      {title:'NUC Data Governance Report',reg:'NUC',due:'30 May 2026',status:'submitted',days:'Submitted',color:'var(--green)'},
+      {title:'NBTE Accreditation Data Pack',reg:'NBTE',due:'15 Jun 2026',status:'pending',days:'61 days',color:'var(--blue)'},
+    ].map(({title,reg,due,status,days,color})=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div style="font-weight:700;font-size:15px;color:var(--dkgreen)">${title}</div>
+          <div style="font-size:12px;color:var(--midgray);margin-top:4px">${reg} · Due: ${due}</div>
+        </div>
+        <span style="background:${color}22;color:${color};padding:4px 10px;border-radius:4px;font-size:12px;font-weight:700;border:1px solid ${color}">${days}</span>
+      </div>
+      ${status==='pending'?`
+      <div style="background:var(--vltgreen);border-radius:8px;padding:12px;font-size:12px;color:var(--midgray);margin-bottom:12px">
+        ✅ EduGuard AI has auto-populated all required fields from your live compliance data.
+        Review below before submitting.
+      </div>
+      <div style="font-size:13px;margin-bottom:12px">
+        ${[['Compliance Score','78/100'],['Open Violations','14'],['PIAs Completed','7/8'],['ROPA Entries','23'],['Consent Coverage','88.2%']].map(([l,v])=>`
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ltgray)">
+          <span style="color:var(--midgray)">${l}</span><span style="font-weight:600">${v}</span>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="submitReturn('${title}')">✉ Submit to ${reg}</button>
+        <button class="btn-sm outline" onclick="showToast('📄 PDF generated')">Download PDF</button>
+      </div>` : `<div style="text-align:center;padding:20px;color:var(--green)">✅ <strong>Successfully submitted to ${reg}</strong><br><small style="color:var(--midgray)">Accepted on 14 Apr 2026</small></div>`}
+    </div>`).join('')}
+  </div>`;
+}
+
+function submitReturn(title) {
+  closeModal();
+  openModal(`
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:60px;margin-bottom:16px">📨</div>
+      <h2 class="modal-title">Confirm Submission</h2>
+      <p class="modal-sub">You are about to submit the <strong>${title}</strong> to NDPC. This action cannot be undone.</p>
+      <div class="modal-actions" style="justify-content:center">
+        <button class="btn-sm" onclick="closeModal();showToast('✅ Return submitted to NDPC successfully!')">Confirm & Submit</button>
+        <button class="btn-sm outline" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>`);
+}
+
+function renderNotifications() {
+  return `
+  <div class="section-header"><div><h2>Alerts & Notifications</h2><p>3 new alerts require your attention</p></div></div>
+  ${[
+    {type:'critical',icon:'🔴',title:'CRITICAL: Unencrypted Data Detected',desc:'MedicalDB — student health records stored in plaintext. Immediate action required. Affects 3,847 records.',btn:'View Violation'},
+    {type:'warning',icon:'⚠️',title:'NDPC Return Due in 12 Days',desc:'Your NDPC Annual Compliance Return is due on 16 April 2026. EduGuard AI has pre-populated the form.',btn:'Review Return'},
+    {type:'info',icon:'ℹ️',title:'Credential Verification Spike',desc:'247 credential verifications recorded this month — 98.8% successful. 3 fraud attempts detected and blocked.',btn:'View Stats'},
+    {type:'warning',icon:'⚠️',title:'Vendor DPA Missing — CloudPay Systems',desc:'No Data Processing Agreement found for CloudPay Systems Ltd. Required under NDPA Section 38.',btn:'Fix Now'},
+  ].map(({type,icon,title,desc,btn})=>`
+  <div class="alert-bar ${type}">
+    <span class="alert-icon">${icon}</span>
+    <div>
+      <div class="alert-title">${title}</div>
+      <div class="alert-desc">${desc}</div>
+    </div>
+    <div class="alert-action">
+      <button class="btn-sm ${type==='critical'?'red':''}" onclick="showToast('Opening: ${title.replace(/'/g,'')}...')">${btn}</button>
+    </div>
+  </div>`).join('')}`;
+}
+
+function renderCredentialRegistry() {
+  return `
+  <div class="section-header">
+    <div><h2>Credential Registry</h2><p>Blockchain-verified academic credential registry for ABU Zaria</p></div>
+    <button class="btn-sm" onclick="navigateTo('upload-credentials')">⬆ Bulk Upload</button>
+  </div>
+  <div style="display:flex;gap:16px;margin-bottom:20px">
+    ${[['4,832','On Blockchain','var(--blue)'],['247','Verified This Month','var(--green)'],['3','Fraud Flagged','var(--red)'],['18','Pending Upload','var(--amber)']].map(([v,l,c])=>`
+    <div style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:${c}">${v}</div>
+      <div style="font-size:12px;color:var(--midgray)">${l}</div>
+    </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="search-wrap">
+      <input class="search-input" placeholder="Search by student name, matric number, or NCID..." id="reg-search">
+      <button class="search-btn" onclick="showToast('🔍 Searching registry...')">Search</button>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Student Name</th><th>Degree</th><th>Class</th><th>Year</th><th>NCID</th><th>Verifications</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        ${[
+          ['Amina Yusuf Ibrahim','B.Sc. Computer Science','2nd Class Upper','2023','NG-23-ABU-00482917',12],
+          ['Chukwuemeka Obi','B.Eng. Electrical Eng.','First Class','2023','NG-23-ABU-00482918',8],
+          ['Fatima Al-Hassan','B.Sc. Biochemistry','2nd Class Upper','2023','NG-23-ABU-00482919',5],
+          ['David Adesanya','MBA','Pass','2022','NG-22-ABU-00381204',23],
+          ['Ngozi Eze','LLB Law','2nd Class Lower','2023','NG-23-ABU-00482920',3],
+          ['Ibrahim Musa','B.Sc. Physics','2nd Class Lower','2023','NG-23-ABU-00482921',1],
+        ].map(([name,deg,cls,yr,ncid,verifs])=>`
+        <tr>
+          <td style="font-weight:500">${name}</td><td>${deg}</td><td>${cls}</td><td>${yr}</td>
+          <td><code style="font-family:'DM Mono',monospace;font-size:11px;background:var(--vltgreen);padding:2px 6px;border-radius:4px">${ncid}</code></td>
+          <td style="color:var(--green);font-weight:600">${verifs}</td>
+          <td><span class="status-pill verified">✓ Verified</span></td>
+          <td><button class="btn-sm outline" onclick="showCredDetail('${name}','${ncid}','${deg}','${cls}')">View</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function showCredDetail(name, ncid, deg, cls) {
+  openModal(`
+    <h2 class="modal-title">🎓 Credential Detail</h2>
+    <div style="display:flex;gap:16px;margin-bottom:20px">
+      <div style="width:60px;height:60px;background:var(--ltblue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">${name[0]}</div>
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--dkgray)">${name}</div>
+        <div style="font-size:13px;color:var(--midgray)">${deg}</div>
+        <span class="status-pill verified" style="margin-top:6px;display:inline-block">✓ Blockchain Verified</span>
+      </div>
+    </div>
+    <div style="background:var(--off);border-radius:8px;padding:14px;margin-bottom:16px">
+      ${[['Class of Degree',cls],['NCID',ncid],['Institution','Ahmadu Bello University, Zaria'],['JAMB Record','✓ Matched'],['WAEC Record','✓ Matched'],['Blockchain Block','#4829481'],['Timestamp','14 Apr 2026 09:32:11 UTC']].map(([l,v])=>`
+      <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--ltgray);font-size:13px">
+        <span style="color:var(--midgray)">${l}</span><span style="font-weight:600;font-family:${l.includes('Block')||l.includes('NCID')?'DM Mono':''}">${v}</span>
+      </div>`).join('')}
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal();showToast('📄 Certificate PDF downloaded')">Download Certificate</button>
+      <button class="btn-sm outline" onclick="closeModal()">Close</button>
+    </div>`);
+}
+
+function renderUploadCredentials() {
+  return `
+  <div class="section-header"><div><h2>Upload Credentials</h2><p>Bulk upload graduating class records to CredVerify Chain</p></div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">📤 Upload Graduating Class Records</div>
+    <div class="upload-zone" onclick="startUpload()">
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Drag & drop your CSV file here</div>
+      <div class="upload-sub">or click to browse — Download <a href="#" onclick="showToast('📥 Template downloaded')">CSV Template</a></div>
+    </div>
+    <div id="upload-progress" style="display:none;margin-top:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+        <span id="up-status">Uploading...</span><span id="up-pct">0%</span>
+      </div>
+      <div class="scanner-anim"><div class="scanner-bar" id="up-bar"></div></div>
+      <div id="up-results" style="margin-top:12px"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Recent Uploads</div>
+    <table class="data-table">
+      <thead><tr><th>Batch Name</th><th>Records</th><th>Valid</th><th>Errors</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>
+        ${[
+          ['Class of 2023 — Engineering','1,247','1,244','3','14 Apr 2026','submitted'],
+          ['Class of 2023 — Sciences','987','987','0','10 Apr 2026','verified'],
+          ['Class of 2022 — All Faculties','3,241','3,238','3','15 Jan 2026','verified'],
+        ].map(([b,r,v,e,d,s])=>`
+        <tr><td style="font-weight:500">${b}</td><td>${r}</td><td style="color:var(--green);font-weight:600">${v} ✓</td>
+        <td style="color:${e==='0'?'var(--midgray)':'var(--red)'}">${e}</td><td>${d}</td>
+        <td><span class="status-pill ${s}">${s==='verified'?'✓ On-Chain':'📨 Processing'}</span></td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function startUpload() {
+  const prog = document.getElementById('upload-progress');
+  const bar = document.getElementById('up-bar');
+  const pct = document.getElementById('up-pct');
+  const status = document.getElementById('up-status');
+  const results = document.getElementById('up-results');
+  prog.style.display = 'block'; bar.style.width = '0%';
+  let p = 0;
+  const iv = setInterval(() => {
+    p += Math.random() * 18;
+    if (p >= 100) {
+      p = 100; clearInterval(iv);
+      status.textContent = 'Validation complete';
+      results.innerHTML = `
+        <div style="background:var(--vltgreen);border-radius:8px;padding:14px">
+          <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:8px">✅ 1,247 records processed</div>
+          <div style="font-size:13px;color:var(--dkgray)">1,244 valid · <span style="color:var(--red)">3 errors</span></div>
+          <div style="margin-top:10px;padding:10px;background:var(--ltred);border-radius:6px;font-size:12px">
+            <div style="font-weight:600;color:var(--red);margin-bottom:6px">Errors to fix:</div>
+            <div>Row 142 — Missing degree classification</div>
+            <div>Row 389 — Invalid matric number format</div>
+            <div>Row 891 — Duplicate NCID detected</div>
+          </div>
+          <button class="btn-sm" style="margin-top:12px" onclick="showToast('🔗 1,244 credentials recorded on blockchain!')">Upload Valid Records to Blockchain</button>
+        </div>`;
+    }
+    bar.style.width = p + '%'; pct.textContent = Math.round(p) + '%';
+  }, 150);
+}
+
+function renderVerify() {
+  return `
+  <div class="section-header"><div><h2>Verify Credential</h2><p>Instant blockchain-verified credential authentication</p></div></div>
+  <div class="card" style="max-width:640px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:48px;margin-bottom:12px">🔗</div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--dkgreen);font-weight:700">CredVerify Chain</div>
+      <div style="font-size:14px;color:var(--midgray);margin-top:4px">Powered by Hyperledger Fabric · Results in under 10 seconds</div>
+    </div>
+    <div class="search-wrap">
+      <input class="search-input" id="ncid-input" placeholder="Enter NCID (e.g. NG-23-ABU-00482917) or type 'fraud'" 
+        onkeydown="if(event.key==='Enter')verifyCredential()">
+      <button class="search-btn" onclick="verifyCredential()">Verify Now</button>
+    </div>
+    <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--midgray)">
+      Try: <code onclick="document.getElementById('ncid-input').value=this.textContent" style="cursor:pointer;background:var(--vltgreen);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace">NG-23-ABU-00482917</code>
+      or
+      <code onclick="document.getElementById('ncid-input').value=this.textContent" style="cursor:pointer;background:var(--ltred);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace">fraud</code>
+    </div>
+    <div id="verify-result"></div>
+  </div>`;
+}
+
+function verifyCredential() {
+  const val = (document.getElementById('ncid-input').value || '').trim();
+  const res = document.getElementById('verify-result');
+  if (!val) { showToast('⚠️ Please enter an NCID'); return; }
+  res.innerHTML = `<div style="text-align:center;padding:30px;color:var(--midgray)"><div style="font-size:32px;margin-bottom:8px">⏳</div>Querying blockchain...</div>`;
+  setTimeout(() => {
+    const isFraud = val.toLowerCase().includes('fraud') || val.length < 10;
+    if (isFraud) {
+      res.innerHTML = `
+      <div class="verify-result fail" style="display:block">
+        <div class="verify-result-header">
+          <span class="verify-badge">❌</span>
+          <div><div class="verify-status-text err">NOT FOUND</div><div style="font-size:13px;color:var(--midgray)">This credential could not be verified on the blockchain</div></div>
+        </div>
+        <div style="background:#fff5f5;border-radius:8px;padding:14px;font-size:13px;color:var(--red)">
+          ⚠️ This certificate could not be matched in the National Credential Registry. 
+          It may be fraudulent. Please do not accept this document and consider reporting it.
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn-sm red" onclick="showToast('🚨 Fraud report submitted to NDPC')">Report Fraud to NDPC</button>
+          <button class="btn-sm outline" onclick="document.getElementById('ncid-input').value='';document.getElementById('verify-result').innerHTML=''">Clear</button>
+        </div>
+      </div>`;
+    } else {
+      res.innerHTML = `
+      <div class="verify-result success" style="display:block">
+        <div class="verify-result-header">
+          <span class="verify-badge">✅</span>
+          <div><div class="verify-status-text ok">VERIFIED</div><div style="font-size:13px;color:var(--midgray)">Credential confirmed on Hyperledger Fabric blockchain</div></div>
+        </div>
+        <div class="verify-details">
+          ${[['Candidate Name','Amina Yusuf Ibrahim'],['Institution','Ahmadu Bello University, Zaria'],['Degree','B.Sc. Computer Science'],['Class of Degree','Second Class Upper (Honours)'],['Year Awarded','2023'],['NCID',val||'NG-23-ABU-00482917']].map(([l,v])=>`
+          <div class="verify-field"><label>${l}</label><span>${v}</span></div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <div style="flex:1;padding:8px 12px;background:#fff8;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:12px"><span>🟢</span><span style="color:var(--green);font-weight:600">JAMB Record: Matched</span></div>
+          <div style="flex:1;padding:8px 12px;background:#fff8;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:12px"><span>🟢</span><span style="color:var(--green);font-weight:600">WAEC Record: Matched</span></div>
+        </div>
+        <div class="blockchain-confirm">🔗 Block #4829481 · Timestamp: 14 Apr 2026 09:32:11 UTC · Hash: a7f3b2c1...</div>
+        <div style="margin-top:12px"><button class="btn-sm outline" onclick="showToast('📄 Verification certificate downloaded')">Download Verification Certificate</button></div>
+      </div>`;
+    }
+  }, 1500);
+}
+
+function renderVerifyHistory() {
+  return `
+  <div class="section-header"><div><h2>Verification History</h2><p>All credential verifications from your account</p></div>
+  <button class="btn-sm outline" onclick="showToast('📥 Exporting CSV...')">Export CSV</button></div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th>Candidate</th><th>Degree</th><th>Institution</th><th>Date</th><th>Requested By</th><th>Result</th></tr></thead>
+      <tbody>
+        ${[
+          ['Amina Yusuf Ibrahim','B.Sc. Computer Science','ABU Zaria','Today 09:32','HR — Dangote Group','verified'],
+          ['Emeka Okafor','B.Eng. Mechanical','UNILAG','Today 08:15','HR — Dangote Group','verified'],
+          ['Kemi Adeyemi','B.Sc. Accounting','OAU','Yesterday','Recruiter — Mr. C. Okonkwo','verified'],
+          ['Unknown Applicant','(Certificate Image)','—','Yesterday','HR — Dangote Group','flagged'],
+          ['Bello Musa','MBA','BUK','3 days ago','HR — Dangote Group','verified'],
+          ['Chioma Nwosu','LLB Law','UNIPORT','1 week ago','Recruiter — Mr. C. Okonkwo','verified'],
+        ].map(([n,d,i,dt,r,s])=>`
+        <tr><td style="font-weight:500">${n}</td><td>${d}</td><td>${i}</td><td style="font-family:'DM Mono',monospace;font-size:12px">${dt}</td>
+        <td>${r}</td><td><span class="status-pill ${s}">${s==='verified'?'✅ Verified':s==='flagged'?'🚨 Flagged':'—'}</span></td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderFraudAlerts() {
+  return `
+  <div class="section-header"><div><h2>Fraud Alerts</h2><p>2 suspicious verification attempts detected</p></div></div>
+  ${[
+    {title:'Suspected Forged Certificate — Engineering Degree',desc:'Certificate submitted on 15 Apr 2026 shows ABU Zaria Engineering degree. Blockchain query returned NO MATCH. Font metadata inconsistency detected by AI scanner.',serious:true},
+    {title:'Duplicate Certificate Hash Detected',desc:'Two candidates submitted certificates with identical blockchain hash — impossible for legitimate credentials. AI fraud engine flagged both submissions.',serious:true},
+  ].map(({title,desc,serious})=>`
+  <div class="card" style="margin-bottom:16px;border-left:4px solid var(--red)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--red);margin-bottom:8px">🚨 ${title}</div>
+        <div style="font-size:13px;color:var(--midgray);line-height:1.5;margin-bottom:16px">${desc}</div>
+      </div>
+      <span class="sev-badge critical">CRITICAL</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm red" onclick="showToast('📨 Fraud report submitted to NDPC')">Report to NDPC</button>
+      <button class="btn-sm outline" onclick="showToast('📋 Case logged')">Log Case</button>
+      <button class="btn-sm outline" onclick="showToast('🚫 Candidate flagged in system')">Flag Candidate</button>
+    </div>
+  </div>`).join('')}`;
+}
+
+function renderSectorOverview() {
+  return `
+  <div class="kpi-row fade-in">
+    <div class="kpi-card green"><span class="kpi-icon">🏫</span><div class="kpi-label">HEIs Onboarded</div><div class="kpi-val green">247</div><div class="kpi-sub">of 1,043 total</div></div>
+    <div class="kpi-card blue"><span class="kpi-icon">📊</span><div class="kpi-label">Avg Compliance</div><div class="kpi-val blue">71<small style="font-size:18px">/100</small></div><div class="kpi-sub">▲ +4 pts vs last year</div></div>
+    <div class="kpi-card amber"><span class="kpi-icon">📥</span><div class="kpi-label">Returns Overdue</div><div class="kpi-val amber">16</div><div class="kpi-sub">of 247 institutions</div></div>
+    <div class="kpi-card red"><span class="kpi-icon">🚨</span><div class="kpi-label">Fraud Cases YTD</div><div class="kpi-val red">1,847</div><div class="kpi-sub">▼ -23% vs last year</div></div>
+  </div>
+  <div class="grid-2" style="gap:20px">
+    <div class="card">
+      <div class="card-title"><span class="ct-icon">🏆</span> Compliance League Table</div>
+      ${[
+        ['1','University of Lagos','Lagos',92,'var(--green)'],
+        ['2','Ahmadu Bello University','Kaduna',88,'var(--green)'],
+        ['3','University of Nigeria','Enugu',85,'var(--green)'],
+        ['4','Obafemi Awolowo University','Osun',82,'var(--green)'],
+        ['5','UNIPORT','Rivers',75,'var(--teal)'],
+        ['6','Bayero University Kano','Kano',68,'var(--amber)'],
+        ['7','University of Benin','Edo',54,'var(--amber)'],
+        ['8','Niger Delta University','Bayelsa',38,'var(--red)'],
+      ].map(([rank,name,state,score,color])=>`
+      <div class="league-bar">
+        <span class="league-rank">${rank}</span>
+        <span class="league-name">${name}</span>
+        <div class="league-bar-wrap"><div class="league-fill" style="width:${score}%;background:${color}"><span>${score}</span></div></div>
+        <span class="league-score" style="color:${color}">${score}</span>
+      </div>`).join('')}
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title"><span class="ct-icon">🗺️</span> Nigeria Compliance Heat Map</div>
+        <div class="map-placeholder">
+          <div class="map-nigeria">🇳🇬</div>
+          <div class="map-label">Nigeria — 36 States + FCT</div>
+          <div class="map-dots">
+            ${Array(24).fill(0).map(()=>'<div class="map-dot"></div>').join('')}
+          </div>
+          <div style="font-size:11px;color:var(--midgray);margin-top:8px">🟢 High compliance &nbsp; 🟡 Medium &nbsp; 🔴 Low</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="ct-icon">📈</span> Sector Trend</div>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:70px">
+          ${[52,55,58,61,60,63,65,66,68,69,70,71].map((v,i)=>`
+          <div style="flex:1;height:${Math.round(v/71*100)}%;background:${v>68?'var(--green)':'var(--ltgreen)'};border-radius:3px 3px 0 0" title="${v}/100"></div>`).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--midgray);margin-top:6px;display:flex;justify-content:space-between"><span>Jan 2025</span><span>▲ 71/100 avg today</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPendingSubmissions() {
+  return `
+  <div class="section-header">
+    <div><h2>Pending Submissions</h2><p>16 institutions have overdue NDPC returns</p></div>
+    <button class="btn-sm" onclick="sendBulkReminder()">📨 Send Bulk Reminder (16)</button>
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th>Institution</th><th>State</th><th>Return Type</th><th>Due Date</th><th>Days Overdue</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        ${[
+          ['Federal Poly Nekede','Imo','NDPC Annual Return','1 Apr 2026',15,'overdue'],
+          ['Abia State University','Abia','NDPC Annual Return','1 Apr 2026',15,'overdue'],
+          ['Covenant University','Ogun','NUC Data Report','31 Mar 2026',16,'overdue'],
+          ['Redeemer\'s University','Osun','NDPC Annual Return','5 Apr 2026',11,'overdue'],
+          ['FUTO','Imo','NBTE Data Pack','28 Mar 2026',19,'overdue'],
+          ['Afe Babalola University','Ekiti','NDPC Annual Return','10 Apr 2026',6,'overdue'],
+          ['ABU Zaria','Kaduna','NDPC Annual Return','16 Apr 2026',0,'pending'],
+          ['UNILAG','Lagos','NDPC Annual Return','16 Apr 2026',0,'submitted'],
+        ].map(([n,s,r,d,days,status])=>`
+        <tr>
+          <td style="font-weight:500">${n}</td><td>${s}</td><td>${r}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px">${d}</td>
+          <td><span style="color:${days>0?'var(--red)':'var(--green)'};font-weight:700">${days>0?days+' days overdue':'On track'}</span></td>
+          <td><span class="status-pill ${status}">${status}</span></td>
+          <td style="display:flex;gap:6px">
+            ${status==='overdue'?`<button class="btn-sm outline" onclick="showToast('📧 Reminder sent to ${n}')">Remind</button><button class="btn-sm red" onclick="showToast('⚖️ Notice issued to ${n}')">Escalate</button>`:'<button class="btn-sm outline" onclick="showToast(\'View return\')" style="opacity:.5">View</button>'}
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function sendBulkReminder() {
+  openModal(`
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:60px;margin-bottom:16px">📨</div>
+      <h2 class="modal-title">Send Bulk Reminder</h2>
+      <p class="modal-sub">You are about to send automated reminder emails to <strong>16 institutions</strong> with overdue compliance returns.</p>
+      <div style="background:var(--ltamber);border-radius:8px;padding:14px;text-align:left;font-size:13px;margin:16px 0">
+        <div style="font-weight:600;color:var(--amber);margin-bottom:6px">This will include:</div>
+        <div>• Institution-specific overdue return details</div>
+        <div>• Direct link to their EduGuard AI submission portal</div>
+        <div>• NDPC regulatory reference and deadline warning</div>
+      </div>
+      <div class="modal-actions" style="justify-content:center">
+        <button class="btn-sm" onclick="closeModal();showToast('✅ 16 automated reminder emails sent successfully!')">Confirm — Send All</button>
+        <button class="btn-sm outline" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>`);
+}
+
+function renderEnforcement() {
+  return `
+  <div class="section-header"><div><h2>Enforcement Alerts</h2><p>4 active enforcement matters requiring NDPC action</p></div></div>
+  ${[
+    {title:'🚨 Fraud Spike — Abia State University',desc:'47 suspicious verification attempts in 24 hours. AI analysis: certificate template mismatch + 3 certificates share identical blockchain hash.',sev:'critical',action:'Issue Compliance Notice'},
+    {title:'🔴 Persistent Non-Compliance — Fed. Poly Nekede',desc:'NDPC return overdue 15 days. No response to 3 automated reminders. Compliance score below threshold (32/100) for 3 consecutive months.',sev:'critical',action:'Issue Enforcement Notice'},
+    {title:'⚠️ Data Breach Disclosure — Covenant University',desc:'Unreported breach of 1,200 student records detected via PrivacyShield AI. Institution failed to notify NDPC within 72-hour NDPA requirement.',sev:'medium',action:'Request Incident Report'},
+    {title:'⚠️ Vendor DPA Non-Compliance — 8 Institutions',desc:'8 institutions using AWS without valid Data Processing Agreements on file. NDPA Section 38 violation.',sev:'medium',action:'Issue Advisory Notice'},
+  ].map(({title,desc,sev,action})=>`
+  <div class="card" style="margin-bottom:16px;border-left:4px solid ${sev==='critical'?'var(--red)':'var(--amber)'}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div style="font-size:15px;font-weight:700;color:var(--dkgray)">${title}</div>
+      <span class="sev-badge ${sev}">${sev.toUpperCase()}</span>
+    </div>
+    <div style="font-size:13px;color:var(--midgray);line-height:1.6;margin-bottom:14px">${desc}</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sm ${sev==='critical'?'red':''}" onclick="showToast('📄 Notice generated and issued')">📋 ${action}</button>
+      <button class="btn-sm outline" onclick="showToast('📊 Investigation opened')">Open Investigation</button>
+    </div>
+  </div>`).join('')}`;
+}
+
+// ── MODAL & TOAST ─────────────────────────────────────────────
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+showLanding();
+</script>
+</body>
+</html>

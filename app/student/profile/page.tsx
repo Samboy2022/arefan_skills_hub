@@ -84,29 +84,31 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* Stat Strip */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">GPA</p>
-            <p className="text-2xl font-bold text-foreground">{avgGpa}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/certificate.png" alt="GPA" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">GPA</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{avgGpa}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/diploma.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Enrolled Credits</p>
-            <p className="text-2xl font-bold text-foreground">{totalCredits}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l sm:border-r border-border px-6">
+          <img src="https://img.icons8.com/scribby/96/star.png" alt="Enrolled Credits" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Enrolled Credits</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{totalCredits}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/books.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Active Courses</p>
-            <p className="text-2xl font-bold text-foreground">{STUDENT_COURSES.length}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/book.png" alt="Active Courses" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Active Courses</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{STUDENT_COURSES.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/classroom.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="" />
-        </Card>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -122,7 +124,41 @@ export default function ProfilePage() {
               </Link>
             </div>
 
-            <Table className="w-full table-fixed">
+            {/* Mobile card layout */}
+            <div className="lg:hidden divide-y divide-border">
+              {STUDENT_COURSES.map(course => (
+                <Link
+                  key={course.id}
+                  href={`/student/courses/${course.id}`}
+                  className="block px-4 py-3.5 hover:bg-muted/20 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-foreground line-clamp-1">{course.name}</p>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                        {course.code}
+                      </span>
+                    </div>
+                    <span className={cn(
+                      "text-sm font-bold shrink-0",
+                      course.grade?.startsWith("A") ? "text-emerald-600 dark:text-emerald-400" :
+                      course.grade?.startsWith("B") ? "text-blue-600 dark:text-blue-400" :
+                      "text-amber-600 dark:text-amber-400"
+                    )}>
+                      {course.grade}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Progress value={course.progress} className="h-1.5 flex-1" />
+                    <span className="text-xs font-semibold text-muted-foreground w-8 shrink-0">{course.progress}%</span>
+                    <span className="text-xs text-muted-foreground">GPA: {course.gpa?.toFixed(1)}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop table layout */}
+            <Table className="w-full table-fixed hidden lg:table">
               <TableHeader className="bg-muted/30">
                 <TableRow>
                   <TableHead className="w-[38%] pl-5">Course</TableHead>

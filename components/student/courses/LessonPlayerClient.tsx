@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { LessonPlayerHeader } from './LessonPlayerHeader';
 import { LessonSidebar } from './LessonSidebar';
+import { Button } from '@/components/ui/button';
 
 interface LessonPlayerClientProps {
   course: any;
@@ -14,6 +16,7 @@ interface LessonPlayerClientProps {
 export function LessonPlayerClient({ course, currentLessonId, currentLesson, children }: LessonPlayerClientProps) {
   const [currentProgress, setCurrentProgress] = useState(course.user_progress ?? 15);
   const [completedIds, setCompletedIds] = useState<Set<number>>(new Set([1, 2]));
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Flat ordered list of all lesson IDs for prev/next
   const allLessons = useMemo(
@@ -39,7 +42,7 @@ export function LessonPlayerClient({ course, currentLessonId, currentLesson, chi
   };
 
   return (
-    <>
+    <div className="flex-1 flex flex-col overflow-hidden h-full">
       <LessonPlayerHeader
         course={course}
         currentLesson={currentLesson}
@@ -48,6 +51,8 @@ export function LessonPlayerClient({ course, currentLessonId, currentLesson, chi
         nextLessonId={nextLessonId}
         isCompleted={isCompleted}
         onMarkComplete={handleMarkComplete}
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen(v => !v)}
       />
 
       {/* Main layout: content + sidebar */}
@@ -57,23 +62,31 @@ export function LessonPlayerClient({ course, currentLessonId, currentLesson, chi
           {children}
         </div>
 
-        {/* Sidebar */}
-        <div className="w-[340px] xl:w-[380px] bg-card border-l border-border overflow-hidden flex flex-col flex-shrink-0 hidden md:flex">
-          <LessonSidebar
-            course={course}
-            currentLessonId={currentLessonId}
-            onProgressUpdate={handleProgressUpdate}
-            externalCompletedIds={completedIds}
-            onToggleComplete={(id) => {
-              setCompletedIds(prev => {
-                const next = new Set(prev);
-                next.has(id) ? next.delete(id) : next.add(id);
-                return next;
-              });
-            }}
-          />
+        {/* Sidebar — collapsible */}
+        <div
+          className={`
+            bg-card border-l border-border flex flex-col flex-shrink-0 overflow-hidden
+            transition-all duration-300 ease-in-out
+            ${sidebarOpen ? 'w-[340px] xl:w-[380px]' : 'w-0'}
+          `}
+        >
+          {sidebarOpen && (
+            <LessonSidebar
+              course={course}
+              currentLessonId={currentLessonId}
+              onProgressUpdate={handleProgressUpdate}
+              externalCompletedIds={completedIds}
+              onToggleComplete={(id) => {
+                setCompletedIds(prev => {
+                  const next = new Set(prev);
+                  next.has(id) ? next.delete(id) : next.add(id);
+                  return next;
+                });
+              }}
+            />
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

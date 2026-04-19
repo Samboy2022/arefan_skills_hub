@@ -261,129 +261,185 @@ export default function CourseGradebookPage({ params }: { params: Promise<{ cour
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/40 hover:bg-muted/40">
-                <TableHead className="font-semibold w-[25%] min-w-[200px]">Student</TableHead>
-                <TableHead className="font-semibold text-center min-w-[120px]">Assignments %</TableHead>
-                <TableHead className="font-semibold text-center min-w-[120px]">Quizzes %</TableHead>
-                <TableHead className="font-semibold text-center min-w-[120px]">Forum %</TableHead>
-                <TableHead className="font-semibold text-center min-w-[100px]">Total</TableHead>
-                <TableHead className="font-semibold text-right min-w-[200px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        <div className="w-full">
+          <div className="hidden lg:grid lg:grid-cols-[1.5fr_100px_100px_100px_100px_200px] gap-4 items-center px-5 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span>Student</span>
+            <span className="text-center">Assignments %</span>
+            <span className="text-center">Quizzes %</span>
+            <span className="text-center">Forum %</span>
+            <span className="text-center">Total</span>
+            <span className="text-right">Actions</span>
+          </div>
+          <div className="divide-y divide-border">
               {paginatedStudents.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                <div className="p-16 text-center text-muted-foreground">
                     No students match your search filter.
-                  </TableCell>
-                </TableRow>
+                </div>
               ) : (
                 paginatedStudents.map((s) => {
                   const total = calculateTotal(s.id);
                   const isGraded = s.status === "graded";
                   
                   return (
-                    <TableRow key={s.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-xs font-bold text-slate-600 flex-shrink-0">
-                            {s.name.split(" ").map(n => n[0]).join("")}
+                    <div key={s.id} className="block hover:bg-muted/10 transition-colors">
+                      {/* Mobile View */}
+                      <div className="lg:hidden px-5 py-4 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-sm font-bold text-slate-600 flex-shrink-0">
+                              {s.name.split(" ").map(n => n[0]).join("")}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-medium text-sm text-foreground">{s.name}</span>
+                              <span className="text-xs text-muted-foreground font-mono">{s.studentId}</span>
+                            </div>
                           </div>
-                          <div className="flex flex-col gap-0.5">
-                            <span className="font-medium text-sm">{s.name}</span>
-                            <span className="text-xs text-muted-foreground font-mono">{s.studentId}</span>
-                          </div>
+                          <Badge variant="outline" className={`font-bold px-2.5 py-1 ${
+                            total >= 70 ? "bg-emerald-100 text-emerald-700 border-emerald-200" : 
+                            total >= 50 ? "bg-amber-100 text-amber-700 border-amber-200" : 
+                            total > 0 ? "bg-red-100 text-red-700 border-red-200" : "bg-muted text-muted-foreground border-transparent"
+                          }`}>
+                            {total}%
+                          </Badge>
                         </div>
-                      </TableCell>
-                      
-                      <TableCell align="center">
-                        <Input 
-                          type="text" 
-                          placeholder="0-100" 
-                          value={s.assignmentScore} 
-                          onChange={(e) => handleInputChange(s.id, "assignmentScore", e.target.value)}
-                          className={`w-20 text-center mx-auto h-8 text-sm ${isGraded ? "border-green-200 bg-green-50/50" : ""}`}
-                        />
-                      </TableCell>
-                      
-                      <TableCell align="center">
-                        <Input 
-                          type="text" 
-                          placeholder="0-100" 
-                          value={s.quizScore} 
-                          onChange={(e) => handleInputChange(s.id, "quizScore", e.target.value)}
-                          className={`w-20 text-center mx-auto h-8 text-sm ${isGraded ? "border-green-200 bg-green-50/50" : ""}`}
-                        />
-                      </TableCell>
-                      
-                      <TableCell align="center">
-                        <Input 
-                          type="text" 
-                          placeholder="0-100" 
-                          value={s.forumScore} 
-                          onChange={(e) => handleInputChange(s.id, "forumScore", e.target.value)}
-                          className={`w-20 text-center mx-auto h-8 text-sm ${isGraded ? "border-green-200 bg-green-50/50" : ""}`}
-                        />
-                      </TableCell>
-                      
-                      <TableCell align="center">
-                        <Badge variant="outline" className={`font-bold px-3 py-1 ${
-                          total >= 70 ? "bg-emerald-100 text-emerald-700 border-emerald-200" : 
-                          total >= 50 ? "bg-amber-100 text-amber-700 border-amber-200" : 
-                          total > 0 ? "bg-red-100 text-red-700 border-red-200" : "bg-muted text-muted-foreground border-transparent"
-                        }`}>
-                          {total}%
-                        </Badge>
-                      </TableCell>
-                      
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
+                        
+                        <div className="grid grid-cols-3 gap-3">
+                           <div>
+                              <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1.5 text-center px-1 truncate">Assign</p>
+                              <Input 
+                                type="text" 
+                                placeholder="0" 
+                                value={s.assignmentScore} 
+                                onChange={(e) => handleInputChange(s.id, "assignmentScore", e.target.value)}
+                                className={`w-full text-center h-9 text-sm font-medium ${isGraded ? "border-emerald-200 bg-emerald-50/70 focus-visible:ring-emerald-500" : ""}`}
+                              />
+                           </div>
+                           <div>
+                              <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1.5 text-center px-1 truncate">Quizzes</p>
+                              <Input 
+                                type="text" 
+                                placeholder="0" 
+                                value={s.quizScore} 
+                                onChange={(e) => handleInputChange(s.id, "quizScore", e.target.value)}
+                                className={`w-full text-center h-9 text-sm font-medium ${isGraded ? "border-emerald-200 bg-emerald-50/70 focus-visible:ring-emerald-500" : ""}`}
+                              />
+                           </div>
+                           <div>
+                              <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1.5 text-center px-1 truncate">Forum</p>
+                              <Input 
+                                type="text" 
+                                placeholder="0" 
+                                value={s.forumScore} 
+                                onChange={(e) => handleInputChange(s.id, "forumScore", e.target.value)}
+                                className={`w-full text-center h-9 text-sm font-medium ${isGraded ? "border-emerald-200 bg-emerald-50/70 focus-visible:ring-emerald-500" : ""}`}
+                              />
+                           </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
                           {isGraded ? (
                             <>
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                asChild
-                                className="h-8 text-xs font-semibold"
-                              >
+                              <Button variant="outline" size="sm" asChild className="h-8 text-xs font-semibold flex-1">
                                 <Link href={`/instructor/gradebook/${unwrappedParams.courseId || 'course'}/breakdown/${s.id}`}>
-                                  View Breakdown
+                                  Breakdown
                                 </Link>
                               </Button>
-                              <Button 
-                                variant="default" 
-                                size="sm" 
-                                asChild
-                                className="h-8 text-xs gap-1.5"
-                              >
+                              <Button variant="default" size="sm" asChild className="h-8 text-xs gap-1.5 flex-1">
                                 <Link href={`/instructor/gradebook/${unwrappedParams.courseId || 'course'}/edit/${s.id}`}>
                                   Edit Grade
                                 </Link>
                               </Button>
                             </>
                           ) : (
-                            <Button 
-                              variant="default" 
-                              size="sm" 
-                              asChild
-                              className="h-8 text-xs w-24 bg-blue-600 hover:bg-blue-700"
-                            >
+                            <Button variant="default" size="sm" asChild className="h-8 text-xs flex-1 bg-brand hover:bg-brand/90 text-primary-foreground">
+                              <Link href={`/instructor/gradebook/${unwrappedParams.courseId || 'course'}/edit/${s.id}`}>
+                                Issue Grade
+                              </Link>
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Desktop View */}
+                      <div className="hidden lg:grid lg:grid-cols-[1.5fr_100px_100px_100px_100px_200px] gap-4 items-center px-5 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-slate-200 to-slate-400 flex items-center justify-center text-xs font-bold text-white shadow-sm flex-shrink-0">
+                            {s.name.split(" ").map(n => n[0]).join("")}
+                          </div>
+                          <div className="flex flex-col min-w-0 pr-2">
+                            <span className="font-medium text-sm text-foreground truncate">{s.name}</span>
+                            <span className="text-xs text-muted-foreground font-mono">{s.studentId}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-center">
+                          <Input 
+                            type="text" 
+                            placeholder="0-100" 
+                            value={s.assignmentScore} 
+                            onChange={(e) => handleInputChange(s.id, "assignmentScore", e.target.value)}
+                            className={`w-20 text-center h-8 text-sm font-medium transition-colors ${isGraded ? "border-emerald-200 bg-emerald-50/70 focus-visible:ring-emerald-500" : ""}`}
+                          />
+                        </div>
+                        
+                        <div className="flex justify-center">
+                          <Input 
+                            type="text" 
+                            placeholder="0-100" 
+                            value={s.quizScore} 
+                            onChange={(e) => handleInputChange(s.id, "quizScore", e.target.value)}
+                            className={`w-20 text-center h-8 text-sm font-medium transition-colors ${isGraded ? "border-emerald-200 bg-emerald-50/70 focus-visible:ring-emerald-500" : ""}`}
+                          />
+                        </div>
+                        
+                        <div className="flex justify-center">
+                          <Input 
+                            type="text" 
+                            placeholder="0-100" 
+                            value={s.forumScore} 
+                            onChange={(e) => handleInputChange(s.id, "forumScore", e.target.value)}
+                            className={`w-20 text-center h-8 text-sm font-medium transition-colors ${isGraded ? "border-emerald-200 bg-emerald-50/70 focus-visible:ring-emerald-500" : ""}`}
+                          />
+                        </div>
+                        
+                        <div className="flex justify-center">
+                          <Badge variant="outline" className={`font-bold px-3 py-1 shadow-sm ${
+                            total >= 70 ? "bg-emerald-100 text-emerald-700 border-emerald-200" : 
+                            total >= 50 ? "bg-amber-100 text-amber-700 border-amber-200" : 
+                            total > 0 ? "bg-red-100 text-red-700 border-red-200" : "bg-muted text-muted-foreground border-transparent"
+                          }`}>
+                            {total}%
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex items-center justify-end gap-2">
+                          {isGraded ? (
+                            <>
+                              <Button variant="outline" size="sm" asChild className="h-8 text-xs font-semibold shadow-sm">
+                                <Link href={`/instructor/gradebook/${unwrappedParams.courseId || 'course'}/breakdown/${s.id}`}>
+                                  Breakdown
+                                </Link>
+                              </Button>
+                              <Button variant="default" size="sm" asChild className="h-8 text-xs shadow-sm">
+                                <Link href={`/instructor/gradebook/${unwrappedParams.courseId || 'course'}/edit/${s.id}`}>
+                                  Edit Grade
+                                </Link>
+                              </Button>
+                            </>
+                          ) : (
+                            <Button variant="default" size="sm" asChild className="h-8 text-xs w-24 bg-brand hover:bg-brand/90 text-primary-foreground shadow-sm">
                               <Link href={`/instructor/gradebook/${unwrappedParams.courseId || 'course'}/edit/${s.id}`}>
                                 Grade
                               </Link>
                             </Button>
                           )}
                         </div>
-                      </TableCell>
-                    </TableRow>
+                      </div>
+                    </div>
                   );
                 })
               )}
-            </TableBody>
-          </Table>
+          </div>
         </div>
 
         {/* Pagination */}

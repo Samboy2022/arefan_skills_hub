@@ -11,12 +11,9 @@ interface QuizPreviewModalProps {
 }
 
 export function QuizPreviewModal({ isOpen, onClose, quizTitle }: QuizPreviewModalProps) {
-  // In a real application, we would pass the actual quiz object and render its complex properties.
-  // For the mock, we simulate a standard layout.
-  
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">Preview: {quizTitle}</DialogTitle>
           <DialogDescription>
@@ -24,52 +21,61 @@ export function QuizPreviewModal({ isOpen, onClose, quizTitle }: QuizPreviewModa
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-muted/20 border border-border rounded-lg space-y-2">
-              <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Metrics</h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-primary" /> Grade Value: 10.00 pts
-                </li>
-                <li className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-emerald-500" /> Time Limit: 30 mins
-                </li>
-                <li className="flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4 text-purple-500" /> Questions: 10
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-4 bg-muted/20 border border-border rounded-lg space-y-2">
-              <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Policies</h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center justify-between">
-                  <span>Randomize</span>
-                  <Badge variant="outline" className="text-emerald-500 border-emerald-500/30">Yes</Badge>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span>Max Attempts</span>
-                  <Badge variant="secondary">1 Attempt</Badge>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span>Notify via Email</span>
-                  <Badge variant="outline" className="text-emerald-500 border-emerald-500/30">Yes</Badge>
-                </li>
-              </ul>
+        <div className="flex flex-col space-y-6 pt-2">
+          {/* Metrics Row */}
+          <div>
+            <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-widest mb-3">Metrics</h4>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary" /> Grade Value: <span className="font-medium">10.00 pts</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <Clock className="w-4 h-4 text-emerald-500" /> Time Limit: <span className="font-medium">30 mins</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <HelpCircle className="w-4 h-4 text-purple-500" /> Questions: <span className="font-medium">10</span>
+              </div>
             </div>
           </div>
 
-          <div className="p-4 bg-background border border-border rounded-lg space-y-3">
-            <h4 className="font-semibold text-sm flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> Timeline Status
-            </h4>
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm">Starts: <b>Immediate</b></span>
-              <span className="text-sm">Ends: <b>No Deadline Set</b></span>
+          <div className="h-px bg-border w-full" />
+
+          {/* Policies Row */}
+          <div>
+            <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-widest mb-3">Policies</h4>
+            <div className="grid grid-cols-2 gap-y-3 text-sm">
+              <div className="flex flex-col gap-1">
+                <span className="text-muted-foreground">Randomize</span>
+                <span className="font-medium text-foreground">Yes</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-muted-foreground">Max Attempts</span>
+                <span className="font-medium text-foreground">1 Attempt</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-muted-foreground">Notify via Email</span>
+                <span className="font-medium text-foreground">Yes</span>
+              </div>
             </div>
-            <div className="mt-2 pt-2 border-t border-border">
-              <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20">Active / Published</Badge>
+          </div>
+
+          <div className="h-px bg-border w-full" />
+
+          {/* Timeline Row */}
+          <div>
+            <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-widest mb-3 flex items-center gap-2">
+              Timeline Status
+            </h4>
+            <div className="flex flex-col space-y-2 text-sm">
+              <div className="flex items-center gap-2 text-foreground">
+                <Calendar className="w-4 h-4 text-muted-foreground" /> Starts: <span className="font-medium">Immediate</span>
+              </div>
+              <div className="flex items-center gap-2 text-foreground">
+                <Calendar className="w-4 h-4 text-muted-foreground" /> Ends: <span className="font-medium">No Deadline Set</span>
+              </div>
+              <div className="mt-2">
+                <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 font-semibold shadow-none border-0">Active / Published</Badge>
+              </div>
             </div>
           </div>
         </div>

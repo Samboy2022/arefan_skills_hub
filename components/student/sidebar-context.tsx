@@ -6,17 +6,25 @@ interface SidebarContextType {
   isCollapsed: boolean
   setIsCollapsed: (collapsed: boolean) => void
   toggleSidebar: () => void
+  isMobile: boolean
+  isMobileOpen: boolean
+  setIsMobileOpen: (open: boolean) => void
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   useEffect(() => {
     const checkMobile = () => {
-      if (window.innerWidth < 768) {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+      if (mobile) {
         setIsCollapsed(true)
+        setIsMobileOpen(false)
       }
     }
     checkMobile()
@@ -24,10 +32,16 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const toggleSidebar = () => setIsCollapsed(!isCollapsed)
+  const toggleSidebar = () => {
+    if (isMobile) {
+      setIsMobileOpen(!isMobileOpen)
+    } else {
+      setIsCollapsed(!isCollapsed)
+    }
+  }
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggleSidebar }}>
+    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggleSidebar, isMobile, isMobileOpen, setIsMobileOpen }}>
       {children}
     </SidebarContext.Provider>
   )

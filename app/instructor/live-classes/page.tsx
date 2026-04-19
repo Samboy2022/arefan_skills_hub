@@ -87,36 +87,38 @@ export default function LiveClassesPage() {
         }
       />
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-5 relative overflow-hidden border-border">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-0.5">Total Sessions</p>
-            <p className="text-3xl font-bold text-foreground">{counts.total}</p>
+      {/* Stats row */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6 mt-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/video-call.png" alt="Total Sessions" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Sessions</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{counts.total}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/video-call.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-5 relative overflow-hidden border-border">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-0.5">Upcoming</p>
-            <p className="text-3xl font-bold text-sky-600 dark:text-sky-400">{counts.upcoming}</p>
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4">
+            <img src="https://img.icons8.com/scribby/96/clock.png" alt="Upcoming" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Upcoming</p>
+              <p className="text-3xl font-extrabold text-sky-600 dark:text-sky-400 leading-none">{counts.upcoming}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/time-machine.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-5 relative overflow-hidden border-border">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-0.5">Live Now</p>
-            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{counts.live}</p>
+          <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/record.png" alt="Live Now" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Live Now</p>
+              <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.live}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/broadcast.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
-        <Card className="p-5 relative overflow-hidden border-border">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-0.5">Completed</p>
-            <p className="text-3xl font-bold text-muted-foreground">{counts.ended}</p>
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/check.png" alt="Completed" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Completed</p>
+              <p className="text-3xl font-extrabold text-muted-foreground leading-none">{counts.ended}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/approval.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-20 pointer-events-none" alt="" />
-        </Card>
+        </div>
       </div>
 
       {/* Table */}
@@ -138,13 +140,13 @@ export default function LiveClassesPage() {
             <Table className="w-full table-fixed">
               <TableHeader className="bg-muted/40">
                 <TableRow>
-                  <TableHead className="w-[22%] pl-5">Meeting Name</TableHead>
-                  <TableHead className="w-[18%]">Description</TableHead>
-                  <TableHead className="w-[14%]">Creator</TableHead>
-                  <TableHead className="w-[16%]">Date & Time</TableHead>
+                  <TableHead className="w-[20%] pl-5">Meeting Name</TableHead>
+                  <TableHead className="w-[15%]">Description</TableHead>
+                  <TableHead className="w-[15%]">Creator</TableHead>
+                  <TableHead className="w-[15%]">Date & Time</TableHead>
                   <TableHead className="w-[8%] text-center">Duration</TableHead>
                   <TableHead className="w-[8%] text-center">Threshold</TableHead>
-                  <TableHead className="w-[8%] text-center">Status</TableHead>
+                  <TableHead className="w-[9%] text-center">Status</TableHead>
                   <TableHead className="w-[10%] text-right pr-5">Actions</TableHead>
                 </TableRow>
               </TableHeader>

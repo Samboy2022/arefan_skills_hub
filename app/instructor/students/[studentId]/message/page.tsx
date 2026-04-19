@@ -1,32 +1,55 @@
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { PageHeader } from "@/components/instructor/page-header";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { MOCK_STUDENTS } from "@/lib/instructor-mock-data";
+"use client";
 
-export default function MessageStudentPage({ params }: { params: { studentId: string } }) {
-  const student = MOCK_STUDENTS.find(s => s.id === params.studentId) || MOCK_STUDENTS[0];
+import * as React from "react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { StudentHeroCard } from "@/components/instructor/students/StudentHeroCard";
+import { StudentTabStrip } from "@/components/instructor/students/StudentTabStrip";
+import { MessageThread } from "@/components/instructor/students/MessageThread";
+import { MessageComposer } from "@/components/instructor/students/MessageComposer";
+import { MOCK_STUDENTS, MOCK_INSTRUCTOR_COURSES, MOCK_MESSAGES, MessageThread as MessageType } from "@/lib/instructor-mock-data";
+
+export default function StudentMessagePage({ params }: { params: Promise<{ studentId: string }> }) {
+  const unwrappedParams = React.use(params);
+  const student = MOCK_STUDENTS.find(s => s.id === unwrappedParams.studentId) || MOCK_STUDENTS[0];
+  const enrolledCourses = MOCK_INSTRUCTOR_COURSES.filter((c) => student.enrolledCourses.includes(c.id));
+
+  const initialMessages = MOCK_MESSAGES[student.id] || [];
+  const [messages, setMessages] = React.useState<MessageType[]>(initialMessages);
+
+  const handleSend = (text: string) => {
+    const newMessage: MessageType = {
+      id: `msg-${Date.now()}`,
+      senderId: "instructor-1", // assuming current user
+      senderName: "You",
+      senderRole: "instructor",
+      body: text,
+      sentAt: new Date(),
+    };
+    setMessages([...messages, newMessage]);
+  };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto max-w-6xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <Breadcrumb 
         showHome={false}
         items={[
           { label: "Dashboard", href: "/instructor" },
           { label: "Students", href: "/instructor/students" },
-          { label: student.name, href: `/instructor/students/${params.studentId}` },
+          { label: student.name, href: `/instructor/students/${student.id}` },
           { label: "Message" }
         ]} 
       />
-      <div className="pt-4 pb-4">
-        <PageHeader title={`Message ${student.name}`} description="Send a direct message to this student." />
-      </div>
-      <div className="p-6 bg-card rounded-md border space-y-4">
-        <div>
-          <label className="text-sm font-medium mb-2 block">Message</label>
-          <Textarea placeholder="Type your message here..." className="min-h-[150px]" />
+
+      <StudentHeroCard student={student} courses={enrolledCourses} />
+      <StudentTabStrip studentId={student.id} />
+
+      <div className="rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col">
+        <div className="h-[55vh] overflow-y-auto border-b bg-background">
+          <MessageThread messages={messages} />
         </div>
-        <Button>Send Message</Button>
+        <div className="p-4 bg-muted/20">
+          <MessageComposer onSend={handleSend} />
+        </div>
       </div>
     </div>
   );

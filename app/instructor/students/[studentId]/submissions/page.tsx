@@ -16,7 +16,10 @@ import {
 import {
   MOCK_STUDENTS, MOCK_ASSIGNMENTS, MOCK_QUIZZES, MOCK_INSTRUCTOR_COURSES,
 } from "@/lib/instructor-mock-data";
+import { StudentHeroCard } from "@/components/instructor/students/StudentHeroCard";
+import { StudentTabStrip } from "@/components/instructor/students/StudentTabStrip";
 import { SUBMISSION_STATUS } from "@/lib/instructor-constants";
+import { Pencil } from "lucide-react";
 
 function getSubmissionStatusInfo(status: string) {
   return SUBMISSION_STATUS.find((s) => s.id === status) || SUBMISSION_STATUS[0];
@@ -160,7 +163,7 @@ export default function StudentSubmissionsPage({ params }: { params: Promise<{ s
   const enrolledCourses = MOCK_INSTRUCTOR_COURSES.filter((c) => student.enrolledCourses.includes(c.id));
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto max-w-6xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <Breadcrumb
         showHome={false}
         items={[
@@ -171,51 +174,40 @@ export default function StudentSubmissionsPage({ params }: { params: Promise<{ s
         ]}
       />
 
-      {/* Student Header Card */}
-      <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-violet-500/10 via-blue-500/5 to-transparent p-6">
-          <div className="flex items-center gap-5 flex-wrap">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-600 flex items-center justify-center text-xl font-bold text-white shadow-lg">
-              {initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-bold">{student.name}</h1>
-              <div className="flex items-center gap-3 flex-wrap mt-1">
-                <span className="text-sm text-muted-foreground">{student.email}</span>
-                <span className="inline-flex items-center gap-1 font-mono text-xs bg-muted px-2 py-0.5 rounded-md">{student.studentId}</span>
-              </div>
-              <div className="flex gap-2 mt-2 flex-wrap">
-                {enrolledCourses.map((c) => (
-                  <span key={c.id} className="text-xs bg-background border border-border px-2 py-0.5 rounded-md font-medium">
-                    {c.code}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <Button variant="outline" size="sm" className="gap-2" onClick={downloadSubsCSV}>
-              <Download className="h-4 w-4" /> Export
-            </Button>
-          </div>
-        </div>
+      <StudentHeroCard student={student} courses={enrolledCourses} />
+      <StudentTabStrip studentId={student.id} />
 
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border">
-          {[
-            { label: "Total Assignments", value: totalSubs, color: "text-violet-600", bg: "bg-violet-50", icon: FileText },
-            { label: "Graded", value: graded, color: "text-emerald-600", bg: "bg-emerald-50", icon: CheckCircle2 },
-            { label: "Awaiting Review", value: pending, color: "text-amber-600", bg: "bg-amber-50", icon: Clock },
-            { label: "Average Score", value: `${avgScore}%`, color: "text-blue-600", bg: "bg-blue-50", icon: Star },
-          ].map((s) => (
-            <div key={s.label} className="bg-card p-4 flex items-center gap-3">
-              <div className={`${s.bg} ${s.color} rounded-lg p-2 flex-shrink-0`}>
-                <s.icon className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-lg font-bold">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
-              </div>
+      {/* Stats row */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/todo-list.png" alt="Total" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Assignments</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{totalSubs}</p>
             </div>
-          ))}
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l border-border px-4 py-4 sm:py-0">
+            <img src="https://img.icons8.com/scribby/96/check.png" alt="Graded" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Graded</p>
+              <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{graded}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center md:border-l border-border px-4 border-t sm:border-t-0 md:border-t-0 pt-4 sm:pt-0 pb-4 sm:pb-0">
+            <img src="https://img.icons8.com/scribby/96/clock.png" alt="Pending" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Awaiting Review</p>
+              <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{pending}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l border-border px-4 border-t md:border-t-0 pt-4 md:pt-0">
+            <img src="https://img.icons8.com/scribby/96/star.png" alt="Avg" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Average Score</p>
+              <p className="text-3xl font-extrabold text-blue-600 dark:text-blue-400 leading-none">{avgScore}%</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -290,108 +282,105 @@ export default function StudentSubmissionsPage({ params }: { params: Promise<{ s
       {/* Assignments Tab */}
       {activeTab === "assignments" && (
         <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/40 hover:bg-muted/40">
-                <TableHead className="font-semibold w-[30%]">Assignment</TableHead>
-                <TableHead className="font-semibold">Course</TableHead>
-                <TableHead className="font-semibold">Due Date</TableHead>
-                <TableHead className="font-semibold">Submitted</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold">Score</TableHead>
-                <TableHead className="font-semibold w-8"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <div className="hidden md:grid md:grid-cols-[1.5fr_100px_1fr_1fr_120px_80px_40px] gap-4 items-center px-5 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span>Assignment</span>
+            <span>Course</span>
+            <span>Due Date</span>
+            <span>Submitted</span>
+            <span>Status</span>
+            <span>Score</span>
+            <span></span>
+          </div>
+          <div className="divide-y divide-border">
               {filteredSubs.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                    No assignments match your filters.
-                  </TableCell>
-                </TableRow>
+                <div className="text-center py-12 text-muted-foreground">
+                  No assignments match your filters.
+                </div>
               ) : (
                 filteredSubs.map((row) => {
                   const statusInfo = getSubmissionStatusInfo(row.status);
                   const isExpanded = expandedRow === row.assignmentId;
                   const isLate = row.submittedDate && row.submittedDate > row.dueDate;
                   return (
-                    <>
-                      <TableRow
-                        key={row.assignmentId}
-                        className={`hover:bg-muted/30 transition-colors cursor-pointer ${isExpanded ? "bg-muted/20" : ""}`}
+                    <div key={row.assignmentId} className="block transition-colors">
+                      <div
+                        className={`hover:bg-muted/30 cursor-pointer ${isExpanded ? "bg-muted/10" : ""}`}
                         onClick={() => setExpandedRow(isExpanded ? null : row.assignmentId)}
                       >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="h-7 w-7 rounded-md bg-violet-100 flex items-center justify-center flex-shrink-0">
-                              <FileText className="h-3.5 w-3.5 text-violet-600" />
+                         <div className="md:hidden px-5 py-4 space-y-2">
+                            <div className="flex items-center justify-between">
+                               <p className="font-semibold text-sm truncate">{row.assignmentTitle}</p>
+                               <Badge variant="outline" className={`border-transparent text-[10px] uppercase font-bold py-0 h-4 ${statusInfo.color}`}>{statusInfo.label}</Badge>
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                               <span>{row.courseCode} &middot; {row.assignmentType}</span>
+                               <span className="font-medium text-foreground">{row.score !== null ? `${row.score}/${row.maxScore}` : "—"}</span>
+                            </div>
+                         </div>
+                         <div className="hidden md:grid md:grid-cols-[1.5fr_100px_1fr_1fr_120px_80px_40px] gap-4 items-center px-5 py-3">
+                           <div className="flex items-center gap-3">
+                              <div className="h-8 w-8 rounded-md bg-violet-100 flex items-center justify-center flex-shrink-0">
+                                <FileText className="h-4 w-4 text-violet-600" />
+                              </div>
+                              <div className="min-w-0 pr-2">
+                                <p className="font-medium text-sm text-foreground truncate">{row.assignmentTitle}</p>
+                                <p className="text-xs text-muted-foreground capitalize">{row.assignmentType}</p>
+                              </div>
                             </div>
                             <div>
-                              <p className="font-medium text-sm">{row.assignmentTitle}</p>
-                              <p className="text-xs text-muted-foreground capitalize">{row.assignmentType}</p>
+                               <span className="text-xs bg-muted px-2 py-0.5 rounded font-medium">{row.courseCode}</span>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-xs bg-muted px-2 py-0.5 rounded font-medium">{row.courseCode}</span>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5" />
-                            {row.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {row.submittedDate ? (
+                            <div className="text-sm text-muted-foreground flex items-center gap-1.5 whitespace-nowrap">
+                               <Calendar className="h-3 w-3" />
+                               {row.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                               {row.submittedDate ? (
+                                <div className="whitespace-nowrap">
+                                  <span>{row.submittedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                                  {isLate && <Badge className="ml-1.5 bg-orange-100 text-orange-700 hover:bg-orange-100 border-transparent shadow-none px-1 py-0 h-4 text-[10px] font-bold">Late</Badge>}
+                                </div>
+                              ) : (
+                                <span>—</span>
+                              )}
+                            </div>
                             <div>
-                              <span>{row.submittedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                              {isLate && <span className="ml-1.5 text-xs text-orange-600 font-medium">Late</span>}
+                               <Badge variant="outline" className={`border-transparent text-xs whitespace-nowrap ${statusInfo.color}`}>
+                                {statusInfo.label}
+                              </Badge>
                             </div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={`border-transparent text-xs ${statusInfo.color}`}>
-                            {statusInfo.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {row.score !== null ? (
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-sm">{row.score}/{row.maxScore}</span>
-                              <span className="text-xs text-muted-foreground">
-                                ({Math.round((row.score / row.maxScore) * 100)}%)
-                              </span>
+                            <div>
+                               {row.score !== null ? (
+                                <div className="flex items-baseline gap-1">
+                                  <span className="font-medium text-sm text-foreground">{row.score}/{row.maxScore}</span>
+                                  <span className="text-[11px] text-muted-foreground">({Math.round((row.score / row.maxScore) * 100)}%)</span>
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
                             </div>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {row.feedback && (
-                            isExpanded
-                              ? <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                              : <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </TableCell>
-                      </TableRow>
+                            <div className="flex justify-end">
+                               {row.feedback || row.files.length > 0 ? (
+                                 isExpanded ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                               ) : null}
+                            </div>
+                         </div>
+                      </div>
                       {isExpanded && (row.feedback || row.files.length > 0) && (
-                        <TableRow key={`${row.assignmentId}-expanded`} className="bg-muted/10 hover:bg-muted/10">
-                          <TableCell colSpan={7} className="py-4 px-6">
-                            <div className="space-y-3">
+                        <div className="bg-muted/5 px-5 lg:px-14 py-4 border-t border-border/50">
+                            <div className="space-y-4">
                               {row.feedback && (
                                 <div>
-                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Instructor Feedback</p>
-                                  <p className="text-sm bg-background border border-border rounded-lg p-3">{row.feedback}</p>
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Instructor Review</p>
+                                  <p className="text-sm bg-background border border-border rounded-lg p-3 italic text-foreground/80">"{row.feedback}"</p>
                                 </div>
                               )}
                               {row.files.length > 0 && (
                                 <div>
-                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Submitted Files</p>
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Attached Work</p>
                                   <div className="flex gap-2 flex-wrap">
                                     {row.files.map((f) => (
-                                      <span key={f} className="flex items-center gap-1.5 text-xs bg-background border border-border rounded-md px-2 py-1">
+                                      <span key={f} className="flex items-center gap-1.5 text-xs bg-background border border-border shadow-sm rounded-md px-2.5 py-1.5">
                                         <FileText className="h-3.5 w-3.5 text-blue-500" /> {f}
                                       </span>
                                     ))}
@@ -399,15 +388,13 @@ export default function StudentSubmissionsPage({ params }: { params: Promise<{ s
                                 </div>
                               )}
                             </div>
-                          </TableCell>
-                        </TableRow>
+                        </div>
                       )}
-                    </>
+                    </div>
                   );
                 })
               )}
-            </TableBody>
-          </Table>
+          </div>
         </div>
       )}
 
@@ -420,62 +407,61 @@ export default function StudentSubmissionsPage({ params }: { params: Promise<{ s
               <p>No quiz attempts found</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/40 hover:bg-muted/40">
-                  <TableHead className="font-semibold w-[30%]">Quiz</TableHead>
-                  <TableHead className="font-semibold">Course</TableHead>
-                  <TableHead className="font-semibold">Attempt Date</TableHead>
-                  <TableHead className="font-semibold">Time Taken</TableHead>
-                  <TableHead className="font-semibold">Score</TableHead>
-                  <TableHead className="font-semibold">Result</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              <div className="hidden md:grid md:grid-cols-[1.5fr_100px_1fr_100px_100px_100px] gap-4 items-center px-5 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <span>Quiz</span>
+                  <span>Course</span>
+                  <span>Attempt Date</span>
+                  <span>Time Taken</span>
+                  <span className="text-right">Score</span>
+                  <span className="text-center">Result</span>
+              </div>
+              <div className="divide-y divide-border">
                 {filteredAttempts.map((row) => (
-                  <TableRow key={row.attemptId} className="hover:bg-muted/30 transition-colors">
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-md bg-purple-100 flex items-center justify-center flex-shrink-0">
-                          <Brain className="h-3.5 w-3.5 text-purple-600" />
-                        </div>
-                        <span className="font-medium text-sm">{row.quizTitle}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-xs bg-muted px-2 py-0.5 rounded font-medium">{row.courseCode}</span>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {row.attemptDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {row.timeTaken !== null ? `${row.timeTaken} min` : "—"}
-                      {row.timeLimit && <span className="text-xs text-muted-foreground ml-1">/ {row.timeLimit} min</span>}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${row.pct >= 70 ? "bg-emerald-500" : "bg-red-500"}`}
-                            style={{ width: `${row.pct}%` }}
-                          />
-                        </div>
-                        <span className="text-sm font-semibold">{row.score}/{row.maxScore}</span>
-                        <span className="text-xs text-muted-foreground">({row.pct}%)</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={`border-transparent text-xs font-medium ${row.passed ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}
-                      >
-                        {row.passed ? "Passed" : "Failed"}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
+                    <div key={row.attemptId} className="block hover:bg-muted/10 transition-colors">
+                       <div className="md:hidden px-5 py-4 space-y-2">
+                           <div className="flex items-center justify-between">
+                              <p className="font-semibold text-sm truncate">{row.quizTitle}</p>
+                              <Badge variant="outline" className={`border-transparent text-[10px] font-bold px-1 py-0 h-4 uppercase ${row.passed ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+                                {row.passed ? "Passed" : "Failed"}
+                              </Badge>
+                           </div>
+                           <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <span>{row.courseCode} &middot; {row.attemptDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                              <span className="font-medium text-foreground">{row.score}/{row.maxScore}</span>
+                           </div>
+                       </div>
+                       <div className="hidden md:grid md:grid-cols-[1.5fr_100px_1fr_100px_100px_100px] gap-4 items-center px-5 py-3">
+                           <div className="flex items-center gap-3">
+                              <div className="h-8 w-8 rounded-md bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                <Brain className="h-4 w-4 text-purple-600" />
+                              </div>
+                              <span className="font-medium text-sm text-foreground truncate pr-2">{row.quizTitle}</span>
+                           </div>
+                           <div>
+                              <span className="text-xs bg-muted px-2 py-0.5 rounded font-medium">{row.courseCode}</span>
+                           </div>
+                           <div className="text-sm text-muted-foreground">
+                              {row.attemptDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                           </div>
+                           <div className="text-sm text-muted-foreground whitespace-nowrap">
+                              {row.timeTaken !== null ? `${row.timeTaken}m` : "—"}
+                              {row.timeLimit && <span className="text-[11px] ml-1">/ {row.timeLimit}m</span>}
+                           </div>
+                           <div className="flex items-baseline justify-end gap-1">
+                              <span className="text-sm font-medium text-foreground">{row.score}/{row.maxScore}</span>
+                              <span className="text-[11px] text-muted-foreground">({row.pct}%)</span>
+                           </div>
+                           <div className="flex justify-center">
+                              <Badge variant="outline" className={`border-transparent text-[10px] font-bold h-5 px-1.5 py-0 uppercase ${row.passed ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+                                {row.passed ? "Passed" : "Failed"}
+                              </Badge>
+                           </div>
+                       </div>
+                    </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+            </>
           )}
         </div>
       )}

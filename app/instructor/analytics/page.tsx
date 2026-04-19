@@ -77,136 +77,87 @@ export default function AnalyticsPage() {
         </Button>
       </div>
 
-      {/* KPI Cards Grid - 8 Items */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Row 1 */}
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Students</p>
-              <div className="h-9 w-9 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+      {/* Stats row 1 */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6 mt-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/user.png" alt="Active Students" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Active Students</p>
+              <div className="flex items-center justify-center gap-1">
+                <p className="text-3xl font-extrabold text-foreground leading-none">{activeStudents}</p>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center">+4%</span>
               </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{activeStudents}</h2>
-              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full flex items-center">
-                <Plus className="h-2 w-2 mr-0.5" />4%
-              </span>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4">
+            <img src="https://img.icons8.com/scribby/96/line-chart.png" alt="Avg Engagement" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg Engagement</p>
+              <div className="flex items-center justify-center gap-1">
+                <p className="text-3xl font-extrabold text-foreground leading-none">{avgEngagement}%</p>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center">+12%</span>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/check.png" alt="Completion Rate" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Completion Rate</p>
+              <div className="flex items-center justify-center gap-1">
+                <p className="text-3xl font-extrabold text-foreground leading-none">{completionRate}%</p>
+                <span className="text-[10px] font-bold text-rose-700 bg-rose-100 dark:bg-rose-900/30 dark:text-rose-400 px-1.5 py-0.5 rounded-full flex items-center">-2%</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/test.png" alt="Avg Score" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg Score</p>
+              <div className="flex items-center justify-center gap-1">
+                <p className="text-3xl font-extrabold text-foreground leading-none">{avgScore}%</p>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center">+8%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Avg Engagement</p>
-              <div className="h-9 w-9 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                <Activity className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+      {/* Stats row 2 */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/book.png" alt="Total Courses" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Courses</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{totalCourses}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4">
+            <img src="https://img.icons8.com/scribby/96/todo-list.png" alt="Assignments" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Assignments</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{totalAssignments}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/idea.png" alt="Active Quizzes" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Active Quizzes</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{totalQuizzes}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/comments.png" alt="Discussions" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Discussions</p>
+              <div className="flex items-center justify-center gap-1">
+                <p className="text-3xl font-extrabold text-foreground leading-none">{totalDiscussions}</p>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center">+2 new</span>
               </div>
             </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{avgEngagement}%</h2>
-              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full flex items-center">
-                <Plus className="h-2 w-2 mr-0.5" />12%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Completion Rate</p>
-              <div className="h-9 w-9 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
-                <Target className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{completionRate}%</h2>
-              <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/30 px-2 py-0.5 rounded-full flex items-center">
-                -2%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Avg Score</p>
-              <div className="h-9 w-9 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
-                <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{avgScore}%</h2>
-              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full flex items-center">
-                <Plus className="h-2 w-2 mr-0.5" />8%
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Row 2 */}
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Courses</p>
-              <div className="h-9 w-9 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
-                <BookOpen className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{totalCourses}</h2>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assignments</p>
-              <div className="h-9 w-9 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
-                <PenTool className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{totalAssignments}</h2>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Quizzes</p>
-              <div className="h-9 w-9 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-                <FileQuestion className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{totalQuizzes}</h2>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:border-primary/50 transition-colors shadow-sm">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between space-y-0 pb-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Discussions</p>
-              <div className="h-9 w-9 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center">
-                <MessageSquare className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2 mt-1">
-              <h2 className="text-3xl font-bold text-foreground">{totalDiscussions}</h2>
-              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full flex items-center">
-                <Plus className="h-2 w-2 mr-0.5" />2 new
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Charts Row */}

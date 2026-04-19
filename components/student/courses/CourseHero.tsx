@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRightIcon, StarIcon, UsersIcon, ClockIcon, BookOpenIcon } from 'lucide-react';
+import { ChevronRightIcon, StarIcon } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface Course {
   id: number | string;
@@ -71,36 +72,42 @@ export function CourseHero({ course, isEnrolled }: CourseHeroProps) {
             </p>
 
             {/* Meta row */}
-            <div className="flex items-center gap-4 mt-4 flex-wrap">
+            <div className="flex items-center gap-y-3 gap-x-4 mt-5 flex-wrap text-sm text-white/70">
               {/* Rating */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5 text-white/90 font-medium">
                 <StarIcon className="w-4 h-4 text-yellow-500 fill-current" />
-                <span className="text-white text-sm font-medium">{course.rating.toFixed(1)}</span>
-                <span className="text-white/60 text-sm">({course.reviews_count.toLocaleString()})</span>
+                <span>{course.rating.toFixed(1)}</span>
+                <span className="text-white/50 font-normal">({course.reviews_count.toLocaleString()} reviews)</span>
               </div>
-              {/* Students */}
-              <div className="flex items-center gap-1.5">
-                <UsersIcon className="w-4 h-4 text-white/60" />
-                <span className="text-white/60 text-sm">{course.enrolled_students_count.toLocaleString()} students</span>
-              </div>
-              {/* Duration */}
+              
+              <span className="text-white/30 hidden sm:inline">&bull;</span>
+              <span>{course.enrolled_students_count.toLocaleString()} students</span>
+              
               {course.duration_hours && (
-                <div className="flex items-center gap-1.5">
-                  <ClockIcon className="w-4 h-4 text-white/60" />
-                  <span className="text-white/60 text-sm">{course.duration_hours}h total</span>
-                </div>
+                <>
+                  <span className="text-white/30 hidden sm:inline">&bull;</span>
+                  <span>{course.duration_hours}h total</span>
+                </>
               )}
-              {/* Lessons */}
+              
               {course.lessons_count && (
-                <div className="flex items-center gap-1.5">
-                  <BookOpenIcon className="w-4 h-4 text-white/60" />
-                  <span className="text-white/60 text-sm">{course.lessons_count} lessons</span>
-                </div>
+                <>
+                  <span className="text-white/30 hidden sm:inline">&bull;</span>
+                  <span>{course.lessons_count} lessons</span>
+                </>
               )}
+              
+              <span className="text-white/30 hidden sm:inline">&bull;</span>
+              
               {/* Instructor */}
-              <div className="flex items-center gap-1">
-                <span className="text-white/60 text-sm">by</span>
-                <span className="text-white text-sm font-medium">{course.instructor.name}</span>
+              <div className="flex items-center gap-2 text-white">
+                <Avatar className="h-6 w-6 border border-white/20 shadow-none">
+                  <AvatarImage src={course.instructor.profile_photo_url || ''} />
+                  <AvatarFallback className="text-[9px] font-bold bg-white/20 text-white">
+                    {course.instructor.name.split(" ").map((n) => n[0]).join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="font-semibold">{course.instructor.name}</span>
               </div>
             </div>
           </div>

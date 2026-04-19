@@ -693,28 +693,31 @@ export default function InstructorDiscussionsPage() {
         <p className="text-sm text-muted-foreground mt-1">Oversee course dialogues, grade student participation, and host global threads.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-5">
-        <Card className="p-5 border-border relative overflow-hidden shadow-sm bg-gradient-to-br from-background to-muted/20">
-          <div className="relative z-10">
-            <p className="text-sm font-semibold text-muted-foreground mb-1 uppercase tracking-wider">Total Threads</p>
-            <p className="text-3xl font-bold text-foreground">{DISCUSSION_THREADS.length}</p>
+      {/* Stats row */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6 mt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/comments.png" alt="Total Threads" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Threads</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{DISCUSSION_THREADS.length}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/chat.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-10" alt="Total Threads" />
-        </Card>
-        <Card className="p-5 border-border relative overflow-hidden shadow-sm bg-gradient-to-br from-background to-muted/20">
-          <div className="relative z-10">
-            <p className="text-sm font-semibold text-muted-foreground mb-1 uppercase tracking-wider">Unread</p>
-            <p className="text-3xl font-bold text-primary">{DISCUSSION_THREADS.filter(t => t.has_unread).length}</p>
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l border-border px-4 py-4 sm:py-0 border-t sm:border-t-0">
+            <img src="https://img.icons8.com/scribby/96/clock.png" alt="Unread" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Unread</p>
+              <p className="text-3xl font-extrabold text-primary leading-none">{DISCUSSION_THREADS.filter(t => t.has_unread).length}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/new-message.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-10" alt="Unread" />
-        </Card>
-        <Card className="p-5 border-border relative overflow-hidden shadow-sm bg-gradient-to-br from-background to-muted/20">
-          <div className="relative z-10">
-            <p className="text-sm font-semibold text-muted-foreground mb-1 uppercase tracking-wider">Course Forums</p>
-            <p className="text-3xl font-bold text-foreground">{courseIds.length}</p>
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l border-border px-4 border-t sm:border-t-0 pt-4 sm:pt-0">
+            <img src="https://img.icons8.com/scribby/96/book.png" alt="Course Forums" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Course Forums</p>
+              <p className="text-3xl font-extrabold text-blue-600 dark:text-blue-400 leading-none">{courseIds.length}</p>
+            </div>
           </div>
-          <img src="https://img.icons8.com/color/96/books.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-10" alt="Course Forums" />
-        </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

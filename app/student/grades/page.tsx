@@ -54,25 +54,11 @@ const barWidth = (earned: number, total: number) =>
 
 function PointCell({ comp }: { comp: GradeComponent }) {
   return (
-    <div className="flex flex-col gap-1 min-w-[80px]">
+    <div className="flex flex-col gap-1 min-w-[60px]">
       <span className={cn("text-sm font-bold tabular-nums", ptColor(comp.earned, comp.total))}>
         {comp.earned}
-        <span className="text-muted-foreground font-normal text-xs">/{comp.total}</span>
+        <span className="text-muted-foreground font-normal text-[11px] ml-0.5">/{comp.total}</span>
       </span>
-      <div className="h-1.5 rounded-full bg-muted overflow-hidden w-full">
-        <div
-          className={cn(
-            "h-full rounded-full transition-all",
-            comp.earned / comp.total >= 0.9 ? "bg-emerald-500"
-            : comp.earned / comp.total >= 0.8 ? "bg-blue-500"
-            : comp.earned / comp.total >= 0.7 ? "bg-amber-500"
-            : comp.earned / comp.total >= 0.6 ? "bg-orange-500"
-            : "bg-red-500"
-          )}
-          style={{ width: barWidth(comp.earned, comp.total) }}
-        />
-      </div>
-      <span className="text-[10px] text-muted-foreground">{comp.weight}% weight</span>
     </div>
   );
 }
@@ -95,79 +81,108 @@ export default function GradesPage() {
         description="Your grade breakdown by course — all scores shown in points"
       />
 
-      {/* ── Slim summary bar ──────────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-6 items-center px-4 py-3 rounded-xl border border-border bg-muted/40 mb-6">
-        <div className="flex items-center gap-3">
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
           <img
-            src="https://img.icons8.com/color/96/diploma.png"
+            src="https://img.icons8.com/scribby/96/certificate.png"
             alt="GPA"
-            className="h-8 w-8"
+            className="h-12 w-12"
           />
           <div>
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">GPA</p>
-            <p className="text-xl font-extrabold text-foreground leading-none">{overallGPA}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">GPA</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{overallGPA}</p>
           </div>
         </div>
 
-        <div className="h-8 w-px bg-border hidden sm:block" />
-
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
           <img
-            src="https://img.icons8.com/color/96/line-chart.png"
+            src="https://img.icons8.com/scribby/96/line-chart.png"
             alt="Average"
-            className="h-8 w-8"
+            className="h-12 w-12"
           />
           <div>
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Avg&nbsp;Score</p>
-            <p className="text-xl font-extrabold text-foreground leading-none">{avgFinal.toFixed(1)}%</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg Score</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{avgFinal.toFixed(1)}%</p>
           </div>
         </div>
 
-        <div className="h-8 w-px bg-border hidden sm:block" />
-
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
           <img
-            src="https://img.icons8.com/color/96/books.png"
+            src="https://img.icons8.com/scribby/96/book.png"
             alt="Courses"
-            className="h-8 w-8"
+            className="h-12 w-12"
           />
           <div>
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Courses</p>
-            <p className="text-xl font-extrabold text-foreground leading-none">{STUDENT_GRADES.length}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Courses</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{STUDENT_GRADES.length}</p>
           </div>
         </div>
-
-        {/* Grade scale toggle */}
-        <button
-          onClick={() => setScaleOpen(v => !v)}
-          className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <Info className="h-3.5 w-3.5" />
-          Grade Scale
-          {scaleOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-        </button>
       </div>
 
-      {/* Collapsible grade scale */}
-      {scaleOpen && (
-        <div className="flex flex-wrap gap-2 mb-6 px-1">
-          {GRADE_SCALE.map(({ letter, range, color, bg }) => (
-            <span
-              key={letter}
-              className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium",
-                bg
-              )}
-            >
-              <span className={cn("text-sm font-bold", color)}>{letter}</span>
-              <span className="text-muted-foreground">{range}%</span>
-            </span>
-          ))}
-        </div>
-      )}
+      {/* ── Mobile Gradebook Cards ──────────────────────────────────── */}
+      <div className="lg:hidden space-y-3">
+        {STUDENT_GRADES.length === 0 ? (
+          <div className="py-16 text-center border rounded-xl bg-card">
+            <BookOpen className="h-8 w-8 opacity-30 mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">No grades available yet.</p>
+          </div>
+        ) : (
+          STUDENT_GRADES.map((grade) => {
+            const course = STUDENT_COURSES.find(c => c.id === grade.course_id);
+            return (
+              <div key={grade.course_id} className="rounded-xl border border-border bg-card overflow-hidden">
+                {/* Course Header */}
+                <div className="px-4 py-3 border-b border-border bg-muted/20">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      {course?.code || grade.course_id.toUpperCase()}
+                    </span>
+                    <span className={cn("text-sm font-extrabold tabular-nums", letterColor(grade.letter_grade))}>
+                      {grade.final_grade.toFixed(1)}%
+                    </span>
+                  </div>
+                  <p className="font-semibold text-sm text-foreground line-clamp-1">{grade.course_name}</p>
+                  <p className="text-[11px] text-muted-foreground">{course?.instructor || "Instructor"} · {course?.credits || 3} cr</p>
+                </div>
+                {/* Component Scores */}
+                <div className="px-4 py-3 grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">Assignments (35%)</p>
+                    <PointCell comp={grade.assignments} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">Tests (40%)</p>
+                    <PointCell comp={grade.tests} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">Quizzes (15%)</p>
+                    <PointCell comp={grade.quizzes} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">Forum (10%)</p>
+                    <PointCell comp={grade.forum_activities} />
+                  </div>
+                </div>
+                {/* Footer */}
+                <div className="px-4 py-2.5 bg-muted/10 border-t border-border flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    {grade.final_points}/{grade.total_points} pts
+                  </span>
+                  <Button variant="ghost" size="sm" asChild className="shadow-none hover:bg-muted font-medium text-xs h-7">
+                    <Link href={`/student/grades/${grade.course_id}`}>
+                      <Eye className="h-3 w-3 mr-1" /> Details
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
 
-      {/* ── Gradebook Data Table ───────────────────────────────────────── */}
-      <div className="w-full overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+      {/* ── Desktop Gradebook Data Table ───────────────────────────── */}
+      <div className="w-full overflow-x-auto rounded-xl border border-border bg-card shadow-sm hidden lg:block">
         <table className="w-full min-w-[720px] text-sm">
           {/* thead */}
           <thead>
@@ -259,54 +274,26 @@ export default function GradesPage() {
 
                     {/* Final Grade */}
                     <td className="px-4 py-4 align-top">
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className={cn("text-base font-extrabold tabular-nums", letterColor(grade.letter_grade))}>
-                            {grade.final_points}
-                          </span>
-                          <span className="text-muted-foreground text-xs">/{grade.total_points} pts</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={cn(
-                            "text-xs font-bold px-2 py-0.5 rounded-full border",
-                            letterBadge(grade.letter_grade)
-                          )}>
-                            {grade.letter_grade}
-                          </span>
-                          <span className="text-[11px] text-muted-foreground">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className={cn("text-sm font-extrabold tabular-nums", letterColor(grade.letter_grade))}>
                             {grade.final_grade.toFixed(1)}%
                           </span>
-                        </div>
-                        {/* Overall progress bar */}
-                        <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className={cn(
-                              "h-full rounded-full",
-                              grade.final_grade >= 90 ? "bg-emerald-500"
-                              : grade.final_grade >= 80 ? "bg-blue-500"
-                              : grade.final_grade >= 70 ? "bg-amber-500"
-                              : grade.final_grade >= 60 ? "bg-orange-500"
-                              : "bg-red-500"
-                            )}
-                            style={{ width: `${grade.final_grade}%` }}
-                          />
+                          <span className="text-muted-foreground text-[11px] font-medium">
+                            ({grade.final_points}/{grade.total_points} pts)
+                          </span>
                         </div>
                       </div>
                     </td>
 
                     {/* Actions */}
                     <td className="px-4 py-4 align-middle text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={`/student/grades/${grade.course_id}`}>
-                            <Eye className="h-3.5 w-3.5 mr-1.5" />
-                            Details
-                          </Link>
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" title="Download report">
-                          <Download className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
+                      <Button variant="ghost" size="sm" asChild className="shadow-none hover:bg-muted font-medium border border-transparent">
+                        <Link href={`/student/grades/${grade.course_id}`}>
+                          <Eye className="h-3.5 w-3.5 mr-1.5" />
+                          View Details
+                        </Link>
+                      </Button>
                     </td>
                   </tr>
                 );
@@ -376,17 +363,7 @@ export default function GradesPage() {
       </div>
 
       {/* ── Footer actions ────────────────────────────────────────────── */}
-      <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline">
-            <FileText className="h-4 w-4 mr-2" />
-            Download Transcript
-          </Button>
-          <Button variant="outline">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Grade Analytics
-          </Button>
-        </div>
+      <div className="mt-6 flex justify-end">
         <p className="text-xs text-muted-foreground">Last updated: Today at 2:30 PM</p>
       </div>
     </div>

@@ -79,15 +79,7 @@ export function CourseListItem({
             </span>
           </div>
 
-          <div className="absolute -bottom-3 -right-3 z-[2] flex items-center justify-center rounded-full border border-border bg-card p-0.5">
-            <CircularProgress
-              value={variant === "archived" ? 100 : pct}
-              size={36}
-              strokeWidth={3}
-              className="shrink-0 bg-card"
-              labelClassName={`text-[10px] font-bold ${variant === "archived" ? "text-green-600" : "text-foreground"}`}
-            />
-          </div>
+
         </div>
 
         {/* Center: Metadata */}

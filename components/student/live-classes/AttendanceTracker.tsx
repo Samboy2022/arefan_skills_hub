@@ -26,11 +26,18 @@ export function AttendanceTracker({
   const [elapsedMs, setElapsedMs] = useState(0);
   const [thresholdMet, setThresholdMet] = useState(false);
   const [pulseActive, setPulseActive] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const reportedRef = useRef(false);
+  const demoOffsetRef = useRef(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const elapsed = Date.now() - joinTimestamp;
+      // If demo mode is active, add 59 seconds to our simulated offset every 1 normal second (effectively 60x speed)
+      if (isDemoMode && !reportedRef.current) {
+        demoOffsetRef.current += 59000;
+      }
+
+      const elapsed = (Date.now() - joinTimestamp) + demoOffsetRef.current;
       setElapsedMs(elapsed);
 
       if (elapsed >= thresholdMs && !reportedRef.current) {
@@ -42,7 +49,7 @@ export function AttendanceTracker({
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [joinTimestamp, thresholdMs, onThresholdMet]);
+  }, [joinTimestamp, thresholdMs, onThresholdMet, isDemoMode]);
 
   const progressPct = Math.min((elapsedMs / thresholdMs) * 100, 100);
   const elapsedMinutes = Math.floor(elapsedMs / 60_000);
@@ -131,6 +138,24 @@ export function AttendanceTracker({
           </div>
         )}
       </div>
+
+      {/* Demo Speed Toggle */}
+      {!thresholdMet && (
+        <div className="pt-2 flex justify-center">
+          <button
+            onClick={() => setIsDemoMode((p) => !p)}
+            className={cn(
+              "text-[10px] uppercase font-bold px-3 py-1.5 rounded transition-colors shadow-sm",
+              isDemoMode 
+                ? "bg-primary text-primary-foreground animate-pulse" 
+                : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
+            )}
+            title="Automatically run tracker at 60x speed to demo functionality"
+          >
+            {isDemoMode ? "Demo Fast-Forward Active (60x)" : "Test Tracker (60x Speed)"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -146,11 +171,16 @@ export function AttendanceTrackerBar({
   const thresholdMs = durationMinutes * 0.8 * 60_000;
   const [elapsedMs, setElapsedMs] = useState(0);
   const [thresholdMet, setThresholdMet] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const reportedRef = useRef(false);
+  const demoOffsetRef = useRef(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const elapsed = Date.now() - joinTimestamp;
+      if (isDemoMode && !reportedRef.current) {
+        demoOffsetRef.current += 59000;
+      }
+      const elapsed = (Date.now() - joinTimestamp) + demoOffsetRef.current;
       setElapsedMs(elapsed);
       if (elapsed >= thresholdMs && !reportedRef.current) {
         reportedRef.current = true;
@@ -158,7 +188,7 @@ export function AttendanceTrackerBar({
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [joinTimestamp, thresholdMs]);
+  }, [joinTimestamp, thresholdMs, isDemoMode]);
 
   const progressPct = Math.min((elapsedMs / thresholdMs) * 100, 100);
   const barColor = thresholdMet ? "bg-emerald-500" : progressPct >= 50 ? "bg-amber-500" : "bg-rose-500";
@@ -177,10 +207,10 @@ export function AttendanceTrackerBar({
         {Math.round(progressPct)}%
       </span>
       <span className={cn(
-        "text-xs font-semibold",
-        thresholdMet ? "text-emerald-600" : "text-amber-600"
-      )}>
-        {thresholdMet ? "Present ✓" : "Counting…"}
+        "text-xs font-semibold shrink-0 cursor-pointer",
+        thresholdMet ? "text-emerald-600" : isDemoMode ? "text-primary animate-pulse" : "text-amber-600"
+      )} onClick={() => !thresholdMet && setIsDemoMode(p => !p)}>
+        {thresholdMet ? "Present ✓" : isDemoMode ? "Fast-Forwarding…" : "Counting… (Tap to Demo)"}
       </span>
     </div>
   );

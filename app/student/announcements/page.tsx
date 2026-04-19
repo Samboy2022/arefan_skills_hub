@@ -315,29 +315,31 @@ export default function AnnouncementsPage() {
         <p className="text-sm text-muted-foreground mt-1">Stay informed about platform updates and your course news.</p>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total</p>
-            <p className="text-2xl font-bold text-foreground">{COURSE_ANNOUNCEMENTS.length}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/megaphone.png" alt="Total" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{COURSE_ANNOUNCEMENTS.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/megaphone.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Unread</p>
-            <p className="text-2xl font-bold text-primary">{totalUnread}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
+          <img src="https://img.icons8.com/scribby/96/star.png" alt="Unread" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Unread</p>
+            <p className="text-3xl font-extrabold text-primary leading-none">{totalUnread}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/new-message.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Unread" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Course</p>
-            <p className="text-2xl font-bold text-foreground">{courseAnnouncements.length}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/user.png" alt="Course" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Course</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{courseAnnouncements.length}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/teacher.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Course" />
-        </Card>
+        </div>
       </div>
 
       {/* Two panes */}

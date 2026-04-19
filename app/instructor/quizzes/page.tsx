@@ -136,12 +136,13 @@ export default function QuizzesPage() {
         <PageHeader
           title="Quizzes & Exams"
           description="Create and manage assessments for your courses via DataTable."
-        >
-          <Button className="gap-2" onClick={handleOpenCreateModal}>
-            <Plus className="h-4 w-4" />
-            New Quiz
-          </Button>
-        </PageHeader>
+          action={
+            <Button className="gap-2" onClick={handleOpenCreateModal}>
+              <Plus className="h-4 w-4" />
+              New Quiz
+            </Button>
+          }
+        />
       </div>
 
       <div className="w-full overflow-x-auto border border-border rounded-md bg-card shadow-sm">
@@ -149,8 +150,6 @@ export default function QuizzesPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="whitespace-nowrap">Quiz Name</TableHead>
-              <TableHead className="whitespace-nowrap">Notification</TableHead>
-              <TableHead className="whitespace-nowrap">Randomize</TableHead>
               <TableHead className="whitespace-nowrap">Attempts</TableHead>
               <TableHead className="whitespace-nowrap">Gradable</TableHead>
               <TableHead className="whitespace-nowrap">Active</TableHead>
@@ -175,8 +174,6 @@ export default function QuizzesPage() {
                     Build Questions
                   </Link>
                 </TableCell>
-                <TableCell>{getFlagStr(quiz.emailNotifications)}</TableCell>
-                <TableCell>{getFlagStr(quiz.randomizeQuestions)}</TableCell>
                 <TableCell>{quiz.attemptsAllowed || 1}</TableCell>
                 <TableCell>{quiz.isGradable === false ? "No" : "Yes"}</TableCell>
                 <TableCell>

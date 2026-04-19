@@ -123,79 +123,47 @@ export default function MyCoursesPage() {
         }
       />
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-sky-200 p-4 transition-all duration-200 hover:shadow-md hover:border-sky-300 hover:translate-y-[-2px] dark:border-sky-900 dark:hover:border-sky-800">
-          <div className="mb-3 flex items-start justify-between">
+      {/* Stats row */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6 mt-2">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/book.png" alt="Total Courses" className="h-12 w-12" />
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Total Courses
-              </p>
-              <p className="text-xs text-muted-foreground">All sections</p>
-            </div>
-            <div className="rounded-full bg-sky-100 p-2 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400 transition-transform duration-200 hover:scale-110">
-              <BookOpen className="h-5 w-5" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Courses</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{courses.length}</p>
             </div>
           </div>
-          <p className="text-2xl font-bold leading-none">{courses.length}</p>
-        </Card>
-
-        <Card className="border-emerald-200 p-4 transition-all duration-200 hover:shadow-md hover:border-emerald-300 hover:translate-y-[-2px] dark:border-emerald-900 dark:hover:border-emerald-800">
-          <div className="mb-3 flex items-start justify-between">
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4">
+            <img src="https://img.icons8.com/scribby/96/check.png" alt="Active Courses" className="h-12 w-12" />
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Active Courses
-              </p>
-              <p className="text-xs text-muted-foreground">Currently teaching</p>
-            </div>
-            <div className="rounded-full bg-emerald-100 p-2 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 transition-transform duration-200 hover:scale-110">
-              <CheckCircle className="h-5 w-5" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Group Course</p>
+              <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{activeCourses.length}</p>
             </div>
           </div>
-          <p className="text-2xl font-bold leading-none">{activeCourses.length}</p>
-        </Card>
-
-        <Card className="border-blue-200 p-4 transition-all duration-200 hover:shadow-md hover:border-blue-300 hover:translate-y-[-2px] dark:border-blue-900 dark:hover:border-blue-800">
-          <div className="mb-3 flex items-start justify-between">
+          <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/todo-list.png" alt="Avg Enrollment" className="h-12 w-12" />
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Avg. enrollment fill
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Across active sections
-              </p>
-            </div>
-            <div className="rounded-full bg-blue-100 p-2 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 transition-transform duration-200 hover:scale-110">
-              <Award className="h-5 w-5" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg Enrollment %</p>
+              <p className="text-3xl font-extrabold text-blue-600 dark:text-blue-400 leading-none">{avgEnrollmentFill}%</p>
             </div>
           </div>
-          <p className="text-2xl font-bold leading-none">{avgEnrollmentFill}%</p>
-        </Card>
-
-        <Card className="border-amber-200 p-4 transition-all duration-200 hover:shadow-md hover:border-amber-300 hover:translate-y-[-2px] dark:border-amber-900 dark:hover:border-amber-800">
-          <div className="mb-3 flex items-start justify-between">
+          <div className="flex flex-col items-center justify-center gap-3 text-center border-l border-border px-4 border-t lg:border-t-0 pt-6 lg:pt-0">
+            <img src="https://img.icons8.com/scribby/96/error.png" alt="Need Attention" className="h-12 w-12" />
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Need attention
-              </p>
-              <p className="text-xs text-muted-foreground">At capacity</p>
-            </div>
-            <div className="rounded-full bg-amber-100 p-2 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 transition-transform duration-200 hover:scale-110">
-              <AlertCircle className="h-5 w-5" />
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Need Attention</p>
+              <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{needAttention}</p>
             </div>
           </div>
-          <p className="text-2xl font-bold leading-none">{needAttention}</p>
-        </Card>
+        </div>
       </div>
 
       {/* Active Courses Section */}
       <section className="space-y-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold flex items-center gap-2 text-foreground">
-              <BookOpen className="h-5 w-5 text-primary" />
-              Active Courses
-              <span className="ml-1 text-sm font-normal text-muted-foreground">
+            <h2 className="text-xl font-semibold flex items-center text-foreground">
+              Group Course
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
                 ({activeCourses.length})
               </span>
             </h2>

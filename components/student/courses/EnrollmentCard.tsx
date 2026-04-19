@@ -46,7 +46,7 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
             <h3 className="text-lg font-semibold text-foreground">Ready to resume?</h3>
             <Button 
               onClick={handleContinue}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded shadow-sm flex items-center justify-center gap-2"
+              className="w-full shadow-none hover:bg-primary/90 text-primary-foreground font-semibold transition-colors flex items-center justify-center gap-2"
               size="lg"
             >
               Continue Learning
@@ -54,17 +54,19 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
             </Button>
             
             {/* Progress */}
-            <div className="bg-muted/30 rounded-md p-5 border border-border flex items-center gap-4">
-              <CircularProgress 
-                value={course.user_progress || 0} 
-                size={56} 
-                strokeWidth={5}
-                className="bg-card"
-                labelClassName="text-sm font-bold text-foreground"
-              />
-              <div>
-                <span className="text-foreground font-semibold block mb-0.5">Course Progress</span>
-                <span className="text-sm text-muted-foreground">{course.user_progress || 0}% completed</span>
+            <div className="bg-muted/40 rounded-xl p-4 flex items-center gap-4 border border-transparent">
+              <div className="flex items-center justify-center rounded-full bg-card shadow-sm shrink-0 w-[64px] h-[64px]">
+                 <CircularProgress 
+                   value={course.user_progress || 0} 
+                   size={52} 
+                   strokeWidth={4}
+                   className="shrink-0"
+                   labelClassName="text-sm font-bold text-foreground"
+                 />
+              </div>
+              <div className="min-w-0">
+                <span className="text-foreground font-semibold block mb-0.5 text-sm">Course Progress</span>
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{course.user_progress || 0}% completed</span>
               </div>
             </div>
           </div>
@@ -74,7 +76,7 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
             <Button 
               onClick={handleEnroll}
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded shadow-sm"
+              className="w-full shadow-none hover:bg-primary/90 text-primary-foreground font-semibold transition-colors"
               size="lg"
             >
               {isLoading ? (

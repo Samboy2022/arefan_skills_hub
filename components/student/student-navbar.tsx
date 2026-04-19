@@ -93,7 +93,7 @@ function StudentNavbarInner() {
 
   return (
     <nav className="sticky top-0 z-30 border-b border-border bg-background">
-      <div className="flex h-16 items-center justify-between px-6">
+      <div className="flex h-14 md:h-16 items-center justify-between px-3 md:px-6">
         {/* Left: Toggle button */}
         <div className="flex items-center gap-4">
           <Button
@@ -107,9 +107,9 @@ function StudentNavbarInner() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
-          {/* Session and Semester Controls */}
-          <div className="flex items-center gap-4 md:gap-6 border-r border-border pr-4 mr-1">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          {/* Session and Semester Controls — hidden on very small mobile */}
+          <div className="hidden sm:flex items-center gap-4 md:gap-6 border-r border-border pr-4 mr-1">
             {/* Session Switcher */}
             <DropdownMenu open={isSessionOpen} onOpenChange={setIsSessionOpen}>
               <DropdownMenuTrigger asChild>
@@ -242,7 +242,7 @@ function StudentNavbarInner() {
                 onMouseEnter={() => setIsProfileOpen(true)}
                 onMouseLeave={() => setIsProfileOpen(false)}
               >
-                <Avatar className="h-10 w-10 border border-border">
+                <Avatar className="h-8 w-8 sm:h-10 sm:w-10 border border-border">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-sm font-bold">
                     {user.initials}

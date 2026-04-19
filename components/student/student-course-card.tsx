@@ -3,8 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  BookOpen,
-  Award,
   AlertCircle,
   CheckCircle,
   ArrowRight,
@@ -24,98 +22,17 @@ export function StudentCourseCard({
   variant = "active",
 }: StudentCourseCardProps) {
   const href = `/student/courses/${course.id}`;
-
-  if (variant === "completed") {
-    return (
-      <Link
-        href={href}
-        className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
-        aria-label={`View completed course: ${course.name}`}
-      >
-        <Card className="h-full border border-border shadow-none rounded-md bg-card flex flex-col overflow-hidden hover:border-primary/50 transition-all group">
-          {/* Header */}
-          <div className="relative h-32 w-full bg-muted border-b border-border overflow-hidden">
-            <Image
-              src={course.thumbnail}
-              alt={`Completed course thumbnail for ${course.name}`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover opacity-60 group-hover:opacity-100 transition-all duration-500 scale-105 group-hover:scale-100"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-
-            <div className="absolute top-4 left-4">
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 rounded-sm bg-background border border-border text-foreground">
-                {course.code}
-              </span>
-            </div>
-
-            <div className="absolute -bottom-6 right-6 bg-card rounded-full p-1 border border-border z-10 shadow-none">
-              <CircularProgress
-                value={100}
-                size={42}
-                strokeWidth={4}
-                className="bg-card shrink-0"
-                labelClassName="text-[10px] font-bold text-green-600"
-              />
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="p-6 pt-10 flex flex-col flex-1 bg-card">
-            <h4 className="font-bold text-base leading-snug group-hover:text-primary transition-colors mb-4 line-clamp-2 text-foreground">
-              {course.name}
-            </h4>
-
-            <div className="flex items-center gap-3 mb-6 bg-muted/20 p-2.5 rounded-md border border-border/50">
-              <Avatar className="h-8 w-8 border border-border shadow-none">
-                <AvatarImage src={course.instructor_avatar} />
-                <AvatarFallback className="text-[9px] bg-primary/10 text-primary font-bold">
-                  {course.instructor
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div className="min-w-0">
-                <p className="text-[11px] font-bold text-foreground truncate uppercase tracking-wider">
-                  {course.instructor}
-                </p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">
-                  {course.credits} Academic Credits
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
-              <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1 text-center">
-                  Final Result
-                </p>
-                <p className="text-xl font-black text-primary leading-none text-center">
-                  {course.grade}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">
-                Syllabus & Details
-                <ArrowRight className="h-3 w-3" />
-              </div>
-            </div>
-          </div>
-        </Card>
-      </Link>
-    );
-  }
+  const isCompleted = variant === "completed";
 
   return (
     <Link
       href={href}
-      className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
-      aria-label={`View active course: ${course.name}`}
+      className="block group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
+      aria-label={`View ${isCompleted ? 'completed ' : 'active '}course: ${course.name}`}
     >
-      <Card className="h-full border border-border bg-card hover:border-primary/50 transition-colors shadow-none rounded flex flex-col overflow-hidden relative">
-        {/* Thumbnail Header */}
-        <div className="relative aspect-[16/9] w-full bg-muted border-b border-border">
+      <Card className="h-full bg-card hover:border-primary/40 hover:shadow-lg rounded-xl flex flex-col overflow-hidden border border-border/80 relative">
+        {/* Thumbnail Header area */}
+        <div className="relative aspect-[16/9] w-full bg-muted overflow-hidden">
           <Image
             src={course.thumbnail}
             alt={`Course thumbnail for ${course.name}`}
@@ -123,86 +40,101 @@ export function StudentCourseCard({
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
           />
-          {/* Overlay protecting the badge */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+          {/* Subtle gradient overlay to ensure text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
 
-          {/* Course Code Badge */}
-          <div className="absolute top-4 left-4">
-            <span className="text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-background text-foreground uppercase shadow-sm">
+          {/* Top Info Strip */}
+          <div className="absolute top-3 left-3 flex gap-2">
+            <span className="text-[10px] font-bold tracking-wide px-2 py-1 rounded bg-black/60 backdrop-blur-md text-white uppercase shadow-sm border border-white/10">
               {course.code}
             </span>
           </div>
 
-          {/* Due Assignments Badge */}
-          {course.due_assignments > 0 && (
-            <div className="absolute top-4 right-4">
-              <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-wide px-2.5 py-1 rounded bg-amber-500 text-white uppercase shadow-sm">
-                <AlertCircle className="w-3.5 h-3.5" />
-                {course.due_assignments} Task
-                {course.due_assignments !== 1 ? "s" : ""} Due
-              </span>
-            </div>
+          {!isCompleted && course.due_assignments > 0 && (
+             <div className="absolute top-3 right-3">
+               <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-wide px-2.5 py-1 rounded-full bg-amber-500/90 backdrop-blur-md text-white uppercase shadow-sm">
+                 <AlertCircle className="w-3.5 h-3.5" />
+                 {course.due_assignments} Task{course.due_assignments !== 1 ? "s" : ""}
+               </span>
+             </div>
           )}
-
-          {/* Circular Progress (floating) */}
-          <div className="absolute -bottom-6 right-5 bg-card rounded-full p-1 border border-border flex items-center justify-center">
-            <CircularProgress
-              value={course.progress}
-              size={48}
-              strokeWidth={4}
-              className="bg-card shrink-0"
-              labelClassName="text-xs font-bold text-foreground"
-            />
-          </div>
+          
         </div>
 
-        {/* Body */}
-        <div className="p-5 pt-10 flex flex-col flex-1 bg-card">
-          <span className="text-[13px] text-muted-foreground font-medium mb-2 block">
-            {course.credits} Credits
-          </span>
-          <h4 className="font-bold text-lg leading-snug group-hover:text-primary transition-colors text-foreground mb-6 line-clamp-2">
+        {/* Content Body */}
+        <div className="p-5 pt-8 flex flex-col flex-1 bg-card relative z-0">
+          {/* Progress Indicator floating on thumbnail boundary */}
+          <div className="absolute -top-[35px] right-5 z-10 shrink-0">
+            <div className="bg-card rounded-full flex items-center justify-center shadow-md border border-border/50 w-[70px] h-[70px]">
+               {isCompleted ? (
+                 <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center border-[4px] border-emerald-500/20 text-emerald-500 bg-emerald-500/10">
+                   <CheckCircle className="w-8 h-8" />
+                 </div>
+               ) : (
+                 <CircularProgress
+                   value={course.progress}
+                   size={60}
+                   strokeWidth={5}
+                   className="shrink-0"
+                   labelClassName="text-sm font-bold text-foreground"
+                 />
+               )}
+            </div>
+          </div>
+
+          <div className="flex justify-between items-start mb-2">
+             <span className="text-xs font-semibold text-primary/80 uppercase tracking-wider">
+               {course.credits} Credits
+             </span>
+          </div>
+          
+          <h4 className="font-bold text-base leading-snug group-hover:text-primary transition-colors text-foreground mb-4 line-clamp-2">
             {course.name}
           </h4>
 
-          {/* Instructor */}
-          <div className="flex items-center gap-3 mb-6">
-            <Avatar className="h-9 w-9 border border-border">
+          {/* Instructor Block */}
+          <div className="flex items-center gap-3 mb-6 bg-muted/30 rounded-lg p-2.5 border border-transparent group-hover:border-border/50 transition-colors">
+            <Avatar className="h-8 w-8 border border-border shadow-sm">
               <AvatarImage src={course.instructor_avatar} />
-              <AvatarFallback className="text-xs font-semibold bg-muted text-muted-foreground">
-                {course.instructor
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+              <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
+                {course.instructor.split(" ").map((n) => n[0]).join("")}
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">
+              <p className="text-xs font-bold text-foreground truncate">
                 {course.instructor}
               </p>
-              <p className="text-xs text-muted-foreground truncate">Instructor</p>
+              <p className="text-[10px] text-muted-foreground truncate uppercase tracking-widest">
+                Instructor
+              </p>
             </div>
           </div>
 
-          {/* Assignment Status Banner */}
-          <div className="mt-auto pt-4 border-t border-border">
-            {course.due_assignments > 0 ? (
-              <div className="flex items-center gap-2 text-[13px] font-medium text-amber-600 bg-amber-50/50 dark:bg-amber-950/20 dark:text-amber-500 px-3 py-2.5 rounded border border-amber-200/50 dark:border-amber-900/50">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>
-                  {course.due_assignments} pending assignment
-                  {course.due_assignments !== 1 ? "s" : ""}
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-[13px] font-medium text-primary bg-primary/5 dark:bg-primary/10 px-3 py-2.5 rounded border border-primary/20 dark:border-primary/20">
-                <CheckCircle className="h-4 w-4 shrink-0" />
-                <span>Up to date</span>
-              </div>
-            )}
+          <div className="flex-1" />
+
+          {/* Footer Metrics */}
+          <div className="pt-4 border-t border-border/60 flex items-center justify-between">
+             <div className="flex items-center gap-2">
+                {!isCompleted && course.unread_announcements > 0 && (
+                   <span className="text-[10px] font-semibold text-sky-600 bg-sky-50 dark:bg-sky-950/30 px-2 py-1 rounded">
+                      {course.unread_announcements} New
+                   </span>
+                )}
+                {isCompleted && (
+                   <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 px-2 py-1 bg-emerald-50 dark:bg-emerald-950/30 rounded">
+                     <CheckCircle className="w-3 h-3" /> Completed
+                   </span>
+                )}
+             </div>
+             
+             <div className="flex flex-col items-end">
+                <span className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold">Grade</span>
+                <span className="text-sm font-black text-foreground">{course.grade}</span>
+             </div>
           </div>
         </div>
       </Card>
     </Link>
   );
 }
+

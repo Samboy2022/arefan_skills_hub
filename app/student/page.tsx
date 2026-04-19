@@ -50,7 +50,7 @@ export default function StudentDashboard() {
       />
 
       {/* KPI Cards — matched to quizzes page style */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Active Courses */}
         <Card className="p-5 border-border relative overflow-hidden">
           <div className="relative z-10">
@@ -180,7 +180,55 @@ export default function StudentDashboard() {
           </div>
 
           <Card className="overflow-hidden border-border bg-card p-0 w-full">
-            <Table className="w-full table-fixed">
+            {/* Mobile card layout */}
+            <div className="lg:hidden divide-y divide-border">
+              {pendingAssignments.map(assignment => {
+                const course = courseMap.get(assignment.course_id);
+                const dueDate = new Date(assignment.due_date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                dueDate.setHours(0, 0, 0, 0);
+                const diffTime = dueDate.getTime() - today.getTime();
+                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                const isValidDt = isValid(dueDate);
+
+                return (
+                  <Link
+                    key={assignment.id}
+                    prefetch={false}
+                    href={`/student/assignments/${assignment.id}`}
+                    className="block px-4 py-3.5 hover:bg-muted/20 transition-colors"
+                    aria-label={`View assignment ${assignment.title}`}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <p className="font-medium text-sm text-foreground line-clamp-2 flex-1">{assignment.title}</p>
+                      <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded shrink-0">
+                        {course?.code || "Course"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground">{isValidDt ? format(dueDate, "MMM dd, yyyy") : "Invalid date"}</span>
+                        <span className={cn(
+                          "text-[10px] font-bold uppercase tracking-widest",
+                          diffDays < 0 ? "text-red-600 dark:text-red-400" :
+                          diffDays <= 2 ? "text-amber-600 dark:text-amber-400" :
+                          "text-muted-foreground"
+                        )}>
+                          {diffDays < 0 ? `${Math.abs(diffDays)} days OVERDUE` : `${diffDays} days left`}
+                        </span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/50 text-xs h-7">
+                        View
+                      </Button>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Desktop table layout */}
+            <Table className="w-full text-sm hidden lg:table">
               <TableHeader className="bg-muted/30">
                 <TableRow>
                   <TableHead className="w-[40%] pl-6">Task Name</TableHead>

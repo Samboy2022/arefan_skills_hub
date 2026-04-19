@@ -45,23 +45,31 @@ export default function GradebookPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[
-          { label: "Total Courses", value: totalCourses, icon: BookOpen, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
-          { label: "Active Courses", value: activeCourses, icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-100" },
-          { label: "Total Students", value: totalStudents, icon: Users, color: "text-violet-600", bg: "bg-violet-50", border: "border-violet-100" },
-        ].map((kpi) => (
-          <div key={kpi.label} className={`rounded-xl border ${kpi.border} bg-card p-4 flex items-center gap-4 shadow-sm`}>
-            <div className={`${kpi.bg} ${kpi.color} rounded-lg p-2.5`}>
-              <kpi.icon className="h-5 w-5" />
-            </div>
+      {/* Stats row */}
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center justify-center p-6 bg-muted/20">
+          <div className="flex flex-col items-center justify-center gap-3 text-center">
+            <img src="https://img.icons8.com/scribby/96/book.png" alt="Courses" className="h-12 w-12" />
             <div>
-              <p className="text-2xl font-bold">{kpi.value}</p>
-              <p className="text-xs text-muted-foreground">{kpi.label}</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Courses</p>
+              <p className="text-3xl font-extrabold text-foreground leading-none">{totalCourses}</p>
             </div>
           </div>
-        ))}
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l border-border px-4 py-4 sm:py-0 border-t sm:border-t-0">
+            <img src="https://img.icons8.com/scribby/96/check.png" alt="Active" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Active Courses</p>
+              <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{activeCourses}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l border-border px-4 border-t sm:border-t-0 pt-4 sm:pt-0">
+            <img src="https://img.icons8.com/scribby/96/user.png" alt="Students" className="h-12 w-12" />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Students</p>
+              <p className="text-3xl font-extrabold text-violet-600 dark:text-violet-400 leading-none">{totalStudents}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Course List Section */}
@@ -79,67 +87,88 @@ export default function GradebookPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border bg-background overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/40 hover:bg-muted/40">
-                <TableHead className="font-semibold w-[40%]">Course</TableHead>
-                <TableHead className="font-semibold">Code</TableHead>
-                <TableHead className="font-semibold text-center">Enrolled Students</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="text-right font-semibold">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        <div className="rounded-xl border bg-background overflow-hidden shadow-sm">
+          <div className="hidden md:grid md:grid-cols-[1.5fr_1fr_1fr_1fr_140px] gap-4 items-center px-5 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span>Course</span>
+            <span>Code</span>
+            <span className="text-center">Enrolled Students</span>
+            <span>Status</span>
+            <span className="text-right">Action</span>
+          </div>
+          <div className="divide-y divide-border">
               {filteredCourses.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-10">
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                      <BookOpen className="h-8 w-8 opacity-30" />
-                      <p>No courses found matching your search.</p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                <div className="text-center py-12 text-muted-foreground">
+                  <div className="flex flex-col items-center gap-2">
+                    <BookOpen className="h-8 w-8 opacity-30" />
+                    <p>No courses found matching your search.</p>
+                  </div>
+                </div>
               ) : (
                 filteredCourses.map((course) => {
                   const studentCount = MOCK_STUDENTS.filter(s => s.enrolledCourses.includes(course.id)).length;
-                  
                   return (
-                    <TableRow key={course.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell>
-                        <span className="font-semibold">{course.title}</span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="bg-muted/50 font-mono text-xs">{course.code}</Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">{studentCount}</span>
-                          <span className="text-muted-foreground text-xs">/ {course.maxStudents}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {course.status === "active" ? (
-                          <Badge variant="outline" className="border-transparent bg-emerald-100 text-emerald-700">Active</Badge>
-                        ) : (
-                          <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground capitalize">{course.status}</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button asChild size="sm" className="gap-1.5">
-                          <Link href={`/instructor/gradebook/${course.id}`}>
-                            <FileEdit className="h-4 w-4" />
-                            Grade Students
-                          </Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                    <div key={course.id} className="block transition-colors hover:bg-muted/10">
+                      <div className="md:hidden px-5 py-4 space-y-3">
+                         <div className="flex justify-between items-start gap-4">
+                            <div>
+                               <p className="font-semibold text-sm">{course.title}</p>
+                               <p className="text-xs text-muted-foreground">{course.code}</p>
+                            </div>
+                            {course.status === "active" ? (
+                              <Badge variant="outline" className="border-transparent bg-emerald-50 text-emerald-700 font-bold uppercase text-[10px] px-1.5 py-0 h-5">Active</Badge>
+                            ) : (
+                              <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground font-bold uppercase text-[10px] px-1.5 py-0 h-5 capitalize">{course.status}</Badge>
+                            )}
+                         </div>
+                         <div className="flex items-center justify-between pt-2">
+                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                               <Users className="h-3.5 w-3.5" />
+                               <span className="font-medium text-foreground">{studentCount}</span>/{course.maxStudents}
+                            </div>
+                            <Button asChild size="sm" className="h-8 text-xs gap-1.5 shadow-sm">
+                               <Link href={`/instructor/gradebook/${course.id}`}>
+                                 <FileEdit className="h-3 w-3" /> Grade
+                               </Link>
+                            </Button>
+                         </div>
+                      </div>
+
+                      <div className="hidden md:grid md:grid-cols-[1.5fr_1fr_1fr_1fr_140px] gap-4 items-center px-5 py-4">
+                         <div className="flex items-center gap-3">
+                             <div className="h-8 w-8 rounded-md bg-blue-100 flex items-center justify-center flex-shrink-0">
+                               <BookOpen className="h-4 w-4 text-blue-600" />
+                             </div>
+                             <span className="font-medium text-sm text-foreground truncate">{course.title}</span>
+                         </div>
+                         <div>
+                            <span className="bg-muted/50 font-mono text-xs px-2 py-0.5 rounded border">{course.code}</span>
+                         </div>
+                         <div className="flex items-center justify-center gap-1.5">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium text-sm">{studentCount}</span>
+                            <span className="text-muted-foreground text-xs">/ {course.maxStudents}</span>
+                         </div>
+                         <div>
+                            {course.status === "active" ? (
+                              <Badge variant="outline" className="border-transparent bg-emerald-100 text-emerald-700 shadow-sm font-medium">Active</Badge>
+                            ) : (
+                              <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground capitalize font-medium shadow-sm">{course.status}</Badge>
+                            )}
+                         </div>
+                         <div className="flex justify-end">
+                            <Button asChild size="sm" className="gap-1.5 bg-foreground text-background hover:bg-foreground/90 shadow-sm">
+                              <Link href={`/instructor/gradebook/${course.id}`}>
+                                <FileEdit className="h-3.5 w-3.5" />
+                                Open Grades
+                              </Link>
+                            </Button>
+                         </div>
+                      </div>
+                    </div>
                   );
                 })
               )}
-            </TableBody>
-          </Table>
+          </div>
         </div>
       </div>
     </div>

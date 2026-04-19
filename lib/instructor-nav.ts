@@ -39,7 +39,7 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
         tooltip: "Overview and quick stats",
       },
       {
-        label: "My Courses",
+        label: "Courses",
         href: "/instructor/courses",
         icon: CoursesIcon,
         tooltip: "Manage your courses",
@@ -91,7 +91,7 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
         tooltip: "Course discussions & Q&A",
       },
       {
-        label: "Announcements",
+        label: "Updates",
         href: "/instructor/announcements",
         icon: AnnouncementsIcon,
         tooltip: "Create announcements",

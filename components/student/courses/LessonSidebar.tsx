@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   ChevronDown,
@@ -17,6 +17,7 @@ import {
   Send,
   User,
   Bot,
+  ArrowUp,
 } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
@@ -124,13 +125,26 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
     );
   }, [currentLessonId, activeLesson?.title]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
+  const handleSendMessage = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!chatInput.trim()) return;
 
     const newMsg = { role: 'user' as const, content: chatInput.trim() };
     setChatMessages(prev => [...prev, newMsg]);
     setChatInput('');
+    
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
 
     // Simulate AI response
     setTimeout(() => {
@@ -171,7 +185,7 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
     return <div className="p-4 text-muted-foreground">Loading curriculum...</div>;
 
   return (
-    <div className="flex flex-col h-full font-sans">
+    <div className="flex flex-col h-full font-sans overflow-hidden">
 
       {/* ── Tab Bar ── */}
       <div className="flex border-b border-border shrink-0">
@@ -223,18 +237,34 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
 
           <form onSubmit={handleSendMessage} className="p-4 bg-card border-t border-border shrink-0">
-            <div className="flex gap-2">
-              <Input 
+            <div className="relative flex items-end w-full">
+              <textarea
+                ref={textareaRef}
                 value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
+                onChange={(e) => {
+                  setChatInput(e.target.value);
+                  e.target.style.height = 'auto'; // Reset the height
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`; // Set height based on content
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (chatInput.trim()) {
+                      handleSendMessage();
+                    }
+                  }
+                }}
                 placeholder="Ask your AI guide..." 
-                className="flex-1 text-sm bg-background"
+                className="flex-1 text-sm bg-background border border-input rounded-xl pl-3 pr-[40px] py-2.5 resize-none outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                rows={1}
+                style={{ minHeight: '40px' }}
               />
-              <Button type="submit" size="icon" className="shrink-0" disabled={!chatInput.trim()}>
-                <Send className="w-4 h-4" />
+              <Button type="submit" size="icon" className="absolute right-1.5 bottom-1.5 h-7 w-7 rounded-[8px] transition-all" disabled={!chatInput.trim()}>
+                <Send className="w-4 h-4 ml-0.5" />
               </Button>
             </div>
           </form>
@@ -282,22 +312,23 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                     </div>
 
                     {/* Meta: lecture count + duration */}
-                    <div className="flex flex-col items-end gap-1 shrink-0">
-                      <div className="flex items-center gap-1">
-                        <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
-                        <span className="text-xs text-muted-foreground">{lectureCount}</span>
+                    <div className="flex items-center gap-4 shrink-0 text-right">
+                      <div className="w-[18px] text-xs text-muted-foreground mr-1 text-right">
+                        {lectureCount}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-amber-500" />
-                        <span className="text-xs text-muted-foreground">{formatDuration(totalMins)}</span>
+                      <div className="flex items-center justify-end gap-1 w-[60px]">
+                        <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDuration(totalMins)}</span>
                       </div>
-                      {completedCount > 0 && (
-                        <div className="flex items-center gap-1">
-                          <Check className="w-3.5 h-3.5 text-primary" />
-                          <span className="text-xs text-muted-foreground">
+                      {completedCount > 0 ? (
+                        <div className="flex items-center justify-end gap-1 w-[36px]">
+                          <Check className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">
                             {completedCount}/{lessons.length}
                           </span>
                         </div>
+                      ) : (
+                        <div className="w-[36px]"></div>
                       )}
                     </div>
                   </button>

@@ -253,18 +253,19 @@ export default function ResourcesPage() {
         <PageHeader
           title="Resource Library"
           description="A centralized hub to upload, structure, and dispatch curriculum assets to your students."
-        >
-          <div className="flex gap-2">
-            <Button variant="outline" className="gap-2 shadow-sm" onClick={() => setIsFolderModalOpen(true)}>
-              <FolderPlus className="h-4 w-4 text-emerald-600" />
-              New Folder
-            </Button>
-            <Button className="gap-2 shadow-sm" onClick={() => setIsUploadModalOpen(true)}>
-              <Upload className="h-4 w-4" />
-              Upload File
-            </Button>
-          </div>
-        </PageHeader>
+          action={
+            <div className="flex gap-2">
+              <Button variant="outline" className="gap-2 shadow-sm" onClick={() => setIsFolderModalOpen(true)}>
+                <FolderPlus className="h-4 w-4 text-emerald-600" />
+                New Folder
+              </Button>
+              <Button className="gap-2 shadow-sm" onClick={() => setIsUploadModalOpen(true)}>
+                <Upload className="h-4 w-4" />
+                Upload File
+              </Button>
+            </div>
+          }
+        />
       </div>
 
       <div className="flex flex-col sm:flex-row items-center gap-4 py-2 border-b">

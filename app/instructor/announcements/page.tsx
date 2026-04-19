@@ -62,14 +62,15 @@ export default function AnnouncementsPage() {
         <PageHeader
           title="Announcements"
           description="Create and manage course announcements"
-        >
-          <Button className="gap-2" asChild>
-            <Link href="/instructor/announcements/create">
-                <Plus className="h-4 w-4" />
-                Add New
-            </Link>
-          </Button>
-        </PageHeader>
+          action={
+            <Button className="gap-2" asChild>
+              <Link href="/instructor/announcements/create">
+                  <Plus className="h-4 w-4" />
+                  Add New
+              </Link>
+            </Button>
+          }
+        />
       </div>
 
       {/* Announcement Sections */}

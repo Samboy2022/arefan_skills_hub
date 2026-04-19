@@ -71,57 +71,57 @@ export function InstructorSidebar() {
             <nav className="space-y-1 pb-4 flex flex-col">
               {INSTRUCTOR_NAV_ITEMS.map((section) => (
                 <div key={section.section} className="flex flex-col space-y-1">
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      const active = isActive(item.href);
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.href);
 
-                      if (isCollapsed) {
-                        return (
-                          <Tooltip key={item.href}>
-                            <TooltipTrigger asChild>
-                              <Link href={item.href}>
-                                <div
-                                  className={cn(
-                                    "relative flex flex-col items-center justify-center gap-1 h-14 transition-all duration-200 px-0.5",
-                                    active
-                                      ? "bg-brand/10 text-brand"
-                                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                                  )}
-                                >
-                                  <div className="relative">
-                                    <Icon className="h-5 w-5" />
-                                  </div>
-                                  <span className="text-[9px] font-medium text-center leading-tight line-clamp-2 px-1 break-words">
-                                    {item.label}
-                                  </span>
-                                </div>
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="ml-2">
-                              <p className="font-medium">{item.tooltip}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        );
-                      }
-
+                    if (isCollapsed) {
                       return (
-                        <Link key={item.href} href={item.href}>
-                          <div
-                            className={cn(
-                              "flex items-center gap-3 px-3 py-2.5 transition-all duration-200 group relative",
-                              active
-                                ? "bg-brand/10 text-brand"
-                                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                            )}
-                          >
-                            <div className="relative">
-                              <Icon className="h-5 w-5 flex-shrink-0" />
-                            </div>
-                            <span className="text-sm font-medium flex-1">{item.label}</span>
-                          </div>
-                        </Link>
+                        <Tooltip key={item.href}>
+                          <TooltipTrigger asChild>
+                            <Link href={item.href}>
+                              <div
+                                className={cn(
+                                  "relative flex flex-col items-center justify-center gap-1 h-14 transition-all duration-200 px-0.5",
+                                  active
+                                    ? "bg-brand/10 text-brand"
+                                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                                )}
+                              >
+                                <div className="relative">
+                                  <Icon className="h-5 w-5" />
+                                </div>
+                                <span className="text-[9px] font-medium text-center leading-tight truncate w-full px-1">
+                                  {item.label.split(" ")[0]}
+                                </span>
+                              </div>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="ml-2">
+                            <p className="font-medium">{item.tooltip}</p>
+                          </TooltipContent>
+                        </Tooltip>
                       );
-                    })}
+                    }
+
+                    return (
+                      <Link key={item.href} href={item.href}>
+                        <div
+                          className={cn(
+                            "flex items-center gap-3 px-3 py-2.5 transition-all duration-200 group relative",
+                            active
+                              ? "bg-brand/10 text-brand"
+                              : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                          )}
+                        >
+                          <div className="relative">
+                            <Icon className="h-5 w-5 flex-shrink-0" />
+                          </div>
+                          <span className="text-sm font-medium flex-1">{item.label}</span>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               ))}
             </nav>

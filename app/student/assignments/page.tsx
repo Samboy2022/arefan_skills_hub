@@ -66,31 +66,33 @@ export default function AssignmentsPage() {
         description="View and submit your course assignments"
       />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Total Assigned</p>
-            <p className="text-2xl font-bold text-foreground">{counts.all}</p>
+      {/* ── Prominent summary bar ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/todo-list.png" alt="Total Assigned" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Assigned</p>
+            <p className="text-3xl font-extrabold text-foreground leading-none">{counts.all}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/list.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Total" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Action Required</p>
-            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
+          <img src="https://img.icons8.com/scribby/96/error.png" alt="Action Required" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Action Required</p>
+            <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">
               {(counts.pending ?? 0) + (counts.missing ?? 0)}
             </p>
           </div>
-          <img src="https://img.icons8.com/color/96/error.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Action Required" />
-        </Card>
-        <Card className="p-4 border-border relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs text-muted-foreground mb-1">Graded</p>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{counts.graded}</p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <img src="https://img.icons8.com/scribby/96/check.png" alt="Graded" className="h-12 w-12" />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Graded</p>
+            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.graded}</p>
           </div>
-          <img src="https://img.icons8.com/color/96/test-passed.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20" alt="Graded" />
-        </Card>
+        </div>
       </div>
 
       {/* Main Card with Tabs + List */}
@@ -122,9 +124,9 @@ export default function AssignmentsPage() {
           ))}
         </div>
 
-        {/* Column Header (desktop only) */}
-        <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto] gap-4 items-center px-5 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          <span>Assignment</span>
+        {/* Desktop Table Header */}
+        <div className="hidden lg:flex items-center px-4 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <span className="flex-1">Assignment</span>
           <span className="w-28 text-center">Deadline</span>
           <span className="w-24 text-center">Marks</span>
           <span className="w-24 text-center">Status</span>
@@ -152,7 +154,7 @@ export default function AssignmentsPage() {
                   className="block hover:bg-muted/20 transition-colors"
                 >
                   {/* Mobile Layout */}
-                  <div className="md:hidden px-4 py-4 space-y-2">
+                  <div className="lg:hidden px-4 py-4 space-y-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -183,10 +185,10 @@ export default function AssignmentsPage() {
                     </div>
                   </div>
 
-                  {/* Desktop Layout */}
-                  <div className="hidden md:grid md:grid-cols-[1fr_auto_auto_auto_auto] gap-4 items-center px-5 py-4">
+                  {/* Desktop Layout -> Flex Table Row */}
+                  <div className="hidden lg:flex items-center px-4 py-4 gap-4">
                     {/* Name Column */}
-                    <div className="min-w-0">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0", categoryColor(a.category))}>
                           {categoryLabel(a.category)}

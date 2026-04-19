@@ -50,7 +50,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)]">
+    <div className="flex flex-col h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)]">
       <Breadcrumb 
         items={[
           { label: "Messages" }

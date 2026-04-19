@@ -143,17 +143,19 @@ export default function MeetingRoomPage({ params }: { params: Promise<{ id: stri
             <span className="text-xs text-zinc-500">Meeting ID: {meeting.zoom.meeting_id}</span>
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center gap-5 p-8 text-center">
-            <Video className="h-14 w-14 text-zinc-600" />
-            <div>
-              <p className="text-zinc-300 font-semibold">Zoom Meeting SDK</p>
-              <p className="text-zinc-500 text-sm mt-1">
-                In production, the full Zoom meeting UI is embedded here via the{" "}
-                <code className="text-zinc-400 bg-zinc-800 px-1 rounded">@zoom/meetingsdk</code> package.
-              </p>
-            </div>
-            <div className="text-xs text-zinc-600 bg-zinc-900 rounded-lg px-4 py-2 font-mono">
-              Meeting #{meeting.zoom.meeting_id}
+          <div className="flex-1 relative w-full h-full min-h-[400px] bg-black">
+            <iframe
+              src="https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=1&mute=1&controls=1"
+              className="absolute inset-0 w-full h-full border-0 pointer-events-auto"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Live Class Demonstration"
+            />
+            {/* Minimal overlay branding */}
+            <div className="absolute top-4 left-4 pointer-events-none">
+               <span className="bg-black/60 backdrop-blur text-white/90 text-[10px] font-bold px-2 py-1 rounded border border-white/10 uppercase tracking-widest">
+                  Live Class Demo
+               </span>
             </div>
           </div>
 
