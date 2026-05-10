@@ -1,15 +1,9 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { ArrowRight } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 export default function CareersPage() {
-  const jobs = [
-    { title: "Senior Full Stack Engineer (Next.js)", department: "Engineering", location: "Remote", type: "Full-time" },
-    { title: "Product Designer", department: "Design", location: "Remote", type: "Full-time" },
-    { title: "Customer Success Manager", department: "Support", location: "Remote (EMEA)", type: "Full-time" },
-    { title: "Enterprise Sales Executive", department: "Sales", location: "Remote (US/Canada)", type: "Full-time" }
-  ];
-
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <SiteHeader />
@@ -19,44 +13,58 @@ export default function CareersPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Build the future of <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Education</span>
+              Careers at <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">FnSkills</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              Join a fully distributed team passionate about empowering educators and learners worldwide.
+              Help us build the infrastructure that powers global education.
             </p>
           </div>
         </section>
 
+        {/* Call to Action Banner (Professional, Long width, Short height ~15vh) */}
+        <section className="py-8 bg-muted/10 border-b border-border/50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <Card className="w-full h-[15vh] min-h-[120px] max-h-[200px] relative overflow-hidden flex items-center justify-between px-8 md:px-16 border-dashed border-2 border-border/50">
+               <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 via-background to-primary/10" />
+               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full">
+                 <div className="text-left mb-4 md:mb-0">
+                   <h2 className="text-2xl font-bold mb-1">Open Positions</h2>
+                   <p className="text-muted-foreground">We are hiring across engineering, design, and customer success.</p>
+                 </div>
+                 <Button size="lg">View All Roles</Button>
+               </div>
+            </Card>
+          </div>
+        </section>
+
+        {/* Careers Info Sections */}
         <section className="py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <h2 className="text-3xl font-bold mb-8">Open Positions</h2>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
 
-            <div className="space-y-4">
-              {jobs.map((job, index) => (
-                <div key={index} className="bg-card border border-border p-6 rounded-xl hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group cursor-pointer">
-                  <div>
-                    <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">{job.title}</h3>
-                    <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                      <span>{job.department}</span>
-                      <span>•</span>
-                      <span>{job.location}</span>
-                      <span>•</span>
-                      <span>{job.type}</span>
-                    </div>
-                  </div>
-                  <div className="bg-primary/10 text-primary p-3 rounded-full flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <ArrowRight className="h-5 w-5" />
-                  </div>
-                </div>
-              ))}
+            <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
+               <div className="prose prose-slate dark:prose-invert max-w-none">
+                 <h2 className="text-3xl font-bold mb-6">Remote-First Culture</h2>
+                 <p className="text-lg text-muted-foreground">
+                   We believe talent is global. Our team operates asynchronously and distributed across multiple time zones. We provide stipends for home office setups and co-working spaces to ensure you have what you need to do your best work.
+                 </p>
+               </div>
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl">
+                 <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Remote Team Working</span>
+               </Card>
             </div>
 
-            <div className="mt-16 bg-muted/50 rounded-2xl p-8 text-center border border-border">
-              <h3 className="text-xl font-bold mb-3">Don't see a fit?</h3>
-              <p className="text-muted-foreground mb-6">
-                We're always looking for talented individuals. Send your resume and a cover letter to <a href="mailto:careers@fnskills.com" className="text-primary hover:underline">careers@fnskills.com</a>.
-              </p>
+            <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl order-2 md:order-1">
+                 <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Growth & Benefits</span>
+               </Card>
+               <div className="prose prose-slate dark:prose-invert max-w-none order-1 md:order-2">
+                 <h2 className="text-3xl font-bold mb-6">Benefits & Growth</h2>
+                 <p className="text-lg text-muted-foreground">
+                   We invest in our people. From comprehensive health coverage to continuous learning budgets and regular team retreats, we ensure that as the company grows, you grow alongside it.
+                 </p>
+               </div>
             </div>
+
           </div>
         </section>
       </main>

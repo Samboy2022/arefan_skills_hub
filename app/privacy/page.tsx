@@ -1,5 +1,6 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { Card } from '@/components/ui/card'
 
 export default function PrivacyPage() {
   return (
@@ -7,52 +8,71 @@ export default function PrivacyPage() {
       <SiteHeader />
 
       <main className="flex-1 pb-24">
-        <section className="py-24 bg-muted/30 border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl text-center">
-            <h1 className="text-4xl font-extrabold tracking-tight mb-4">Privacy Policy</h1>
-            <p className="text-muted-foreground">Last Updated: October 20, 2024</p>
+        {/* Banner Section */}
+        <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center relative overflow-hidden">
+          <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary via-background to-background" />
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl relative z-10">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+              Privacy <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Policy</span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-10">
+              Your data security and privacy are fundamental to our architecture.
+            </p>
           </div>
         </section>
 
-        <section className="py-16">
+        {/* Content Section */}
+        <section className="py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <div className="prose prose-slate dark:prose-invert max-w-none">
-              <p>
-                At FnSkills, we are committed to protecting the privacy and security of your data. This Privacy Policy outlines how we collect, use, and safeguard your personal and institutional information.
-              </p>
+            <div className="prose prose-slate dark:prose-invert max-w-none lg:prose-lg">
 
-              <h2>1. Multi-Tenant Data Isolation</h2>
+              <Card className="p-6 mb-8 bg-muted/20 border-l-4 border-l-primary rounded-l-none">
+                <p className="m-0 font-medium text-foreground">Last Updated: May 10, 2024</p>
+              </Card>
+
+              <h2>1. Introduction</h2>
               <p>
-                FnSkills operates on a multi-tenant cloud architecture. Your institutional data is logically isolated from all other tenants. We employ strict database-level security policies to ensure that cross-tenant data access is impossible under normal operating conditions.
+                At FnSkills, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our cloud-based, multi-tenant Learning Management System (LMS) platform.
               </p>
 
               <h2>2. Information We Collect</h2>
-              <p>
-                We collect information you provide directly to us when you create an account, build a curriculum, or interact with the platform. For students, this includes enrollment data, assignment submissions, and assessment scores.
-              </p>
-
-              <h2>3. How We Use Your Information</h2>
+              <p>We may collect information about you in a variety of ways, including:</p>
               <ul>
-                <li>To provide, maintain, and improve the platform.</li>
-                <li>To process transactions and send related information, including confirmations and receipts.</li>
-                <li>To send technical notices, updates, security alerts, and support messages.</li>
-                <li>To respond to your comments, questions, and requests.</li>
+                <li><strong>Personal Data:</strong> Personally identifiable information, such as your name, shipping address, email address, and telephone number, and demographic information.</li>
+                <li><strong>Derivative Data:</strong> Information our servers automatically collect when you access the platform, such as your IP address, browser type, operating system, access times, and the pages you have viewed.</li>
+                <li><strong>Financial Data:</strong> Data related to your payment method (e.g., valid credit card number, card brand, expiration date) that we may collect when you purchase a subscription.</li>
               </ul>
 
-              <h2>4. Third-Party Integrations</h2>
+              <h2>3. Multi-Tenant Data Isolation</h2>
               <p>
-                If you choose to utilize third-party integrations (e.g., Zoom, Stripe), you are authorizing us to share necessary data with those services. We encourage you to review the privacy policies of any third-party services you connect.
+                As a multi-tenant platform, your institutional data is logically separated from other tenants. We employ strict access controls and database schemas to ensure that user data from one organization cannot be accessed by users from another organization.
               </p>
 
-              <h2>5. Security</h2>
+              <h2>4. Use of Your Information</h2>
+              <p>Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Site to:</p>
+              <ul>
+                <li>Create and manage your account.</li>
+                <li>Process your transactions and send related information.</li>
+                <li>Send administrative information to you, such as updates to our terms, conditions, and policies.</li>
+                <li>Respond to customer service requests and provide support.</li>
+              </ul>
+
+              <h2>5. Disclosure of Your Information</h2>
+              <p>We may share information we have collected about you in certain situations. Your information may be disclosed as follows:</p>
+              <ul>
+                <li><strong>By Law or to Protect Rights:</strong> If we believe the release of information about you is necessary to respond to legal process, to investigate or remedy potential violations of our policies, or to protect the rights, property, and safety of others.</li>
+                <li><strong>Third-Party Service Providers:</strong> We may share your information with third parties that perform services for us or on our behalf, including payment processing, data analysis, email delivery, hosting services, and customer service.</li>
+              </ul>
+
+              <h2>6. Security of Your Information</h2>
               <p>
-                We use industry-standard security measures (including encryption in transit and at rest) to protect your data. However, no security system is impenetrable, and we cannot guarantee the absolute security of our databases.
+                We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable.
               </p>
 
-              <h2>Contact Us</h2>
-              <p>
-                If you have any questions about this Privacy Policy, please contact our Data Protection Officer at <a href="mailto:privacy@fnskills.com">privacy@fnskills.com</a>.
-              </p>
+              <h2>7. Contact Us</h2>
+              <p>If you have questions or comments about this Privacy Policy, please contact us at:</p>
+              <p>privacy@fnskills.com</p>
+
             </div>
           </div>
         </section>

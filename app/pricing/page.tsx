@@ -2,7 +2,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
-import { CheckCircle2, XCircle, HelpCircle } from 'lucide-react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 
 export default function PricingPage() {
   return (
@@ -14,100 +14,95 @@ export default function PricingPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Simple, Transparent <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Pricing</span>
+              Transparent Pricing for Every <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Scale</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              Choose the plan that fits your institution's size. No hidden fees, cancel anytime.
+              No hidden fees. No complex contracts. Choose the plan that fits your institution's needs and upgrade as you grow.
             </p>
-            {/* Toggle switch placeholder */}
-            <div className="inline-flex items-center justify-center p-1 bg-muted rounded-full mb-8">
-              <button className="px-6 py-2 rounded-full bg-background shadow-sm text-sm font-medium">Monthly billing</button>
-              <button className="px-6 py-2 rounded-full text-muted-foreground text-sm font-medium">Annual billing <span className="text-green-500 text-xs ml-1 font-bold">-20%</span></button>
-            </div>
           </div>
         </section>
 
-        {/* Pricing Cards */}
-        <section className="py-20 -mt-20 relative z-10">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {/* Pricing Tiers */}
+        <section className="py-20 -mt-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+            <div className="grid md:grid-cols-3 gap-8">
               {/* Starter Plan */}
-              <Card className="flex flex-col border-border/50 bg-card/95 backdrop-blur-sm">
+              <Card className="flex flex-col relative bg-card shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-2xl">Starter</CardTitle>
-                  <CardDescription>Perfect for private tutors and small training centers.</CardDescription>
+                  <CardDescription>Perfect for private tutors and small academies.</CardDescription>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold">$99</span>
+                    <span className="text-4xl font-extrabold">$49</span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1">
-                  <ul className="space-y-4 text-sm text-muted-foreground">
-                    <FeatureItem text="Up to 500 Students" />
-                    <FeatureItem text="Up to 5 Instructors" />
-                    <FeatureItem text="Branded Sub-domain" />
-                    <FeatureItem text="Basic Course Builder" />
-                    <FeatureItem text="Standard Support" />
-                    <FeatureItem text="50GB Storage" />
+                  <ul className="space-y-3">
+                    <PricingFeature text="Up to 100 Active Students" />
+                    <PricingFeature text="5 Instructors" />
+                    <PricingFeature text="Custom Subdomain" />
+                    <PricingFeature text="Basic Course Builder" />
+                    <PricingFeature text="Community Forums" />
+                    <PricingFeature text="Standard Email Support" />
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full">Start Free Trial</Button>
+                  <Button className="w-full" variant="outline">Start Free Trial</Button>
                 </CardFooter>
               </Card>
 
               {/* Professional Plan */}
-              <Card className="flex flex-col border-primary shadow-2xl relative transform md:-translate-y-4 bg-card">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wider shadow-md">
-                  Most Popular
+              <Card className="flex flex-col relative border-primary shadow-md scale-105 z-10 bg-card">
+                <div className="absolute top-0 inset-x-0 h-1 bg-primary rounded-t-lg" />
+                <div className="absolute -top-4 inset-x-0 flex justify-center">
+                  <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span>
                 </div>
                 <CardHeader>
                   <CardTitle className="text-2xl">Professional</CardTitle>
-                  <CardDescription>Ideal for growing colleges and corporate teams.</CardDescription>
+                  <CardDescription>For growing schools and training organizations.</CardDescription>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold">$299</span>
+                    <span className="text-4xl font-extrabold">$199</span>
                     <span className="text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1">
-                  <ul className="space-y-4 text-sm text-muted-foreground">
-                    <FeatureItem text="Up to 5,000 Students" />
-                    <FeatureItem text="Up to 50 Instructors" />
-                    <FeatureItem text="Branded Sub-domain" />
-                    <FeatureItem text="Advanced Analytics" />
-                    <FeatureItem text="Custom White-labeling" />
-                    <FeatureItem text="API Access" />
-                    <FeatureItem text="Priority Support" />
-                    <FeatureItem text="500GB Storage" />
+                  <ul className="space-y-3">
+                    <PricingFeature text="Up to 1,000 Active Students" />
+                    <PricingFeature text="25 Instructors" />
+                    <PricingFeature text="Custom Domain Support" />
+                    <PricingFeature text="Advanced Analytics" />
+                    <PricingFeature text="Zoom & Google Meet Integration" />
+                    <PricingFeature text="Automated Gradebook" />
+                    <PricingFeature text="Priority Support" />
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full">Start Free Trial</Button>
+                  <Button className="w-full">Get Started</Button>
                 </CardFooter>
               </Card>
 
               {/* Enterprise Plan */}
-              <Card className="flex flex-col border-border/50 bg-card/95 backdrop-blur-sm">
+              <Card className="flex flex-col relative bg-card shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-2xl">Enterprise</CardTitle>
-                  <CardDescription>For universities and large educational networks.</CardDescription>
+                  <CardDescription>For universities and large corporate teams.</CardDescription>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold">Custom</span>
+                    <span className="text-4xl font-extrabold">Custom</span>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1">
-                  <ul className="space-y-4 text-sm text-muted-foreground">
-                    <FeatureItem text="Unlimited Students" />
-                    <FeatureItem text="Unlimited Instructors" />
-                    <FeatureItem text="Multiple Sub-domains" />
-                    <FeatureItem text="Advanced API & Integrations" />
-                    <FeatureItem text="Dedicated Account Manager" />
-                    <FeatureItem text="SLA & Custom Contracts" />
-                    <FeatureItem text="Unlimited Storage" />
+                  <ul className="space-y-3">
+                    <PricingFeature text="Unlimited Students" />
+                    <PricingFeature text="Unlimited Instructors" />
+                    <PricingFeature text="White-labeling & Custom CSS" />
+                    <PricingFeature text="SSO (SAML, OAuth)" />
+                    <PricingFeature text="Dedicated Account Manager" />
+                    <PricingFeature text="Custom API Integrations" />
+                    <PricingFeature text="On-premise deployment options" />
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" className="w-full">Contact Sales</Button>
+                  <Button className="w-full" variant="outline">Contact Sales</Button>
                 </CardFooter>
               </Card>
             </div>
@@ -115,73 +110,78 @@ export default function PricingPage() {
         </section>
 
         {/* Feature Comparison Table */}
-        <section className="py-20 bg-muted/30 border-y border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight">Compare Plan Features</h2>
-              <p className="text-muted-foreground mt-4">A detailed breakdown of what's included in every tier.</p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="py-4 px-6 font-medium text-muted-foreground w-1/3">Feature</th>
-                    <th className="py-4 px-6 font-semibold text-center">Starter</th>
-                    <th className="py-4 px-6 font-semibold text-center text-primary">Professional</th>
-                    <th className="py-4 px-6 font-semibold text-center">Enterprise</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50 text-sm">
-                  {/* Category */}
-                  <tr>
-                    <td colSpan={4} className="py-4 px-6 font-bold bg-background/50 text-foreground">Core Features</td>
-                  </tr>
-                  <TableRow name="Custom Subdomain" starter={true} pro={true} enterprise={true} />
-                  <TableRow name="Course Builder" starter={true} pro={true} enterprise={true} />
-                  <TableRow name="Student Portal" starter={true} pro={true} enterprise={true} />
-                  <TableRow name="Remove Branding" starter={false} pro={true} enterprise={true} />
-
-                  {/* Category */}
-                  <tr>
-                    <td colSpan={4} className="py-4 px-6 font-bold bg-background/50 text-foreground mt-4">Integrations & Data</td>
-                  </tr>
-                  <TableRow name="Payment Gateway Integration" starter={true} pro={true} enterprise={true} />
-                  <TableRow name="Basic Reports" starter={true} pro={true} enterprise={true} />
-                  <TableRow name="Advanced Analytics" starter={false} pro={true} enterprise={true} />
-                  <TableRow name="REST API Access" starter={false} pro={true} enterprise={true} />
-                  <TableRow name="SSO Integration" starter={false} pro={false} enterprise={true} />
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <section className="py-20 bg-muted/10 border-y border-border/50">
+           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+              <h2 className="text-3xl font-bold text-center mb-12">Compare Plan Features</h2>
+              <div className="overflow-x-auto">
+                 <table className="w-full text-left border-collapse">
+                    <thead>
+                       <tr className="border-b border-border">
+                          <th className="py-4 px-6 font-semibold">Feature</th>
+                          <th className="py-4 px-6 font-semibold text-center">Starter</th>
+                          <th className="py-4 px-6 font-semibold text-center text-primary">Professional</th>
+                          <th className="py-4 px-6 font-semibold text-center">Enterprise</th>
+                       </tr>
+                    </thead>
+                    <tbody>
+                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                          <td className="py-4 px-6">Multi-tenant Cloud Infra</td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                       </tr>
+                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                          <td className="py-4 px-6">Storage</td>
+                          <td className="py-4 px-6 text-center text-sm">50 GB</td>
+                          <td className="py-4 px-6 text-center text-sm">500 GB</td>
+                          <td className="py-4 px-6 text-center text-sm">Unlimited</td>
+                       </tr>
+                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                          <td className="py-4 px-6">Live Video Integrations</td>
+                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" /></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                       </tr>
+                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                          <td className="py-4 px-6">Single Sign-On (SSO)</td>
+                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" /></td>
+                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" /></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                       </tr>
+                    </tbody>
+                 </table>
+              </div>
+           </div>
         </section>
 
-        {/* Scaling & Discounts Info */}
+        {/* FAQ Section */}
         <section className="py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight mb-8">Scaling & Discounts</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-card border border-border p-8 rounded-2xl text-left">
-                <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
-                  <span className="text-xl font-bold text-green-500">%</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Annual Billing Discount</h3>
-                <p className="text-muted-foreground">
-                  Commit to a year of FnSkills and receive a 20% discount on any plan. This is ideal for institutions looking for long-term stability and budget predictability.
-                </p>
+           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+              <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+              <div className="space-y-6">
+                 <div>
+                    <h4 className="text-xl font-bold mb-2">Can I switch plans later?</h4>
+                    <p className="text-muted-foreground">Yes, you can upgrade or downgrade your plan at any time from your administrator dashboard. Prorated charges will be applied automatically.</p>
+                 </div>
+                 <div>
+                    <h4 className="text-xl font-bold mb-2">What happens if I exceed my student limit?</h4>
+                    <p className="text-muted-foreground">If you go slightly over your limit, your service will not be interrupted. We will contact you to discuss upgrading to a tier that better suits your current volume.</p>
+                 </div>
+                 <div>
+                    <h4 className="text-xl font-bold mb-2">Do you offer discounts for non-profits?</h4>
+                    <p className="text-muted-foreground">Yes! We offer a 20% discount on all plans for registered non-profit organizations and public schools. Please contact our sales team with proof of your 501(c)(3) or equivalent status.</p>
+                 </div>
               </div>
-              <div className="bg-card border border-border p-8 rounded-2xl text-left">
-                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-6">
-                  <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Seamless Scaling</h3>
-                <p className="text-muted-foreground">
-                  Need to add more students midway through the year? We automatically prorate your upgrade so you never pay twice, ensuring your platform scales exactly as you do.
-                </p>
-              </div>
-            </div>
-          </div>
+           </div>
+        </section>
+
+        {/* Enterprise CTA */}
+        <section className="py-20 bg-primary/5 border-t border-border/50 text-center">
+           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+              <h2 className="text-3xl font-bold mb-6">Need a custom solution?</h2>
+              <p className="text-lg text-muted-foreground mb-8">If you have specific compliance requirements, need custom API development, or require on-premise hosting, our engineering team is ready to help.</p>
+              <Button size="lg" className="px-8">Contact Enterprise Sales</Button>
+           </div>
         </section>
 
       </main>
@@ -190,28 +190,11 @@ export default function PricingPage() {
   )
 }
 
-function FeatureItem({ text }: { text: string }) {
+function PricingFeature({ text }: { text: string }) {
   return (
-    <li className="flex items-center">
-      <CheckCircle2 className="h-4 w-4 text-primary mr-3 flex-shrink-0" />
-      <span>{text}</span>
+    <li className="flex items-center gap-3">
+      <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
+      <span className="text-sm">{text}</span>
     </li>
-  )
-}
-
-function TableRow({ name, starter, pro, enterprise }: { name: string, starter: boolean, pro: boolean, enterprise: boolean }) {
-  const renderIcon = (value: boolean) => {
-    return value ?
-      <CheckCircle2 className="h-5 w-5 text-primary mx-auto" /> :
-      <XCircle className="h-5 w-5 text-muted/30 mx-auto" />
-  }
-
-  return (
-    <tr className="hover:bg-muted/10 transition-colors">
-      <td className="py-4 px-6 text-muted-foreground">{name}</td>
-      <td className="py-4 px-6 text-center">{renderIcon(starter)}</td>
-      <td className="py-4 px-6 text-center">{renderIcon(pro)}</td>
-      <td className="py-4 px-6 text-center">{renderIcon(enterprise)}</td>
-    </tr>
   )
 }
