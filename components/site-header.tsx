@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { MobileNav } from '@/components/mobile-nav'
 
 export function SiteHeader() {
   return (
@@ -20,15 +21,17 @@ export function SiteHeader() {
           <Link href="/pricing" className="transition-colors hover:text-primary">Pricing</Link>
           <Link href="/integrations" className="transition-colors hover:text-primary">Integrations</Link>
           <Link href="/documentation" className="transition-colors hover:text-primary">Docs</Link>
+          <Link href="/about" className="transition-colors hover:text-primary">About</Link>
         </nav>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <ThemeToggle />
-          <Link href="/login">
-            <Button variant="ghost" className="hidden sm:inline-flex">Log in</Button>
+          <Link href="/login" className="hidden md:inline-block">
+            <Button variant="ghost">Log in</Button>
           </Link>
-          <Link href="/login">
+          <Link href="/login" className="hidden md:inline-block">
             <Button>Get Started</Button>
           </Link>
+          <MobileNav />
         </div>
       </div>
     </header>

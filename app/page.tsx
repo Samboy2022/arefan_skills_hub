@@ -18,6 +18,8 @@ import {
   GraduationCap,
   Globe
 } from 'lucide-react'
+import { HeroTextRotator } from '@/components/hero-text-rotator'
+import { DashboardSlider } from '@/components/dashboard-slider'
 
 export default function Home() {
   return (
@@ -31,13 +33,14 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <Cloud className="mr-2 h-4 w-4" />
-              <span>Cloud-Based Multi-Tenant Infrastructure</span>
+              <span>Enterprise-Grade Multi-Tenant Infrastructure</span>
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-              Your Institution's Platform, <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Your Sub-domain</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 flex flex-col items-center justify-center gap-2">
+              <span>Your Institution's</span>
+              <HeroTextRotator />
             </h1>
-            <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-              FnSkills enables Universities, Colleges of Education, Private Organizations, and other institutions to launch their own branded Learning Management System instantly. Subscribe and get your dedicated dashboard.
+            <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 leading-relaxed">
+              Instantly deploy a secure, branded learning environment. FnSkills provides the cloud infrastructure so you can focus on delivering exceptional educational experiences without the IT overhead.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
               <Link href="/login">
@@ -69,6 +72,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Dashboard Slider */}
+            <DashboardSlider />
+
           </div>
         </section>
 
@@ -226,81 +233,49 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section id="pricing" className="py-24 bg-background">
+        {/* Core Integrations & Features Section */}
+        <section className="py-24 bg-muted/10 border-y border-border/50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight mb-4">Transparent Pricing for Every Scale</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                All plans include your own dedicated sub-domain and core LMS features.
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Seamlessly Integrated. Infinitely Scalable.</h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                FnSkills connects with the tools your institution already uses, creating a unified educational ecosystem.
               </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {/* Starter */}
-              <Card className="flex flex-col border-border/50">
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              <Card className="bg-card hover:border-primary/50 transition-colors">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Starter</CardTitle>
-                  <CardDescription>Perfect for private tutors and small training centers.</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">$99</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
+                  <Globe className="h-10 w-10 text-primary mb-4" />
+                  <CardTitle>Video Conferencing</CardTitle>
+                  <CardDescription>Native integrations with Zoom, Google Meet, and Microsoft Teams for seamless live classes.</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-3 mb-8 flex-1 text-sm text-muted-foreground">
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Up to 500 Students</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Branded Sub-domain</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Basic Course Builder</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Standard Support</li>
-                  </ul>
-                  <Button variant="outline" className="w-full">Get Started</Button>
-                </CardContent>
               </Card>
 
-              {/* Professional */}
-              <Card className="flex flex-col border-primary shadow-lg relative transform md:-translate-y-4">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                  Most Popular
-                </div>
+              <Card className="bg-card hover:border-primary/50 transition-colors">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Professional</CardTitle>
-                  <CardDescription>Ideal for growing colleges and corporate teams.</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">$299</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
+                  <ShieldCheck className="h-10 w-10 text-primary mb-4" />
+                  <CardTitle>Enterprise SSO</CardTitle>
+                  <CardDescription>Support for SAML, OAuth, and Active Directory to ensure secure, one-click access for your users.</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-3 mb-8 flex-1 text-sm text-muted-foreground">
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Up to 5,000 Students</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Branded Sub-domain</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Advanced Analytics</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Custom White-labeling</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Priority Support</li>
-                  </ul>
-                  <Button className="w-full">Get Started</Button>
-                </CardContent>
               </Card>
 
-              {/* Enterprise */}
-              <Card className="flex flex-col border-border/50">
+              <Card className="bg-card hover:border-primary/50 transition-colors">
                 <CardHeader>
-                  <CardTitle className="text-2xl">Enterprise</CardTitle>
-                  <CardDescription>For universities and large educational networks.</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">Custom</span>
-                  </div>
+                  <Zap className="h-10 w-10 text-primary mb-4" />
+                  <CardTitle>Plagiarism Detection</CardTitle>
+                  <CardDescription>Automated scanning of student submissions via Turnitin and CopyLeaks integrations.</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-3 mb-8 flex-1 text-sm text-muted-foreground">
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Unlimited Students</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Multiple Sub-domains</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> API Access</li>
-                    <li className="flex items-center"><CheckCircle2 className="h-4 w-4 text-primary mr-2" /> Dedicated Account Manager</li>
-                  </ul>
-                  <Button variant="outline" className="w-full">Contact Sales</Button>
-                </CardContent>
               </Card>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+               <Link href="/integrations">
+                 <Button size="lg" variant="default" className="px-8">View All Integrations</Button>
+               </Link>
+               <Link href="/features">
+                 <Button size="lg" variant="outline" className="px-8">Explore Features</Button>
+               </Link>
             </div>
           </div>
         </section>

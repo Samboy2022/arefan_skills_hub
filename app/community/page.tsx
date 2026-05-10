@@ -1,6 +1,6 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { MessageCircle, Mail, Users, ExternalLink } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 
 export default function CommunityPage() {
   return (
@@ -12,86 +12,55 @@ export default function CommunityPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Join the <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">FnSkills Community</span>
+              Join the <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">FnSkills</span> Community
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              Connect with fellow educators, administrators, and developers. Share resources, ask questions, and help shape the future of learning.
+              Connect with educators, administrators, and students shaping the future of learning.
             </p>
           </div>
         </section>
 
-        {/* Community Channels */}
+        {/* Call to Action Banner (Professional, Long width, Short height ~15vh) */}
+        <section className="py-8 bg-muted/10 border-b border-border/50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <Card className="w-full h-[15vh] min-h-[120px] max-h-[200px] relative overflow-hidden flex items-center justify-center border-dashed border-2 border-border/50">
+               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-background to-green-400/20" />
+               <div className="relative z-10 text-center px-4">
+                 <h2 className="text-2xl font-bold mb-2">Ready to contribute?</h2>
+                 <p className="text-muted-foreground">Join our public forums to share your ideas and get help from the community.</p>
+               </div>
+            </Card>
+          </div>
+        </section>
+
+        {/* Community Sections */}
         <section className="py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-            <div className="grid md:grid-cols-2 gap-8">
 
-              {/* WhatsApp */}
-              <div className="bg-card border border-border rounded-2xl p-8 hover:shadow-lg transition-all hover:border-green-500/50 group">
-                <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center mb-6 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-colors">
-                  <MessageCircle className="h-8 w-8" />
-                </div>
-                <h2 className="text-2xl font-bold mb-3">WhatsApp Channels</h2>
-                <p className="text-muted-foreground mb-6">
-                  Get real-time announcements, quick tips, and direct access to our core team. We have dedicated channels for Instructors and School Admins.
-                </p>
-                <a href="#" className="inline-flex items-center text-green-500 font-medium hover:underline">
-                  Join WhatsApp Channel <ExternalLink className="h-4 w-4 ml-1" />
-                </a>
-              </div>
-
-              {/* Telegram */}
-              <div className="bg-card border border-border rounded-2xl p-8 hover:shadow-lg transition-all hover:border-blue-500/50 group">
-                <div className="h-16 w-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                  <MessageCircle className="h-8 w-8" />
-                </div>
-                <h2 className="text-2xl font-bold mb-3">Telegram Group</h2>
-                <p className="text-muted-foreground mb-6">
-                  Our largest and most active community space. Engage in deep discussions about e-learning strategies, feature requests, and technical integrations.
-                </p>
-                <a href="#" className="inline-flex items-center text-blue-500 font-medium hover:underline">
-                  Join Telegram Group <ExternalLink className="h-4 w-4 ml-1" />
-                </a>
-              </div>
-
-              {/* Facebook */}
-              <div className="bg-card border border-border rounded-2xl p-8 hover:shadow-lg transition-all hover:border-indigo-500/50 group">
-                <div className="h-16 w-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-6 text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                  <Users className="h-8 w-8" />
-                </div>
-                <h2 className="text-2xl font-bold mb-3">Facebook Group</h2>
-                <p className="text-muted-foreground mb-6">
-                  Join our official Facebook community to network with other institutional leaders. We regularly host live Q&A sessions and feature highlights here.
-                </p>
-                <a href="#" className="inline-flex items-center text-indigo-500 font-medium hover:underline">
-                  Join Facebook Group <ExternalLink className="h-4 w-4 ml-1" />
-                </a>
-              </div>
-
-              {/* Newsletter */}
-              <div className="bg-primary text-primary-foreground rounded-2xl p-8 shadow-lg relative overflow-hidden">
-                <div className="absolute -right-10 -top-10 h-40 w-40 bg-white/10 rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center mb-6 text-white">
-                    <Mail className="h-8 w-8" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-3">Weekly Newsletter</h2>
-                  <p className="text-primary-foreground/90 mb-6">
-                    Curated content delivered straight to your inbox. Get the latest LMS trends, platform updates, and exclusive webinar invites.
-                  </p>
-                  <form className="flex gap-2">
-                    <input
-                      type="email"
-                      placeholder="Enter your email"
-                      className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-                    />
-                    <button type="submit" className="bg-white text-primary px-4 py-2 rounded-lg font-medium hover:bg-white/90 transition-colors">
-                      Subscribe
-                    </button>
-                  </form>
-                </div>
-              </div>
-
+            <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
+               <div className="prose prose-slate dark:prose-invert max-w-none">
+                 <h2 className="text-3xl font-bold mb-6">Educator Forums</h2>
+                 <p className="text-lg text-muted-foreground">
+                   Share best practices, course templates, and pedagogical strategies with other instructors using the FnSkills platform. Discuss how to best engage students using our built-in tools.
+                 </p>
+               </div>
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl">
+                 <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Forums Interface</span>
+               </Card>
             </div>
+
+            <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl order-2 md:order-1">
+                 <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Open Source/Developer Tools</span>
+               </Card>
+               <div className="prose prose-slate dark:prose-invert max-w-none order-1 md:order-2">
+                 <h2 className="text-3xl font-bold mb-6">Developer Network</h2>
+                 <p className="text-lg text-muted-foreground">
+                   Are you building custom integrations or themes? Connect with our engineering team and other developers in our developer network. Get early access to API updates and technical support.
+                 </p>
+               </div>
+            </div>
+
           </div>
         </section>
       </main>
