@@ -15,7 +15,7 @@ export default function TermsPage() {
         </section>
 
         <section className="py-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <div className="prose prose-slate dark:prose-invert max-w-none">
               <p>
                 Please read these Terms of Service ("Terms") carefully before using the FnSkills platform. By accessing or using our services, you agree to be bound by these Terms.

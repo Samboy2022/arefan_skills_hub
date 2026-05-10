@@ -11,7 +11,7 @@ export default function PricingPage() {
 
       <main className="flex-1 pb-24">
         {/* Header Section */}
-        <section className="py-24 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
+        <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
               Simple, Transparent <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Pricing</span>
@@ -116,7 +116,7 @@ export default function PricingPage() {
 
         {/* Feature Comparison Table */}
         <section className="py-20 bg-muted/30 border-y border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold tracking-tight">Compare Plan Features</h2>
               <p className="text-muted-foreground mt-4">A detailed breakdown of what's included in every tier.</p>
