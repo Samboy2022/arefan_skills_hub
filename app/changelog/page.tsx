@@ -47,8 +47,8 @@ export default function ChangelogPage() {
 
       <main className="flex-1 pb-24">
         {/* Header Section */}
-        <section className="py-24 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+        <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
               Product <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Changelog</span>
             </h1>

@@ -10,13 +10,13 @@ export default function DocumentationPage() {
 
       <main className="flex-1 pb-24">
         {/* Header Section */}
-        <section className="py-24 bg-gradient-to-b from-background to-muted/30 border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+        <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
               FnSkills Documentation
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Comprehensive guides to help you navigate and master the platform. Currently highlighting the Student Dashboard flow.
+              Comprehensive guides to help you navigate and master the platform. Currently highlighting the Student and Instructor Dashboard flows.
             </p>
           </div>
         </section>
@@ -31,15 +31,25 @@ export default function DocumentationPage() {
                 <h3 className="font-bold text-lg mb-4">Contents</h3>
                 <nav className="space-y-1">
                   <DocNavLink active title="Student Dashboard" icon={Book} />
-                  <div className="pl-6 space-y-1 border-l border-border ml-3 mt-1">
-                    <DocSubLink active title="1. Logging In" />
-                    <DocSubLink active title="2. The Learning Hub" />
-                    <DocSubLink active title="3. Submitting Assignments" />
-                    <DocSubLink active title="4. Taking Quizzes" />
-                    <DocSubLink active title="5. Community Forums" />
+                  <div className="pl-6 space-y-1 border-l border-border ml-3 mt-1 mb-4">
+                    <DocSubLink title="1. Logging In" />
+                    <DocSubLink title="2. The Learning Hub" />
+                    <DocSubLink title="3. Submitting Assignments" />
+                    <DocSubLink title="4. Taking Quizzes" />
+                    <DocSubLink title="5. Community Forums" />
                   </div>
+
+                  <DocNavLink active title="Instructor Guide" icon={MonitorPlay} />
+                  <div className="pl-6 space-y-1 border-l border-border ml-3 mt-1">
+                    <DocSubLink title="1. Course Builder" />
+                    <DocSubLink title="2. Live Classes" />
+                    <DocSubLink title="3. Assessments & Quizzes" />
+                    <DocSubLink title="4. Automated Gradebook" />
+                    <DocSubLink title="5. Schedule Management" />
+                    <DocSubLink title="6. Student Engagement" />
+                  </div>
+
                   <div className="pt-4">
-                    <DocNavLink title="Instructor Guide" icon={MonitorPlay} />
                     <DocNavLink title="Admin Settings" icon={FileCheck} />
                     <DocNavLink title="API Reference" icon={CheckCircle} />
                   </div>
@@ -112,18 +122,94 @@ export default function DocumentationPage() {
                   <PlaceholderImage text="Screenshot: Course discussion forum showing threaded replies" />
                 </div>
 
+
+                <h2 className="text-3xl font-bold border-b border-border pb-4 mb-8 mt-24">Instructor Guide Flow</h2>
+
+                {/* Step 1 */}
+                <div className="mb-16">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
+                    <h3 className="text-2xl font-semibold m-0">Course Builder</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-6">
+                    Use the drag-and-drop course builder to create modules, lessons, and assignments. Upload multimedia content, embed external videos, and structure your curriculum without writing any code.
+                  </p>
+                  <PlaceholderImage text="Screenshot: Drag-and-drop interface of the Course Builder" />
+                </div>
+
+                {/* Step 2 */}
+                <div className="mb-16">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
+                    <h3 className="text-2xl font-semibold m-0">Live Classes</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-6">
+                    Schedule and launch live sessions directly from your dashboard. Integrated with Zoom and Google Meet, the system automatically sends invites and records attendance.
+                  </p>
+                  <PlaceholderImage text="Screenshot: Live class scheduling interface with Zoom integration" />
+                </div>
+
+                {/* Step 3 */}
+                <div className="mb-16">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
+                    <h3 className="text-2xl font-semibold m-0">Assessments & Quizzes</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-6">
+                    Create comprehensive assessments with varied question types (multiple-choice, essay, true/false). Set time limits, passing grades, and automated feedback mechanisms.
+                  </p>
+                  <PlaceholderImage text="Screenshot: Quiz creation tool showing question type selection" />
+                </div>
+
+                {/* Step 4 */}
+                <div className="mb-16">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold">4</div>
+                    <h3 className="text-2xl font-semibold m-0">Automated Gradebook</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-6">
+                    All quiz scores are automatically synced to the centralized gradebook. Manually review and grade essay submissions or file uploads with our built-in rubric grading tool.
+                  </p>
+                  <PlaceholderImage text="Screenshot: Centralized instructor gradebook showing student scores" />
+                </div>
+
+                {/* Step 5 */}
+                <div className="mb-16">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold">5</div>
+                    <h3 className="text-2xl font-semibold m-0">Schedule Management</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-6">
+                    Maintain your academic calendar. Block out office hours, set assignment deadlines, and manage live class schedules that automatically reflect on your students' dashboards.
+                  </p>
+                  <PlaceholderImage text="Screenshot: Instructor calendar view for managing deadlines and office hours" />
+                </div>
+
+                {/* Step 6 */}
+                <div className="mb-16">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold">6</div>
+                    <h3 className="text-2xl font-semibold m-0">Student Engagement Tools</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-6">
+                    Send direct messages, post global course announcements, and moderate discussion forums to keep your students engaged and informed throughout the semester.
+                  </p>
+                  <PlaceholderImage text="Screenshot: Course announcement creation and messaging interface" />
+                </div>
+
                 {/* Pagination */}
                 <div className="flex items-center justify-between border-t border-border pt-8 mt-12">
-                  <button className="text-muted-foreground hover:text-foreground transition-colors opacity-50 cursor-not-allowed">
-                    Previous
+                  <button className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors">
+                    <ChevronRight className="h-4 w-4 rotate-180" /> Student Dashboard
                   </button>
                   <button className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors">
-                    Instructor Guide <ChevronRight className="h-4 w-4" />
+                    Admin Settings <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
             </div>
           </div>
+
         </section>
       </main>
       <SiteFooter />
