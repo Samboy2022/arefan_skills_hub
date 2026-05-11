@@ -54,7 +54,6 @@ export function ProfileTab() {
   const onSubmit = async (data: ProfileFormValues) => {
     setIsSaving(true);
     // MOCK API CALL
-    console.log("PUT /api/instructor/profile", data);
     setTimeout(() => {
       setIsSaving(false);
       // Here usually we show toast success
