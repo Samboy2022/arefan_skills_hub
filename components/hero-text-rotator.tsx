@@ -16,7 +16,7 @@ export function HeroTextRotator() {
   }, [])
 
   return (
-    <span className="inline-block relative w-[250px] md:w-[400px] text-left text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">
+    <span className="inline-block relative w-[300px] md:w-[450px] text-center md:text-left text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400 drop-shadow-sm pb-2">
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
@@ -24,12 +24,12 @@ export function HeroTextRotator() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="absolute left-0"
+          className="absolute left-0 right-0 md:right-auto bg-clip-text text-transparent bg-gradient-to-r from-primary via-emerald-500 to-green-400"
         >
           {words[index]}
         </motion.span>
       </AnimatePresence>
-      <span className="invisible">Virtual Campus</span> {/* Placeholder to maintain width */}
+      <span className="invisible">Command Center</span> {/* Placeholder to maintain width */}
     </span>
   )
 }
