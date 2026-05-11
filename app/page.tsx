@@ -19,7 +19,6 @@ import {
   Globe
 } from 'lucide-react'
 import { HeroTextRotator } from '@/components/hero-text-rotator'
-import { DashboardSlider } from '@/components/dashboard-slider'
 
 export default function Home() {
   return (
@@ -42,7 +41,7 @@ export default function Home() {
             <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 leading-relaxed">
               Instantly deploy a secure, branded learning environment. FnSkills provides the cloud infrastructure so you can focus on delivering exceptional educational experiences without the IT overhead.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-24 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
               <Link href="/login">
                 <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg group">
                   Start Your Free Trial
@@ -55,26 +54,6 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-
-            {/* Dashboard Preview */}
-            <div className="relative mx-auto max-w-6xl mt-12 animate-in fade-in zoom-in-95 duration-1000 delay-500">
-              <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-primary/20 via-primary/5 to-transparent blur-3xl rounded-[3rem]"></div>
-              <div className="rounded-2xl border border-border/50 bg-card/50 p-2 shadow-2xl backdrop-blur-sm">
-                <div className="rounded-xl overflow-hidden border border-border bg-background">
-                  <Image
-                    src="/dashboard-preview.png"
-                    alt="FnSkills Dashboard Preview"
-                    width={1920}
-                    height={1080}
-                    className="w-full h-auto object-cover"
-                    priority
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Dashboard Slider */}
-            <DashboardSlider />
 
           </div>
         </section>
