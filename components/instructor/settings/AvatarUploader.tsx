@@ -32,14 +32,12 @@ export function AvatarUploader() {
     reader.readAsDataURL(file);
     
     // Simulating API Call
-    console.log("Mocking POST /api/instructor/profile/avatar");
   };
 
   const handleRemove = () => {
     setAvatar(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     // Simulating API Call
-    console.log("Mocking DELETE /api/instructor/profile/avatar");
   };
 
   return (
