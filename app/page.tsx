@@ -153,10 +153,10 @@ export default function Home() {
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-muted/50">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <Cloud className="h-6 w-6 text-primary" />
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <Cloud className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle>Multi-Tenant Architecture</CardTitle>
                   <CardDescription>
@@ -164,10 +164,10 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-muted/50">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <LayoutDashboard className="h-6 w-6 text-primary" />
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <LayoutDashboard className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle>White-Labeled Dashboards</CardTitle>
                   <CardDescription>
@@ -175,10 +175,10 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-muted/50">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <ShieldCheck className="h-6 w-6 text-primary" />
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <ShieldCheck className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle>Role-Based Access Control</CardTitle>
                   <CardDescription>
@@ -186,10 +186,10 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-muted/50">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <BookOpen className="h-6 w-6 text-primary" />
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <BookOpen className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle>Robust Curriculum Builder</CardTitle>
                   <CardDescription>
@@ -197,10 +197,10 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-muted/50">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <CheckCircle2 className="h-6 w-6 text-primary" />
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <CheckCircle2 className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle>Advanced Assessments</CardTitle>
                   <CardDescription>
@@ -208,10 +208,10 @@ export default function Home() {
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:bg-muted/50">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <Zap className="h-6 w-6 text-primary" />
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <Zap className="h-8 w-8 text-primary" />
                   </div>
                   <CardTitle>Real-time Analytics</CardTitle>
                   <CardDescription>

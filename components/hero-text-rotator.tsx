@@ -16,20 +16,20 @@ export function HeroTextRotator() {
   }, [])
 
   return (
-    <span className="inline-block relative w-[300px] md:w-[450px] text-center md:text-left text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400 drop-shadow-sm pb-2">
-      <AnimatePresence mode="wait">
+    <span className="inline-block relative text-center text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400 drop-shadow-sm pb-2 whitespace-nowrap">
+      <AnimatePresence>
         <motion.span
           key={index}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -20, opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="absolute left-0 right-0 md:right-auto bg-clip-text text-transparent bg-gradient-to-r from-primary via-emerald-500 to-green-400"
+          className="absolute left-0 right-0 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary via-emerald-500 to-green-400 whitespace-nowrap"
         >
           {words[index]}
         </motion.span>
       </AnimatePresence>
-      <span className="invisible">Command Center</span> {/* Placeholder to maintain width */}
+      <span className="invisible whitespace-nowrap">Command Center</span> {/* Placeholder to maintain width */}
     </span>
   )
 }
