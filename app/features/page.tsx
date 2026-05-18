@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import type { LucideIcon } from 'lucide-react'
 import {
   Building,
   GraduationCap,
@@ -17,6 +19,15 @@ import {
   Video
 } from 'lucide-react'
 
+export const metadata: Metadata = {
+  title: 'Features — FnSkills LMS',
+  description: 'Explore FnSkills features built for school administrators, instructors, and students. White-label subdomains, drag-and-drop course builder, gamified learning, and more.',
+  openGraph: {
+    title: 'FnSkills Features — Built for Scale',
+    description: 'Comprehensive LMS tools for administrators, instructors, and students.',
+  },
+}
+
 export default function FeaturesPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -27,7 +38,7 @@ export default function FeaturesPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Features Built for <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Scale</span>
+              Features Built for <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Scale</span>
             </h1>
             <p className="text-xl text-muted-foreground">
               Discover the comprehensive suite of tools designed specifically for Administrators, Instructors, and Students.
@@ -185,9 +196,9 @@ export default function FeaturesPage() {
   )
 }
 
-function FeatureCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
+function FeatureCard({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) {
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30">
+    <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-muted/10 transition-colors">
       <CardHeader>
         <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
           <Icon className="h-6 w-6 text-primary" />

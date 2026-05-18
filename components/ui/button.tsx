@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-brand-dark shadow-sm transition-all active:scale-95',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/80 shadow-sm transition-all active:scale-95',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm transition-all active:scale-95',
         outline:
@@ -20,7 +20,7 @@ const buttonVariants = cva(
           'text-brand hover:bg-brand-light/30 hover:text-brand-dark font-medium transition-all',
         link: 'text-brand underline-offset-4 hover:underline font-medium',
         success:
-          'bg-green-600 text-white hover:bg-green-700 shadow-sm transition-all active:scale-95',
+          'bg-success text-success-foreground hover:bg-success/80 shadow-sm transition-all active:scale-95',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

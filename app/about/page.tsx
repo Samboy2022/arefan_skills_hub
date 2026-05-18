@@ -1,7 +1,18 @@
+import type { Metadata } from 'next'
+import Image from 'next/image'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { Card } from '@/components/ui/card'
 import { HeartHandshake, Shield, Lightbulb, ShieldCheck, Users, Globe2 } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'About FnSkills — Our Story & Mission',
+  description: 'FnSkills is on a mission to democratize access to enterprise-grade educational technology. Learn about our story, mission, and core values.',
+  openGraph: {
+    title: 'About FnSkills — Democratizing Education Technology',
+    description: 'We believe technology should be an enabler, not a barrier. Discover the FnSkills story.',
+  },
+}
 
 export default function AboutPage() {
   return (
@@ -14,7 +25,7 @@ export default function AboutPage() {
           <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.08] bg-[url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center" />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl relative z-10">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              About <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400">FnSkills</span>
+              About <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400">FnSkills</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 max-w-3xl mx-auto leading-relaxed">
               We are on a mission to democratize access to enterprise-grade educational technology for institutions of all sizes.
@@ -40,10 +51,12 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="relative h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl border border-border/50 animate-in fade-in slide-in-from-right-8 duration-700">
-                 <img 
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1470" 
-                    alt="Team Collaboration" 
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                 <Image
+                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1470"
+                    alt="Team collaborating on educational technology"
+                    fill
+                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                  />
                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent pointer-events-none" />
               </div>
@@ -56,10 +69,12 @@ export default function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="relative h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl border border-border/50 order-2 lg:order-1 animate-in fade-in slide-in-from-left-8 duration-700">
-                 <img 
-                    src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1470" 
-                    alt="Global Education" 
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                 <Image
+                    src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1470"
+                    alt="Global education and learning technology"
+                    fill
+                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                  />
                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent pointer-events-none" />
               </div>

@@ -1,7 +1,17 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Book, MonitorPlay, FileCheck, Code, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+
+export const metadata: Metadata = {
+  title: 'Documentation — FnSkills LMS',
+  description: 'Comprehensive guides for students and instructors. Learn how to navigate courses, build curriculum, manage grades, and more with FnSkills.',
+  openGraph: {
+    title: 'FnSkills Documentation',
+    description: 'Step-by-step guides for students, instructors, and administrators using the FnSkills platform.',
+  },
+}
 
 export default function DocumentationOverview() {
   return (
@@ -13,49 +23,59 @@ export default function DocumentationOverview() {
       </p>
 
       <div className="grid md:grid-cols-2 gap-6 mb-12">
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="hover:shadow-lg hover:border-primary/30 transition-all">
           <CardHeader>
             <Book className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Student Guide</CardTitle>
             <CardDescription>Everything students need to know to navigate courses, submit assignments, and interact.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Link href="/documentation/student/dashboard">
-              <Button variant="outline" className="w-full justify-between">
+            <Button variant="outline" className="w-full justify-between" asChild>
+              <Link href="/documentation/student/dashboard">
                 View Student Docs <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="hover:shadow-lg hover:border-primary/30 transition-all">
           <CardHeader>
             <MonitorPlay className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Instructor Guide</CardTitle>
             <CardDescription>Learn how to build courses, manage grades, and engage with your students effectively.</CardDescription>
           </CardHeader>
           <CardContent>
-             <Link href="/documentation/instructor/course-builder">
-              <Button variant="outline" className="w-full justify-between">
+            <Button variant="outline" className="w-full justify-between" asChild>
+              <Link href="/documentation/instructor/course-builder">
                 View Instructor Docs <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-primary/50 transition-colors opacity-75 cursor-not-allowed">
+        <Card className="opacity-75">
           <CardHeader>
-            <FileCheck className="h-8 w-8 text-muted-foreground mb-2" />
+            <FileCheck className="h-8 w-8 text-muted-foreground mb-2" aria-hidden="true" />
             <CardTitle>Admin Guide</CardTitle>
-            <CardDescription>Configuration, user management, and institution settings. (Coming Soon)</CardDescription>
+            <CardDescription>
+              Configuration, user management, and institution settings.
+              <span className="inline-block mt-2 text-xs font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                Coming Soon
+              </span>
+            </CardDescription>
           </CardHeader>
         </Card>
 
-        <Card className="hover:border-primary/50 transition-colors opacity-75 cursor-not-allowed">
+        <Card className="opacity-75">
           <CardHeader>
-            <Code className="h-8 w-8 text-muted-foreground mb-2" />
+            <Code className="h-8 w-8 text-muted-foreground mb-2" aria-hidden="true" />
             <CardTitle>Developer API</CardTitle>
-            <CardDescription>Integrate FnSkills with your existing tools using our RESTful API. (Coming Soon)</CardDescription>
+            <CardDescription>
+              Integrate FnSkills with your existing tools using our RESTful API.
+              <span className="inline-block mt-2 text-xs font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                Coming Soon
+              </span>
+            </CardDescription>
           </CardHeader>
         </Card>
       </div>

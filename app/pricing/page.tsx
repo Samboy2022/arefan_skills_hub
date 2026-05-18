@@ -3,6 +3,7 @@ import { SiteFooter } from '@/components/site-footer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { CheckCircle2, XCircle } from 'lucide-react'
+import Link from 'next/link'
 
 export default function PricingPage() {
   return (
@@ -10,11 +11,10 @@ export default function PricingPage() {
       <SiteHeader />
 
       <main className="flex-1 pb-24">
-        {/* Header Section */}
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Transparent Pricing for Every <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Scale</span>
+              Transparent Pricing for Every <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Scale</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
               No hidden fees. No complex contracts. Choose the plan that fits your institution's needs and upgrade as you grow.
@@ -22,12 +22,11 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Pricing Tiers */}
         <section className="py-20 -mt-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
             <div className="grid md:grid-cols-3 gap-8">
-              {/* Starter Plan */}
-              <Card className="flex flex-col relative bg-card shadow-sm hover:shadow-md transition-shadow">
+              {/* Starter */}
+              <Card className="flex flex-col shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-2xl">Starter</CardTitle>
                   <CardDescription>Perfect for private tutors and small academies.</CardDescription>
@@ -47,12 +46,14 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full" variant="outline">Start Free Trial</Button>
+                  <Button className="w-full" variant="outline" asChild>
+                    <Link href="/signup?plan=starter">Start Free Trial</Link>
+                  </Button>
                 </CardFooter>
               </Card>
 
-              {/* Professional Plan */}
-              <Card className="flex flex-col relative border-primary shadow-md scale-105 z-10 bg-card">
+              {/* Professional */}
+              <Card className="flex flex-col relative border-primary shadow-md hover:shadow-lg transition-shadow z-10">
                 <div className="absolute top-0 inset-x-0 h-1 bg-primary rounded-t-lg" />
                 <div className="absolute -top-4 inset-x-0 flex justify-center">
                   <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span>
@@ -77,12 +78,14 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full">Get Started</Button>
+                  <Button className="w-full" asChild>
+                    <Link href="/signup?plan=professional">Get Started</Link>
+                  </Button>
                 </CardFooter>
               </Card>
 
-              {/* Enterprise Plan */}
-              <Card className="flex flex-col relative bg-card shadow-sm hover:shadow-md transition-shadow">
+              {/* Enterprise */}
+              <Card className="flex flex-col shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-2xl">Enterprise</CardTitle>
                   <CardDescription>For universities and large corporate teams.</CardDescription>
@@ -102,14 +105,15 @@ export default function PricingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full" variant="outline">Contact Sales</Button>
+                  <Button className="w-full" variant="outline" asChild>
+                    <Link href="/contact?team=sales">Contact Sales</Link>
+                  </Button>
                 </CardFooter>
               </Card>
             </div>
           </div>
         </section>
 
-        {/* Feature Comparison Table */}
         <section className="py-20 bg-muted/10 border-y border-border/50">
            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
               <h2 className="text-3xl font-bold text-center mb-12">Compare Plan Features</h2>
@@ -124,29 +128,29 @@ export default function PricingPage() {
                        </tr>
                     </thead>
                     <tbody>
-                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                       <tr className="border-b border-border/50 hover:bg-muted/20 transition-colors">
                           <td className="py-4 px-6">Multi-tenant Cloud Infra</td>
-                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
-                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
-                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" aria-hidden="true" /><span className="sr-only">Included</span></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" aria-hidden="true" /><span className="sr-only">Included</span></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" aria-hidden="true" /><span className="sr-only">Included</span></td>
                        </tr>
-                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                       <tr className="border-b border-border/50 hover:bg-muted/20 transition-colors">
                           <td className="py-4 px-6">Storage</td>
                           <td className="py-4 px-6 text-center text-sm">50 GB</td>
                           <td className="py-4 px-6 text-center text-sm">500 GB</td>
                           <td className="py-4 px-6 text-center text-sm">Unlimited</td>
                        </tr>
-                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                       <tr className="border-b border-border/50 hover:bg-muted/20 transition-colors">
                           <td className="py-4 px-6">Live Video Integrations</td>
-                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" /></td>
-                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
-                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" aria-hidden="true" /><span className="sr-only">Not included</span></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" aria-hidden="true" /><span className="sr-only">Included</span></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" aria-hidden="true" /><span className="sr-only">Included</span></td>
                        </tr>
-                       <tr className="border-b border-border/50 hover:bg-muted/20">
+                       <tr className="border-b border-border/50 hover:bg-muted/20 transition-colors">
                           <td className="py-4 px-6">Single Sign-On (SSO)</td>
-                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" /></td>
-                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" /></td>
-                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" /></td>
+                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" aria-hidden="true" /><span className="sr-only">Not included</span></td>
+                          <td className="py-4 px-6 text-center"><XCircle className="h-5 w-5 mx-auto text-muted-foreground" aria-hidden="true" /><span className="sr-only">Not included</span></td>
+                          <td className="py-4 px-6 text-center"><CheckCircle2 className="h-5 w-5 mx-auto text-green-500" aria-hidden="true" /><span className="sr-only">Included</span></td>
                        </tr>
                     </tbody>
                  </table>
@@ -154,33 +158,33 @@ export default function PricingPage() {
            </div>
         </section>
 
-        {/* FAQ Section */}
         <section className="py-20">
            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
               <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
               <div className="space-y-6">
                  <div>
-                    <h4 className="text-xl font-bold mb-2">Can I switch plans later?</h4>
+                    <h3 className="text-xl font-bold mb-2">Can I switch plans later?</h3>
                     <p className="text-muted-foreground">Yes, you can upgrade or downgrade your plan at any time from your administrator dashboard. Prorated charges will be applied automatically.</p>
                  </div>
                  <div>
-                    <h4 className="text-xl font-bold mb-2">What happens if I exceed my student limit?</h4>
+                    <h3 className="text-xl font-bold mb-2">What happens if I exceed my student limit?</h3>
                     <p className="text-muted-foreground">If you go slightly over your limit, your service will not be interrupted. We will contact you to discuss upgrading to a tier that better suits your current volume.</p>
                  </div>
                  <div>
-                    <h4 className="text-xl font-bold mb-2">Do you offer discounts for non-profits?</h4>
+                    <h3 className="text-xl font-bold mb-2">Do you offer discounts for non-profits?</h3>
                     <p className="text-muted-foreground">Yes! We offer a 20% discount on all plans for registered non-profit organizations and public schools. Please contact our sales team with proof of your 501(c)(3) or equivalent status.</p>
                  </div>
               </div>
            </div>
         </section>
 
-        {/* Enterprise CTA */}
         <section className="py-20 bg-primary/5 border-t border-border/50 text-center">
            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
               <h2 className="text-3xl font-bold mb-6">Need a custom solution?</h2>
               <p className="text-lg text-muted-foreground mb-8">If you have specific compliance requirements, need custom API development, or require on-premise hosting, our engineering team is ready to help.</p>
-              <Button size="lg" className="px-8">Contact Enterprise Sales</Button>
+              <Button size="lg" className="px-8" asChild>
+                <Link href="/contact?team=sales">Contact Enterprise Sales</Link>
+              </Button>
            </div>
         </section>
 

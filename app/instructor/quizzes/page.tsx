@@ -16,6 +16,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -156,7 +164,7 @@ export default function QuizzesPage() {
               <TableHead className="whitespace-nowrap">Duration</TableHead>
               <TableHead className="whitespace-nowrap">Score</TableHead>
               <TableHead className="whitespace-nowrap">Submissions</TableHead>
-              <TableHead className="text-right whitespace-nowrap min-w-[200px]">Actions</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -195,41 +203,54 @@ export default function QuizzesPage() {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => executePreview(quiz)} title="View Quiz">
-                      <Eye className="h-4 w-4 text-emerald-500" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleOpenEditModal(quiz)} title="Edit Form">
-                      <Edit className="h-4 w-4 text-primary" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive" title="Delete Quiz">
-                          <Trash2 className="h-4 w-4" />
+                  <AlertDialog>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Quiz?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the quiz
-                            <span className="font-semibold text-foreground"> {quiz.title}</span> 
-                            and remove all of its data.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDeleteQuiz(quiz.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Button variant="outline" size="sm" className="h-8 gap-1 ml-1 shrink-0" onClick={() => executeOverride(quiz)}>
-                      <ShieldAlert className="h-3.5 w-3.5 text-amber-500" />
-                      Override Student
-                    </Button>
-                  </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => executePreview(quiz)}>
+                          <Eye className="mr-2 h-4 w-4 text-emerald-500" />
+                          View Quiz
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleOpenEditModal(quiz)}>
+                          <Edit className="mr-2 h-4 w-4 text-primary" />
+                          Edit Form
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => executeOverride(quiz)}>
+                          <ShieldAlert className="mr-2 h-4 w-4 text-amber-500" />
+                          Override Student
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <AlertDialogTrigger asChild>
+                          <DropdownMenuItem>
+                            <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+                            <span className="text-destructive">Delete Quiz</span>
+                          </DropdownMenuItem>
+                        </AlertDialogTrigger>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Quiz?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the quiz
+                          <span className="font-semibold text-foreground"> {quiz.title}</span> 
+                          and remove all of its data.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteQuiz(quiz.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}

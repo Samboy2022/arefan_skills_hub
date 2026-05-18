@@ -1,7 +1,19 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Video, Mail, MessageSquare, CreditCard, Plug, Code } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Integrations — FnSkills LMS',
+  description: 'Connect FnSkills with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
+  openGraph: {
+    title: 'FnSkills Integrations — Connect Your Favorite Tools',
+    description: 'Powerful integrations for live classes, payments, email marketing, SMS notifications, and custom API development.',
+  },
+}
 
 export default function IntegrationsPage() {
   return (
@@ -13,7 +25,7 @@ export default function IntegrationsPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Connect with your <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Favorite Tools</span>
+              Connect with your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Favorite Tools</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
               Extend FnSkills with powerful third-party integrations to automate your workflow and enhance the learning experience.
@@ -118,9 +130,9 @@ export default function IntegrationsPage() {
                 </p>
               </div>
               <div className="flex-shrink-0">
-                <button className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
-                  View API Documentation
-                </button>
+                <Button asChild>
+                  <Link href="/documentation/api-reference">View API Documentation</Link>
+                </Button>
               </div>
             </div>
 
@@ -135,7 +147,7 @@ export default function IntegrationsPage() {
 
 function IntegrationCard({ title, description, tags }: { title: string, description: string, tags: string[] }) {
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-all hover:shadow-lg hover:border-primary/30 h-full flex flex-col">
+    <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-muted/10 transition-colors h-full flex flex-col">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>{title}</span>
