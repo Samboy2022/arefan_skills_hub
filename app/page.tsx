@@ -178,8 +178,13 @@ export default function Home() {
         {/* ── Hero Section ───────────────────────────────────────────── */}
         <section className="relative pt-24 pb-20 md:pt-36 md:pb-28 lg:pt-44 lg:pb-32 overflow-hidden">
           {/* subtle grid background */}
-          <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/30" />
+          <div
+            className="absolute inset-0 -z-20 opacity-40 dark:opacity-20"
+            style={{
+              background:
+                'radial-gradient(125% 125% at 50% 10%, transparent 40%, oklch(0.61 0.19 149.213) 100%)',
+            }}
+          />
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             {/* Badge */}
@@ -204,22 +209,19 @@ export default function Home() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Link href="/login">
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto h-12 px-8 text-base group shadow-lg shadow-primary/20"
+                <button
+                  className="relative inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full overflow-hidden hover:opacity-90 transition-opacity shadow-lg group text-white bg-gradient-to-tr from-primary/80 via-primary to-primary/80 ring-4 ring-primary/30 dark:text-white dark:from-primary/80 dark:via-primary dark:to-primary/80 dark:ring-primary/30 before:absolute before:top-4 before:left-1/2 before:-translate-x-1/2 before:w-[100px] before:h-[100px] before:rounded-full before:bg-gradient-to-b before:from-white/20 dark:before:from-white/10 before:blur-xl"
                 >
                   Start Your Free Trial
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                </button>
               </Link>
               <Link href="#how-it-works">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto h-12 px-8 text-base bg-background/60 backdrop-blur-sm"
+                <button
+                  className="relative inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full overflow-hidden hover:opacity-90 transition-opacity shadow-lg border group text-emerald-950 bg-gradient-to-tr from-white/90 via-white to-white/90 ring-4 ring-emerald-100/50 border-white dark:text-emerald-50 dark:from-primary/20 dark:via-primary/30 dark:to-primary/20 dark:ring-primary/50 dark:border-primary/50 before:absolute before:top-4 before:left-1/2 before:-translate-x-1/2 before:w-[100px] before:h-[100px] before:rounded-full before:bg-gradient-to-b before:from-primary/10 dark:before:from-primary/40 before:blur-xl"
                 >
                   See How It Works
-                </Button>
+                </button>
               </Link>
             </div>
 
@@ -404,7 +406,7 @@ export default function Home() {
         </section>
 
         {/* ── Integrations Section ───────────────────────────────────── */}
-        <section className="py-20 md:py-28 bg-muted/20 border-y border-border/40">
+        <section className="py-20 md:py-28 bg-background border-y border-border/40 overflow-hidden">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
@@ -416,35 +418,64 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              <IntegrationCard
-                icon={Video}
-                title="Video Conferencing"
-                description="Native integrations with Zoom, Google Meet, and Microsoft Teams for seamless live classes."
-              />
-              <IntegrationCard
-                icon={Lock}
-                title="Enterprise SSO"
-                description="Support for SAML, OAuth, and Active Directory to ensure secure, one-click access for your users."
-              />
-              <IntegrationCard
-                icon={Zap}
-                title="Plagiarism Detection"
-                description="Automated scanning of student submissions via Turnitin and CopyLeaks integrations."
-              />
+            {/* Carousel */}
+            <div className="mt-12 overflow-hidden relative pb-2 max-w-5xl mx-auto mb-16">
+              {/* Row 1 */}
+              <div className="flex w-max gap-10 whitespace-nowrap animate-scroll-left">
+                {Array.from({ length: 4 }).flatMap(() => [
+                  "https://cdn-icons-png.flaticon.com/512/5968/5968854.png",
+                  "https://cdn-icons-png.flaticon.com/512/732/732221.png",
+                  "https://cdn-icons-png.flaticon.com/512/733/733609.png",
+                  "https://cdn-icons-png.flaticon.com/512/732/732084.png",
+                  "https://cdn-icons-png.flaticon.com/512/733/733585.png",
+                  "https://cdn-icons-png.flaticon.com/512/281/281763.png",
+                  "https://cdn-icons-png.flaticon.com/512/888/888879.png",
+                ]).map((src, i) => (
+                  <div key={i} className="h-16 w-16 flex-shrink-0 rounded-full bg-card shadow-sm flex items-center justify-center border border-border/60">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt="Integration icon" className="h-8 w-8 object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Row 2 */}
+              <div className="flex w-max gap-10 whitespace-nowrap mt-8 animate-scroll-right">
+                {Array.from({ length: 4 }).flatMap(() => [
+                  "https://cdn-icons-png.flaticon.com/512/174/174857.png",
+                  "https://cdn-icons-png.flaticon.com/512/906/906324.png",
+                  "https://cdn-icons-png.flaticon.com/512/888/888841.png",
+                  "https://cdn-icons-png.flaticon.com/512/5968/5968875.png",
+                  "https://cdn-icons-png.flaticon.com/512/906/906361.png",
+                  "https://cdn-icons-png.flaticon.com/512/732/732190.png",
+                  "https://cdn-icons-png.flaticon.com/512/888/888847.png",
+                ]).map((src, i) => (
+                  <div key={i} className="h-16 w-16 flex-shrink-0 rounded-full bg-card shadow-sm flex items-center justify-center border border-border/60">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt="Integration icon" className="h-8 w-8 object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Fade overlays */}
+              <div className="absolute left-0 top-0 h-full w-32 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+              <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-background to-transparent pointer-events-none" />
             </div>
 
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <Link href="/integrations">
-                <Button size="lg" variant="default" className="px-8">
+                <button
+                  className="relative inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full overflow-hidden hover:opacity-90 transition-opacity shadow-lg group text-white bg-gradient-to-tr from-primary/80 via-primary to-primary/80 ring-4 ring-primary/30 dark:text-white dark:from-primary/80 dark:via-primary dark:to-primary/80 dark:ring-primary/30 before:absolute before:top-4 before:left-1/2 before:-translate-x-1/2 before:w-[100px] before:h-[100px] before:rounded-full before:bg-gradient-to-b before:from-white/20 dark:before:from-white/10 before:blur-xl"
+                >
                   View All Integrations
-                  <ArrowUpRight className="ml-1.5 h-4 w-4" />
-                </Button>
+                  <ArrowUpRight className="ml-1.5 h-4 w-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </Link>
               <Link href="/features">
-                <Button size="lg" variant="outline" className="px-8">
+                <button
+                  className="relative inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full overflow-hidden hover:opacity-90 transition-opacity shadow-lg border group text-emerald-950 bg-gradient-to-tr from-white/90 via-white to-white/90 ring-4 ring-emerald-100/50 border-white dark:text-emerald-50 dark:from-primary/20 dark:via-primary/30 dark:to-primary/20 dark:ring-primary/50 dark:border-primary/50 before:absolute before:top-4 before:left-1/2 before:-translate-x-1/2 before:w-[100px] before:h-[100px] before:rounded-full before:bg-gradient-to-b before:from-primary/10 dark:before:from-primary/40 before:blur-xl"
+                >
                   Explore Features
-                </Button>
+                </button>
               </Link>
             </div>
           </div>
@@ -471,13 +502,11 @@ export default function Home() {
                   leveraging FnSkills&apos; cloud infrastructure.
                 </p>
                 <Link href="/login">
-                  <Button
-                    size="lg"
-                    variant="secondary"
-                    className="h-12 px-8 text-base font-semibold shadow-lg"
+                  <button
+                    className="relative inline-flex w-full sm:w-auto items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full overflow-hidden hover:opacity-90 transition-opacity shadow-lg border group text-emerald-950 bg-gradient-to-tr from-white/90 via-white to-white/90 ring-4 ring-emerald-100/50 border-white dark:text-emerald-50 dark:from-primary/20 dark:via-primary/30 dark:to-primary/20 dark:ring-primary/50 dark:border-primary/50 before:absolute before:top-4 before:left-1/2 before:-translate-x-1/2 before:w-[100px] before:h-[100px] before:rounded-full before:bg-gradient-to-b before:from-primary/10 dark:before:from-primary/40 before:blur-xl mt-4"
                   >
                     Create Your Account Now
-                  </Button>
+                  </button>
                 </Link>
               </div>
             </div>

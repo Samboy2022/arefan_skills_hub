@@ -35,15 +35,56 @@ export interface Faculty {
   avatar?: string;
 }
 
-export interface Course {
+export interface CourseLesson {
+  id: string;
+  moduleId: string;
+  title: string;
+  type: 'video' | 'document' | 'quiz' | 'assignment';
+  durationMinutes: number;
+  order: number;
+}
+
+export interface CourseModule {
+  id: string;
+  courseId: string;
+  title: string;
+  order: number;
+  lessons: CourseLesson[];
+}
+
+export type ProgramLevel = 'Certificate' | 'Diploma' | 'Degree' | 'Masters' | 'PhD';
+
+export interface Program {
   id: string;
   name: string;
+  description: string;
+  level: ProgramLevel;
+  createdBy: string;
+  createdAt: string;
+  courseIds: string[];
+}
+
+export interface Course {
+  id: string;
+  title: string;
   code: string;
-  grade: string;
-  duration: number;
-  instructor: string;
-  status: "Active" | "Draft" | "Archived";
-  students: number;
+  categoryId: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  language?: string;
+  status: 'draft' | 'active' | 'archived' | 'inactive';
+  credits: number;
+  maxStudents?: number;
+  enrollmentCount: number;
+  semester?: string;
+  thumbnail: string;
+  thumbnailUrl?: string;
+  description: string;
+  prerequisites?: string;
+  learningOutcomes?: string[];
+  targetAudience?: string;
+  durationWeeks?: number;
+  createdAt: string;
+  modules?: CourseModule[];
 }
 
 export interface Assessment {

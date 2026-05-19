@@ -29,7 +29,11 @@ export function SiteHeader() {
             <Button variant="ghost">Log in</Button>
           </Link>
           <Link href="/login" className="hidden md:inline-block">
-            <Button>Get Started</Button>
+            <button
+              className="relative inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold rounded-full overflow-hidden hover:opacity-90 transition-opacity shadow-sm border group text-emerald-950 bg-gradient-to-tr from-white/90 via-white to-white/90 ring-2 ring-emerald-100/50 border-white dark:text-emerald-50 dark:from-primary/20 dark:via-primary/30 dark:to-primary/20 dark:ring-primary/50 dark:border-primary/50 before:absolute before:top-4 before:left-1/2 before:-translate-x-1/2 before:w-[60px] before:h-[60px] before:rounded-full before:bg-gradient-to-b before:from-primary/10 dark:before:from-primary/40 before:blur-xl"
+            >
+              Get Started
+            </button>
           </Link>
           <MobileNav />
         </div>

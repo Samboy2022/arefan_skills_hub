@@ -4,6 +4,7 @@ import {
   ClassesIcon as Classes,
   FacultyIcon as Faculty,
   CoursesIcon as BookOpen,
+  CurriculumIcon as ProgramsIcon,
   LessonsIcon as FileText,
   GradesIcon as BarChart3,
   TransactionsIcon as DollarSign,
@@ -50,8 +51,14 @@ export const TENANT_NAV_ITEMS = [
     section: "ACADEMICS",
     items: [
       {
-        label: "Curriculum",
-        href: "/school-admin/curriculum",
+        label: "Programs",
+        href: "/school-admin/programs",
+        icon: ProgramsIcon,
+        tooltip: "Academic Programs",
+      },
+      {
+        label: "Courses",
+        href: "/school-admin/courses",
         icon: BookOpen,
         tooltip: "Course Management",
       },

@@ -229,7 +229,7 @@ export interface ApiResponse<T> {
 
 ---
 
-## 📁 Architectural File Structure Convention (Feature-Sliced Design)
+## 📁 Architectural File Structure Convention "(Feature-Sliced Design)
 
 ```text
 src/

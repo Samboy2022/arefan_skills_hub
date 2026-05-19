@@ -1,39 +1,86 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Plus, Search, Pencil, Trash2, Eye, Users, UserCheck, UserMinus } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Eye, Users, UserCheck, UserMinus, Filter, ShieldCheck, CheckCircle2, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "@/components/admin/data-table";
 import { KPICard } from "@/components/tenant/kpi-card";
 import { ConfirmDeleteDialog } from "@/components/school-admin/confirm-delete-dialog";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { mockStudents } from "@/lib/tenant-mock-data";
 
 export default function StudentsPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("All");
+  const [roleFilter, setRoleFilter] = useState("All");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteName, setDeleteName] = useState("");
+
+  // Bulk Selection state
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
 
   const filteredStudents = useMemo(() => {
     return mockStudents.filter((student) => {
       const matchesSearch =
         student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = activeTab === "All" || student.status === activeTab;
-      return matchesSearch && matchesStatus;
+      
+      // In a real app with roles, we would filter by student.role here
+      // For now, since mockStudents only has 'class', we'll simulate a filter on it
+      const matchesRole = roleFilter === "All" || student.class === roleFilter;
+
+      return matchesSearch && matchesRole;
     });
-  }, [searchTerm, activeTab]);
+  }, [searchTerm, roleFilter]);
 
   const statusCounts = useMemo(() => ({
     active: mockStudents.filter((s) => s.status === "Active").length,
     inactive: mockStudents.filter((s) => s.status === "Inactive").length,
   }), []);
+
+  // Bulk Selection Handlers
+  const toggleSelectAll = () => {
+    if (selectedRowIds.size === filteredStudents.length && filteredStudents.length > 0) {
+      setSelectedRowIds(new Set());
+    } else {
+      setSelectedRowIds(new Set(filteredStudents.map(s => s.id)));
+    }
+  };
+
+  const toggleSelectRow = (id: string) => {
+    const newSelected = new Set(selectedRowIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedRowIds(newSelected);
+  };
+
+  const handleBulkAction = (action: string) => {
+    console.log(`Executing ${action} for`, Array.from(selectedRowIds));
+    // Implementation for Verify, Activate, etc. would go here
+    setSelectedRowIds(new Set());
+  };
 
   const openDeleteDialog = (id: string, name: string) => {
     setDeleteId(id);
@@ -46,6 +93,18 @@ export default function StudentsPage() {
   };
 
   const columns = [
+    {
+      header: 'Select',
+      accessor: 'id_select' as any,
+      width: "w-[50px]",
+      cell: (_v: any, row: typeof mockStudents[0]) => (
+        <Checkbox 
+          checked={selectedRowIds.has(row.id)}
+          onCheckedChange={() => toggleSelectRow(row.id)}
+          aria-label={`Select student ${row.id}`}
+        />
+      ),
+    },
     {
       header: 'Name',
       accessor: 'name' as const,
@@ -80,8 +139,8 @@ export default function StudentsPage() {
     },
     {
       header: 'Actions',
-      accessor: 'id' as const,
-      cell: (_value: string, row: typeof mockStudents[0]) => (
+      accessor: 'id_action' as any,
+      cell: (_value: any, row: typeof mockStudents[0]) => (
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" className="h-8 w-8" title="View Profile">
             <Eye className="h-4 w-4" />
@@ -103,8 +162,34 @@ export default function StudentsPage() {
     },
   ];
 
+  const enhancedColumns = columns.map(col => {
+    if (col.header === 'Select') {
+      return {
+        ...col,
+        header: '',
+        cell: (_v: any, row: any) => {
+           return (
+             <Checkbox 
+                checked={selectedRowIds.has(row.id)}
+                onCheckedChange={() => toggleSelectRow(row.id)}
+             />
+           )
+        }
+      }
+    }
+    return col;
+  });
+
   return (
     <div className="space-y-6">
+      <Breadcrumb 
+        showHome={false} 
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Users" }
+        ]} 
+        className="mb-2" 
+      />
       <PageHeader
         title="Users"
         description="Manage all users in your platform"
@@ -122,31 +207,92 @@ export default function StudentsPage() {
         <KPICard title="Inactive Students" value={statusCounts.inactive.toLocaleString()} hint="Suspended or left" icon={UserMinus} color="red" />
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-          <TabsList className="bg-muted/50">
-            <TabsTrigger value="All">All ({mockStudents.length})</TabsTrigger>
-            <TabsTrigger value="Active">Active ({statusCounts.active})</TabsTrigger>
-            <TabsTrigger value="Inactive">Inactive ({statusCounts.inactive})</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <div className="relative w-full sm:w-[300px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search students..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-10"
-          />
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-muted/20 p-4 border rounded-md">
+        
+        {/* Left Side: Bulk Actions (When Items Selected) or Standard Filters */}
+        <div className="flex-1 w-full sm:w-auto">
+          {selectedRowIds.size > 0 ? (
+            <div className="flex items-center gap-3 animate-in fade-in duration-200">
+              <div className="bg-primary/10 text-primary px-3 py-1.5 rounded-md text-sm font-medium border border-primary/20">
+                {selectedRowIds.size} Selected
+              </div>
+              <Button variant="outline" size="sm" onClick={() => handleBulkAction('verify')}>
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Verify
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleBulkAction('activate')}>
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Activate
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={() => handleBulkAction('suspend')}>
+                    Suspend Users
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleBulkAction('delete')}
+                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                  >
+                    Delete Users
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedRowIds(new Set())} className="text-muted-foreground ml-2">
+                Cancel
+              </Button>
+            </div>
+          ) : (
+            <div className="relative w-full sm:max-w-[400px]">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search users by name or roll no..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 bg-background"
+              />
+            </div>
+          )}
+        </div>
+        
+        {/* Right Side: Filters */}
+        <div className="w-full sm:w-[200px]">
+          <Select value={roleFilter} onValueChange={setRoleFilter}>
+            <SelectTrigger className="h-10 bg-background">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Filter Role" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Roles</SelectItem>
+              <SelectItem value="10-A">Student (10-A)</SelectItem>
+              <SelectItem value="10-B">Student (10-B)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       <Card className="hover:shadow-md transition-shadow">
+        <div className="p-4 border-b bg-muted/20 flex items-center gap-3">
+           <Checkbox 
+              checked={selectedRowIds.size > 0 && selectedRowIds.size === filteredStudents.length}
+              onCheckedChange={toggleSelectAll}
+              id="select-all"
+           />
+           <Label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+             Select All {filteredStudents.length > 0 ? `(${filteredStudents.length})` : ''}
+           </Label>
+        </div>
         <DataTable
-          columns={columns}
+          columns={enhancedColumns}
           data={filteredStudents}
           pageSize={10}
-          emptyMessage="No students found matching your criteria"
+          emptyMessage="No users found matching your criteria"
         />
       </Card>
 
