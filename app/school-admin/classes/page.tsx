@@ -9,6 +9,7 @@ import { DataTable } from "@/components/admin/data-table";
 import { ConfirmDeleteDialog } from "@/components/school-admin/confirm-delete-dialog";
 import { mockClasses } from "@/lib/tenant-mock-data";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function ClassesPage() {
   const router = useRouter();
@@ -19,11 +20,10 @@ export default function ClassesPage() {
   const handleDelete = () => setDeleteId(null);
 
   const columns = [
-    { header: 'Class', accessor: 'name' as const, cell: (v: string) => <span className="font-medium">{v}</span> },
-    { header: 'Grade', accessor: 'grade' as const },
-    { header: 'Section', accessor: 'section' as const },
-    { header: 'Class Teacher', accessor: 'classTeacher' as const },
-    { header: 'Students', accessor: 'totalStudents' as const },
+    { header: 'Course Title', accessor: 'name' as const, cell: (v: string) => <div className="font-medium max-w-[150px] lg:max-w-[200px] truncate" title={v}>{v}</div> },
+    { header: 'Program', accessor: 'program' as const, cell: (v: string) => <div className="max-w-[120px] lg:max-w-[160px] truncate" title={v}>{v}</div> },
+    { header: 'Code', accessor: 'courseCode' as const },
+    { header: 'Instructors', accessor: 'instructors' as const, cell: (v: string[]) => <div className="max-w-[120px] lg:max-w-[180px] truncate" title={v.join(", ")}>{v.join(", ")}</div> },
     {
       header: 'Status',
       accessor: 'status' as const,
@@ -52,6 +52,14 @@ export default function ClassesPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Classes" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Classes"
         description="Manage all classes and sections"

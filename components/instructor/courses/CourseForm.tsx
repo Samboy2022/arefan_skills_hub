@@ -50,7 +50,7 @@ export function CourseForm({ mode, course, onSuccess, onCancel }: CourseFormProp
   });
 
   const { fields: learningOutcomes, append: appendOutcome, remove: removeOutcome } = useFieldArray({
-    control: form.control,
+    control: form.control as any,
     name: "learning_outcomes",
   });
 

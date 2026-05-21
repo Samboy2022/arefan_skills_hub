@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 interface KPICardProps {
   title: string;
   value: number | string;
-  icon: LucideIcon;
+  icon: any;
   trend?: number;
   unit?: string;
   color?: "blue" | "green" | "orange" | "red" | "purple";

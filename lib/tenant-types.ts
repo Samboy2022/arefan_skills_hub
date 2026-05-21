@@ -3,7 +3,9 @@ export interface Student {
   name: string;
   email: string;
   rollNumber: string;
+  regNumber?: string;
   class: string;
+  program?: string;
   dateOfBirth: string;
   parentEmail: string;
   status: "Active" | "Inactive" | "Suspended" | "Graduated";
@@ -14,10 +16,12 @@ export interface Student {
 export interface Class {
   id: string;
   name: string;
-  grade: string;
-  section: string;
-  classTeacher: string;
+  program: string;
+  courseCode: string;
+  semester: string;
+  instructors: string[];
   totalStudents: number;
+  capacity: number;
   status: "Active" | "Planned" | "Archived";
   academicYear: string;
 }
@@ -30,9 +34,11 @@ export interface Faculty {
   subjects: string[];
   department: string;
   joinDate: string;
-  role: "Teacher" | "Staff" | "Admin";
+  role: "Teacher" | "Staff" | "Admin" | "Lecturer" | "Instructor";
   status: "Active" | "Inactive";
   avatar?: string;
+  assignedCourses?: string[];
+  assignedProgram?: string;
 }
 
 export interface CourseLesson {
@@ -85,6 +91,10 @@ export interface Course {
   durationWeeks?: number;
   createdAt: string;
   modules?: CourseModule[];
+  grade?: string;
+  instructor?: string;
+  duration?: number;
+  students?: number;
 }
 
 export interface Assessment {
@@ -135,4 +145,26 @@ export interface DashboardMetrics {
   totalCourses: number;
   averageAttendance: number;
   pendingFees: number;
+}
+
+export type PermissionAction = 'create' | 'read' | 'update' | 'delete';
+
+export interface RolePermission {
+  feature: string;
+  actions: PermissionAction[];
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  description: string;
+  isSystem?: boolean;
+  usersCount: number;
+  permissions: RolePermission[];
+  scope?: "system" | "campus" | "department";
+  mfaRequired?: boolean;
+  ipRestricted?: boolean;
+  sessionTimeout?: string;
+  defaultDashboard?: string;
+  allowedDepartments?: string[];
 }

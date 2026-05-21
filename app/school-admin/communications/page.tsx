@@ -10,6 +10,7 @@ import { DataTable } from "@/components/admin/data-table";
 import { ConfirmDeleteDialog } from "@/components/school-admin/confirm-delete-dialog";
 import { mockCommunications } from "@/lib/tenant-mock-data";
 import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function CommunicationsPage() {
   const router = useRouter();
@@ -54,6 +55,14 @@ export default function CommunicationsPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Communications" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Communications"
         description="Send announcements and messages to students and parents"

@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function NotificationsPage() {
   const notificationTypes = [
@@ -35,6 +36,14 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Notifications" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Notification Rules"
         description="Configure automatic notifications for parents and students"

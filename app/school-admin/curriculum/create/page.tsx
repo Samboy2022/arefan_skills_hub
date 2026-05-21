@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function CreateCurriculumPage() {
   const router = useRouter();
@@ -32,6 +33,15 @@ export default function CreateCurriculumPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Curriculum", href: "/school-admin/curriculum" },
+          { label: "Create" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Add New Subject"
         description="Fill in the details below to add a new subject to the curriculum."

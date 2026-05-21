@@ -42,11 +42,9 @@ export default function StudentsPage() {
     return mockStudents.filter((student) => {
       const matchesSearch =
         student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
+        (student.regNumber || student.rollNumber).toLowerCase().includes(searchTerm.toLowerCase());
       
-      // In a real app with roles, we would filter by student.role here
-      // For now, since mockStudents only has 'class', we'll simulate a filter on it
-      const matchesRole = roleFilter === "All" || student.class === roleFilter;
+      const matchesRole = roleFilter === "All" || student.program === roleFilter;
 
       return matchesSearch && matchesRole;
     });
@@ -110,8 +108,8 @@ export default function StudentsPage() {
       accessor: 'name' as const,
       cell: (value: string) => <span className="font-medium">{value}</span>,
     },
-    { header: 'Roll No.', accessor: 'rollNumber' as const },
-    { header: 'Class', accessor: 'class' as const },
+    { header: 'Reg. Number', accessor: 'rollNumber' as const, cell: (value: string) => <span className="text-xs font-mono text-muted-foreground">{value}</span> },
+    { header: 'Program', accessor: 'program' as any, cell: (value: string) => <span className="text-sm">{value || '—'}</span> },
     {
       header: 'Email',
       accessor: 'email' as const,
@@ -260,18 +258,19 @@ export default function StudentsPage() {
         </div>
         
         {/* Right Side: Filters */}
-        <div className="w-full sm:w-[200px]">
+        <div className="w-full sm:w-[240px]">
           <Select value={roleFilter} onValueChange={setRoleFilter}>
             <SelectTrigger className="h-10 bg-background">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Filter Role" />
+                <SelectValue placeholder="Filter by Program" />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="All">All Roles</SelectItem>
-              <SelectItem value="10-A">Student (10-A)</SelectItem>
-              <SelectItem value="10-B">Student (10-B)</SelectItem>
+              <SelectItem value="All">All Programs</SelectItem>
+              <SelectItem value="Bachelor of Science in Computer Science">B.Sc. Computer Science</SelectItem>
+              <SelectItem value="Diploma in English Literature">Diploma in English Lit.</SelectItem>
+              <SelectItem value="Master of Arts in History">M.A. in History</SelectItem>
             </SelectContent>
           </Select>
         </div>

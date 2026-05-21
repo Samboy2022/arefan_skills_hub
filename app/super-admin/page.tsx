@@ -29,7 +29,7 @@ export default function DashboardPage() {
   const totalStudents = mockTenants.reduce((sum, t) => sum + t.students, 0)
   const totalCourses = mockTenants.reduce((sum, t) => sum + t.courses, 0)
   const activeTenants = mockTenants.filter((t) => t.status === 'active').length
-  const totalRevenue = mockRevenueData.reduce((sum, d) => sum + d.value, 0)
+  const totalRevenue = mockRevenueData.reduce((sum, d) => sum + (d.value ?? 0), 0)
   const pendingRenewals = 3
   const recentTenants = [...mockTenants].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -132,7 +132,7 @@ export default function DashboardPage() {
           description="Monthly recurring and one-time revenue"
           className="border-green-200 dark:border-green-900"
         >
-          <RevenueChart data={mockRevenueData} type="line" />
+          <RevenueChart data={mockRevenueData as any} type="line" />
         </ChartCard>
 
         <ChartCard
@@ -140,7 +140,7 @@ export default function DashboardPage() {
           description="Net new tenants per week"
           className="border-blue-200 dark:border-blue-900"
         >
-          <TenantGrowthChart data={mockTenantGrowthData} />
+          <TenantGrowthChart data={mockTenantGrowthData as any} />
         </ChartCard>
       </div>
 
@@ -151,7 +151,7 @@ export default function DashboardPage() {
           description="By education segment"
           className="border-purple-200 dark:border-purple-900"
         >
-          <SimpleDonutChart data={mockStudentDistribution} />
+          <SimpleDonutChart data={mockStudentDistribution as any} />
         </ChartCard>
 
         <ChartCard
@@ -159,7 +159,7 @@ export default function DashboardPage() {
           description="By total enrolled students"
           className="border-amber-200 dark:border-amber-900"
         >
-          <BarPieChart data={mockTopTenantsData} />
+          <BarPieChart data={mockTopTenantsData as any} />
         </ChartCard>
       </div>
 

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function CreateAssessmentPage() {
   const router = useRouter();
@@ -35,6 +36,15 @@ export default function CreateAssessmentPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Assessments", href: "/school-admin/assessments" },
+          { label: "Create" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Create Assessment"
         description="Fill in the details below to schedule a new assessment."

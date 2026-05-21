@@ -49,7 +49,7 @@ export function AdminCourseCard({
 }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const pct = enrollmentPct(course);
-  const atCapacity = course.enrollmentCount >= course.maxStudents;
+  const atCapacity = course.maxStudents ? course.enrollmentCount >= course.maxStudents : false;
   const initials =
     course.code.replace(/[^A-Za-z]/g, "").slice(0, 2) || "—";
 
@@ -214,7 +214,7 @@ export function AdminCourseCard({
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-foreground truncate">
-                  {course.enrollmentCount} / {course.maxStudents} Enrolled
+                  {course.maxStudents ? `${course.enrollmentCount} / ${course.maxStudents}` : course.enrollmentCount} Enrolled
                 </p>
                 <div className="w-full bg-muted-foreground/20 rounded-full h-1.5 mt-1 overflow-hidden">
                    <div 

@@ -10,6 +10,7 @@ import { DataTable } from "@/components/admin/data-table";
 import { ConfirmDeleteDialog } from "@/components/school-admin/confirm-delete-dialog";
 import { mockAssessments } from "@/lib/tenant-mock-data";
 import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function AssessmentsPage() {
   const router = useRouter();
@@ -56,6 +57,14 @@ export default function AssessmentsPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Assessments" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Assessments"
         description="Create and manage tests, quizzes, and assignments"

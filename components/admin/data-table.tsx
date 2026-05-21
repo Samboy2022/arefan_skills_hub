@@ -63,8 +63,8 @@ export function DataTable<T extends { id?: string }>({
 
   return (
     <div className="space-y-4">
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
+      <div className="border rounded-lg overflow-hidden overflow-x-auto">
+        <Table className="min-w-full">
           <TableHeader>
             <TableRow>
               {columns.map((col) => (

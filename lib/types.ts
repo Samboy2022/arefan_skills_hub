@@ -63,6 +63,6 @@ export interface KPIMetric {
 
 export interface ChartData {
   name: string
-  value: number
+  value?: number
   [key: string]: any
 }

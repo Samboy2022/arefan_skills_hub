@@ -31,7 +31,8 @@ import {
   Info
 } from "lucide-react";
 import Link from "next/link";
-import { mockCourses } from "@/lib/tenant-mock-data";
+import { mockCourses, mockPrograms } from "@/lib/tenant-mock-data";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -64,6 +65,15 @@ export default function CreateUserPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Students", href: "/school-admin/students" },
+          { label: "Add Student" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Add New User"
         description="Fill in the details below to register a new user to the platform or bulk import."
@@ -71,7 +81,7 @@ export default function CreateUserPage() {
           <Button variant="outline" asChild>
             <Link href="/school-admin/students">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Users
+              Back to Students
             </Link>
           </Button>
         }
@@ -136,23 +146,34 @@ export default function CreateUserPage() {
                       </Select>
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="courses">Assigned Courses</Label>
-                      <Select>
-                        <SelectTrigger id="courses">
-                          <SelectValue placeholder="Select initial course" />
+                      <Label htmlFor="program">Program <span className="text-destructive">*</span></Label>
+                      <Select required>
+                        <SelectTrigger id="program">
+                          <SelectValue placeholder="Select program" />
                         </SelectTrigger>
                         <SelectContent>
-                          {mockCourses.map((course) => (
-                            <SelectItem key={course.id} value={course.id}>
-                              {course.name} ({course.code})
+                          {mockPrograms.map((program) => (
+                            <SelectItem key={program.id} value={program.id}>
+                              {program.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="joinDate">Join Date <span className="text-destructive">*</span></Label>
-                      <Input id="joinDate" type="date" required />
+                      <Label htmlFor="classYear">Class of Year <span className="text-destructive">*</span></Label>
+                      <Select required>
+                        <SelectTrigger id="classYear">
+                          <SelectValue placeholder="Select intake year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="2024">Class of 2024</SelectItem>
+                          <SelectItem value="2023">Class of 2023</SelectItem>
+                          <SelectItem value="2022">Class of 2022</SelectItem>
+                          <SelectItem value="2021">Class of 2021</SelectItem>
+                          <SelectItem value="2020">Class of 2020</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="status">Status</Label>

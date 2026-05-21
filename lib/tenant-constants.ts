@@ -7,14 +7,13 @@ import {
   CurriculumIcon as ProgramsIcon,
   LessonsIcon as FileText,
   GradesIcon as BarChart3,
-  TransactionsIcon as DollarSign,
   SettingsIcon as Settings,
   BellIcon as Bell,
   RolesIcon as Shield,
   MessageIcon as Inbox,
-  ClockIcon as Clock,
   AwardIcon as Award,
-  SmartphoneIcon as Smartphone,
+  AssignmentsIcon as Assignments,
+  QuizzesIcon as Quizzes,
 } from "@/components/shared/colored-icons";
 
 export const TENANT_NAV_ITEMS = [
@@ -40,10 +39,10 @@ export const TENANT_NAV_ITEMS = [
         tooltip: "User Management",
       },
       {
-        label: "Faculty & Staff",
-        href: "/school-admin/faculty",
+        label: "Instructors",
+        href: "/school-admin/instructors",
         icon: Faculty,
-        tooltip: "Staff Directory",
+        tooltip: "Instructors",
       },
     ],
   },
@@ -63,16 +62,22 @@ export const TENANT_NAV_ITEMS = [
         tooltip: "Course Management",
       },
       {
-        label: "Timetable",
-        href: "/school-admin/timetable",
-        icon: Clock,
-        tooltip: "Class Schedule",
-      },
-      {
         label: "Assessments",
         href: "/school-admin/assessments",
         icon: FileText,
         tooltip: "Tests & Exams",
+      },
+      {
+        label: "Assignments",
+        href: "/school-admin/assignments",
+        icon: Assignments,
+        tooltip: "Student Assignments",
+      },
+      {
+        label: "Quizzes",
+        href: "/school-admin/quizzes",
+        icon: Quizzes,
+        tooltip: "Student Quizzes",
       },
       {
         label: "Attendance",
@@ -85,12 +90,6 @@ export const TENANT_NAV_ITEMS = [
   {
     section: "OPERATIONS",
     items: [
-      {
-        label: "Finance",
-        href: "/school-admin/finance",
-        icon: DollarSign,
-        tooltip: "Financial Reports",
-      },
       {
         label: "Communications",
         href: "/school-admin/communications",
@@ -119,12 +118,6 @@ export const TENANT_NAV_ITEMS = [
         href: "/school-admin/roles",
         icon: Shield,
         tooltip: "Manage Roles",
-      },
-      {
-        label: "Mobile App",
-        href: "/school-admin/mobile",
-        icon: Smartphone,
-        tooltip: "App Settings",
       },
       {
         label: "Notifications",

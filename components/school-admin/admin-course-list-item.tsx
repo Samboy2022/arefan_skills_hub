@@ -50,7 +50,7 @@ export function AdminCourseListItem({
 }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const pct = enrollmentPct(course);
-  const atCapacity = course.enrollmentCount >= course.maxStudents;
+  const atCapacity = course.maxStudents ? course.enrollmentCount >= course.maxStudents : false;
 
   const viewHref = `/school-admin/courses/${course.id}`;
   const editHref = `/school-admin/courses/${course.id}/edit`;
@@ -101,7 +101,7 @@ export function AdminCourseListItem({
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-auto">
             <div className="flex items-center gap-2 text-sm text-foreground">
-              <span className="font-semibold">{course.enrollmentCount} / {course.maxStudents}</span>
+              <span className="font-semibold">{course.maxStudents ? `${course.enrollmentCount} / ${course.maxStudents}` : course.enrollmentCount}</span>
               <span className="text-xs text-muted-foreground">Students</span>
             </div>
             

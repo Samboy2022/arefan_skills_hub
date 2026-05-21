@@ -18,20 +18,22 @@ export function PageHeader({
   children,
 }: PageHeaderProps) {
   return (
-    <div className="mb-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+    <div className="mb-8 flex flex-col gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             {title}
           </h1>
           {description && (
-            <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground text-sm sm:text-base">{description}</p>
           )}
         </div>
         {action && (
-          <Button onClick={action.onClick} size="lg">
-            {action.label}
-          </Button>
+          <div className="shrink-0">
+            <Button onClick={action.onClick} size="lg" className="w-full sm:w-auto">
+              {action.label}
+            </Button>
+          </div>
         )}
       </div>
       {children && <div className="mt-4">{children}</div>}

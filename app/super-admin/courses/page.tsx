@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { Eye, Search, BookOpen, TrendingUp, DollarSign, Users } from 'lucide-react'
@@ -45,7 +45,7 @@ const coursesData: CourseDetail[] = mockCourses.map((course, index) => {
     description: 'Comprehensive course covering fundamental and advanced concepts with hands-on projects and real-world applications.',
     duration: ['4 weeks', '6 weeks', '8 weeks', '12 weeks'][index % 4],
     level: ['Beginner', 'Intermediate', 'Advanced'][index % 3],
-    rating: (Math.random() * 1.5 + 3.5).toFixed(1),
+    rating: parseFloat((Math.random() * 1.5 + 3.5).toFixed(1)),
   }
 })
 

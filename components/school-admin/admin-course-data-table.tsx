@@ -82,7 +82,7 @@ export function AdminCourseDataTable({
               const editHref = `/school-admin/courses/${course.id}/edit`;
               const contentHref = `/school-admin/lessons?courseId=${encodeURIComponent(course.id)}`;
               const pct = enrollmentPct(course);
-              const atCapacity = course.enrollmentCount >= course.maxStudents;
+              const atCapacity = course.maxStudents ? course.enrollmentCount >= course.maxStudents : false;
 
               return (
                 <TableRow key={course.id} className={variant === 'archived' ? 'opacity-80' : ''}>
@@ -101,7 +101,7 @@ export function AdminCourseDataTable({
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <span className="text-sm font-medium">
-                        {course.enrollmentCount} / {course.maxStudents}
+                        {course.maxStudents ? `${course.enrollmentCount} / ${course.maxStudents}` : course.enrollmentCount}
                       </span>
                       <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                         <div 

@@ -13,7 +13,32 @@ export function TenantSidebar() {
   const { isCollapsed } = useSidebar();
   const pathname = usePathname();
 
+  const [schoolName, setSchoolName] = useState("Bright Academy");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [primaryColor, setPrimaryColor] = useState("#0d9f58");
 
+  useEffect(() => {
+    const loadBranding = () => {
+      const savedName = localStorage.getItem("school_name");
+      const savedLogo = localStorage.getItem("school_logo");
+      const savedPrimary = localStorage.getItem("school_color_primary");
+
+      if (savedName) setSchoolName(savedName);
+      if (savedLogo) {
+        setLogoUrl(savedLogo);
+      } else {
+        setLogoUrl(null);
+      }
+      if (savedPrimary) setPrimaryColor(savedPrimary);
+    };
+
+    loadBranding();
+
+    window.addEventListener("school-settings-updated", loadBranding);
+    return () => {
+      window.removeEventListener("school-settings-updated", loadBranding);
+    };
+  }, []);
 
   const isActive = (href: string) => {
     // Exact match for the dashboard
@@ -36,13 +61,28 @@ export function TenantSidebar() {
         <div className="h-16 border-b border-sidebar-border flex items-center px-4 shrink-0 transition-all duration-300">
           {isCollapsed ? (
             <div className="flex items-center justify-center w-full">
-              <img src="/fnskillslogo11.png" alt="FN Skills Logo" className="h-8 w-auto" />
+              {logoUrl ? (
+                <img src={logoUrl} alt={schoolName} className="h-8 w-8 object-contain rounded-md bg-white/5 p-0.5" />
+              ) : (
+                <img src="/fnskillslogo11.png" alt="FN Skills Logo" className="h-8 w-auto" />
+              )}
             </div>
           ) : (
-            <div className="flex items-center gap-3 w-full">
-              <div className="flex items-center justify-center shrink-0">
-                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-10 w-auto" />
-              </div>
+            <div className="flex items-center gap-3 w-full overflow-hidden">
+              {logoUrl ? (
+                <div className="flex items-center gap-2.5 w-full">
+                  <img src={logoUrl} alt={schoolName} className="h-9 w-9 object-contain rounded-md bg-white/5 p-1 shrink-0" />
+                  <span className="font-bold text-sm text-sidebar-foreground truncate tracking-wide leading-tight">
+                    {schoolName}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 w-full">
+                  <div className="flex items-center justify-center shrink-0">
+                    <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-10 w-auto" />
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -67,9 +107,10 @@ export function TenantSidebar() {
                                   className={cn(
                                     "relative flex flex-col items-center justify-center gap-1 h-14 transition-all duration-200 px-0.5",
                                     active
-                                      ? "bg-brand/10 text-brand"
+                                      ? ""
                                       : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                                   )}
+                                  style={active ? { color: primaryColor, backgroundColor: `${primaryColor}1a` } : undefined}
                                 >
                                   <div className="relative">
                                     <Icon className="h-5 w-5" />
@@ -93,9 +134,10 @@ export function TenantSidebar() {
                             className={cn(
                               "flex items-center gap-3 px-3 py-2.5 transition-all duration-200 group relative",
                               active
-                                ? "bg-brand/10 text-brand"
+                                ? ""
                                 : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                             )}
+                            style={active ? { color: primaryColor, backgroundColor: `${primaryColor}1a` } : undefined}
                           >
                             <div className="relative">
                               <Icon className="h-5 w-5 flex-shrink-0" />

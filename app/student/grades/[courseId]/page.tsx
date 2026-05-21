@@ -66,6 +66,17 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
     notFound();
   }
 
+  // Calculate local grades to fix TS errors
+  const assignments_grade = gradeRecord.assignments.total > 0
+    ? Math.round((gradeRecord.assignments.earned / gradeRecord.assignments.total) * 100)
+    : 0;
+  const quizzes_grade = gradeRecord.quizzes.total > 0
+    ? Math.round((gradeRecord.quizzes.earned / gradeRecord.quizzes.total) * 100)
+    : 0;
+  const participation_grade = gradeRecord.forum_activities.total > 0
+    ? Math.round((gradeRecord.forum_activities.earned / gradeRecord.forum_activities.total) * 100)
+    : 0;
+
   // Fetch relevant graded items
   const gradedAssignments = STUDENT_ASSIGNMENTS.filter(
     (a) => a.course_id === courseId && (a.status === "graded" || a.status === "missing")
@@ -121,8 +132,8 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
           <div className="relative z-10 flex flex-col h-full">
             <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Assignments</p>
             <div className="mt-auto pt-2">
-              <span className={cn("text-2xl font-bold", getPerformanceColor(gradeRecord.assignments_grade))}>
-                {gradeRecord.assignments_grade}%
+              <span className={cn("text-2xl font-bold", getPerformanceColor(assignments_grade))}>
+                {assignments_grade}%
               </span>
             </div>
           </div>
@@ -134,8 +145,8 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
           <div className="relative z-10 flex flex-col h-full">
             <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Quizzes & Exams</p>
             <div className="mt-auto pt-2">
-              <span className={cn("text-2xl font-bold", getPerformanceColor(gradeRecord.quizzes_grade))}>
-                {gradeRecord.quizzes_grade}%
+              <span className={cn("text-2xl font-bold", getPerformanceColor(quizzes_grade))}>
+                {quizzes_grade}%
               </span>
             </div>
           </div>
@@ -147,8 +158,8 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
           <div className="relative z-10 flex flex-col h-full">
             <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Participation</p>
             <div className="mt-auto pt-2">
-              <span className={cn("text-2xl font-bold", getPerformanceColor(gradeRecord.participation_grade))}>
-                {gradeRecord.participation_grade}%
+              <span className={cn("text-2xl font-bold", getPerformanceColor(participation_grade))}>
+                {participation_grade}%
               </span>
             </div>
           </div>

@@ -17,14 +17,18 @@ export function PageHeader({
   titleAction,
 }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-6 mb-8">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-          <div className="shrink-0">{titleAction}</div>
+    <div className="mb-8 flex flex-col gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+          {description && (
+            <p className="text-muted-foreground text-sm sm:text-base">{description}</p>
+          )}
         </div>
-        {description && (
-          <p className="text-muted-foreground">{description}</p>
+        {titleAction && (
+          <div className="shrink-0 flex items-center gap-3 w-full sm:w-auto justify-end">
+            {titleAction}
+          </div>
         )}
       </div>
 

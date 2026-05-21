@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function CreateCommunicationPage() {
   const router = useRouter();
@@ -32,6 +33,15 @@ export default function CreateCommunicationPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Communications", href: "/school-admin/communications" },
+          { label: "Create Announcement" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Compose Message"
         description="Create and send a new communication to students, parents, or staff."

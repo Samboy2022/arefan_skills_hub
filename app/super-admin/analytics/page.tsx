@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useMemo, useState } from 'react'
 import { TrendingUp, DollarSign, Users, Building2, BookOpen, Award, UserCheck, UserPlus } from 'lucide-react'
@@ -111,7 +111,7 @@ export default function AnalyticsPage() {
     [effectiveRange.end, effectiveRange.start, tenantSeries],
   )
 
-  const totalRevenue = filteredRevenue.reduce((sum, item) => sum + item.value, 0)
+  const totalRevenue = filteredRevenue.reduce((sum, item) => sum + (item.value ?? 0), 0)
   const latestTenantTotal = filteredTenants.length
     ? (filteredTenants[filteredTenants.length - 1].total ?? 0)
     : 0
@@ -422,21 +422,21 @@ export default function AnalyticsPage() {
             title="Revenue Trends"
             description="Monthly recurring and one-time revenue breakdown"
           >
-            <RevenueChart data={filteredRevenue} type="line" />
+            <RevenueChart data={filteredRevenue as any} type="line" />
           </ChartCard>
 
           <ChartCard
             title="Tenant Growth"
             description="New vs churned tenants per week"
           >
-            <TenantGrowthChart data={filteredTenants} />
+            <TenantGrowthChart data={filteredTenants as any} />
           </ChartCard>
 
           <ChartCard
             title="Student Distribution"
             description="By education segment"
           >
-            <SimpleDonutChart data={mockStudentDistribution} />
+            <SimpleDonutChart data={mockStudentDistribution as any} />
           </ChartCard>
         </div>
       </section>

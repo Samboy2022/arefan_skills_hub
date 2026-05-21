@@ -5,10 +5,19 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { KPICard } from "@/components/tenant/kpi-card";
 import { Award, TrendingUp } from "lucide-react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function AttendancePage() {
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        showHome={false}
+        items={[
+          { label: "Dashboard", href: "/school-admin" },
+          { label: "Attendance" }
+        ]}
+        className="mb-2"
+      />
       <PageHeader
         title="Attendance Management"
         description="Track and manage student and faculty attendance"
