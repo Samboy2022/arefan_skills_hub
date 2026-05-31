@@ -74,6 +74,12 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
         tooltip: "Manage enrolled students",
       },
       {
+        label: "Attendance",
+        href: "/instructor/attendance",
+        icon: CurriculumIcon,
+        tooltip: "Track student attendance",
+      },
+      {
         label: "Gradebook",
         href: "/instructor/gradebook",
         icon: GradesIcon,

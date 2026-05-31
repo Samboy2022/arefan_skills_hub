@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { format } from "date-fns";
 import { PageHeader } from "@/components/tenant/page-header";
 import { KPICard } from "@/components/tenant/kpi-card";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/admin/data-table";
-import { mockDashboardMetrics, mockStudents, mockCommunications } from "@/lib/tenant-mock-data";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {
@@ -31,6 +30,9 @@ import {
 } from "recharts";
 import { TrendingUp, Users, BookOpen, School } from "lucide-react";
 
+import { MOCK_STUDENTS, MOCK_INSTRUCTOR_COURSES } from "@/lib/instructor-mock-data";
+import { mockFaculty, mockClasses, mockCommunications } from "@/lib/tenant-mock-data";
+
 const ENROLLMENT_BAR_DATA = [
   { name: "Comp. Sci", enrolled: 87, capacity: 100 },
   { name: "Civil Eng.", enrolled: 95, capacity: 100 },
@@ -42,13 +44,88 @@ const ENROLLMENT_BAR_DATA = [
 
 export default function SchoolAdminDashboard() {
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => { setIsMounted(true); }, []);
 
-  const metrics = mockDashboardMetrics;
-  const recentStudents = mockStudents.slice(0, 5);
+  // Dynamic Lists State
+  const [students, setStudents] = useState<any[]>([]);
+  const [instructors, setInstructors] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    // Load Students
+    const savedStudents = localStorage.getItem("school_admin_students");
+    if (savedStudents) {
+      try { setStudents(JSON.parse(savedStudents)); } catch (e) { setStudents(MOCK_STUDENTS); }
+    } else {
+      setStudents(MOCK_STUDENTS);
+      localStorage.setItem("school_admin_students", JSON.stringify(MOCK_STUDENTS));
+    }
+
+    // Load Instructors
+    const savedInstructors = localStorage.getItem("school_admin_instructors");
+    if (savedInstructors) {
+      try { setInstructors(JSON.parse(savedInstructors)); } catch (e) { setInstructors(mockFaculty); }
+    } else {
+      const courseMappings: Record<string, string[]> = {
+        "1": ["course-1", "course-2"],
+        "2": ["course-2"],
+        "3": ["course-3"],
+        "4": ["course-1", "course-3"],
+      };
+      const seedInstructors = mockFaculty.map(f => ({
+        ...f,
+        assignedCourses: courseMappings[f.id] || ["course-1"],
+      }));
+      setInstructors(seedInstructors);
+      localStorage.setItem("school_admin_instructors", JSON.stringify(seedInstructors));
+    }
+
+    // Load Courses
+    const savedCourses = localStorage.getItem("school_admin_courses");
+    if (savedCourses) {
+      try { setCourses(JSON.parse(savedCourses)); } catch (e) { setCourses(MOCK_INSTRUCTOR_COURSES); }
+    } else {
+      setCourses(MOCK_INSTRUCTOR_COURSES);
+      localStorage.setItem("school_admin_courses", JSON.stringify(MOCK_INSTRUCTOR_COURSES));
+    }
+
+    // Load Classes
+    const savedClasses = localStorage.getItem("school_admin_classes");
+    if (savedClasses) {
+      try { setClasses(JSON.parse(savedClasses)); } catch (e) { setClasses(mockClasses); }
+    } else {
+      setClasses(mockClasses);
+      localStorage.setItem("school_admin_classes", JSON.stringify(mockClasses));
+    }
+  }, []);
+
+  // Recents List
+  const recentStudents = useMemo(() => {
+    return students.slice(-5).reverse().map((s, idx) => ({
+      id: s.id,
+      name: s.name,
+      rollNumber: s.studentId || `STU00${idx + 1}`,
+      program: s.enrolledCourses && s.enrolledCourses.length > 0 
+        ? MOCK_INSTRUCTOR_COURSES.find(c => c.id === s.enrolledCourses[0])?.title || "Degree Program"
+        : "Degree Program",
+      status: s.status === "active" ? "Active" : s.status === "inactive" ? "Inactive" : "Pending",
+    }));
+  }, [students]);
+
+  // Dynamic KPIs calculations
+  const kpis = useMemo(() => {
+    return {
+      totalStudents: students.length,
+      totalFaculty: instructors.length,
+      activeClasses: classes.filter(c => c.status === "Active").length,
+      totalCourses: courses.length,
+    };
+  }, [students, instructors, classes, courses]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
       <PageHeader
         title="School Dashboard"
         description="Welcome back! Here is a quick snapshot of your school's activities today."
@@ -58,7 +135,7 @@ export default function SchoolAdminDashboard() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <KPICard
           title="Total Students"
-          value={metrics.totalStudents.toLocaleString()}
+          value={kpis.totalStudents.toString()}
           hint="Enrolled students across programs"
           icon={(props: any) => <StudentsIcon {...props} color="0369a1" />}
           trend={5.2}
@@ -66,7 +143,7 @@ export default function SchoolAdminDashboard() {
         />
         <KPICard
           title="Instructors"
-          value={metrics.totalFaculty.toLocaleString()}
+          value={kpis.totalFaculty.toString()}
           hint="Active teaching staff"
           icon={(props: any) => <FacultyIcon {...props} color="22C55E" />}
           trend={2}
@@ -74,7 +151,7 @@ export default function SchoolAdminDashboard() {
         />
         <KPICard
           title="Active Classes"
-          value={metrics.activeClasses.toLocaleString()}
+          value={kpis.activeClasses.toString()}
           hint="Currently ongoing classes"
           icon={(props: any) => <CoursesIcon {...props} color="a855f7" />}
           trend={0}
@@ -82,7 +159,7 @@ export default function SchoolAdminDashboard() {
         />
         <KPICard
           title="Total Courses"
-          value={metrics.totalCourses.toLocaleString()}
+          value={kpis.totalCourses.toString()}
           hint="Published and active courses"
           icon={(props: any) => <CurriculumIcon {...props} color="f97316" />}
           trend={8}
@@ -90,7 +167,7 @@ export default function SchoolAdminDashboard() {
         />
         <KPICard
           title="Avg Attendance"
-          value={`${metrics.averageAttendance}%`}
+          value="94.2%"
           hint="Throughout the school"
           icon={(props: any) => <AwardIcon {...props} color="22C55E" />}
           trend={3}
@@ -98,7 +175,7 @@ export default function SchoolAdminDashboard() {
         />
         <KPICard
           title="Pending Fees"
-          value={metrics.pendingFees.toLocaleString()}
+          value="$8,450"
           hint="Needs follow-up soon"
           icon={(props: any) => <TransactionsIcon {...props} color="ef4444" />}
           trend={-2}
@@ -187,26 +264,23 @@ export default function SchoolAdminDashboard() {
                   header: "Name",
                   accessor: "name",
                   cell: (value) => (
-                    <Link
-                      href="/school-admin/students"
-                      className="font-medium text-primary hover:underline"
-                    >
+                    <span className="font-semibold text-foreground">
                       {value}
-                    </Link>
+                    </span>
                   ),
                 },
                 {
                   header: "Reg. No.",
                   accessor: "rollNumber",
                   cell: (value) => (
-                    <span className="text-xs font-mono text-muted-foreground">{value}</span>
+                    <span className="text-xs font-mono text-muted-foreground font-semibold px-2 py-0.5 bg-muted rounded">{value}</span>
                   ),
                 },
                 {
                   header: "Program",
                   accessor: "program" as any,
                   cell: (value) => (
-                    <span className="text-xs text-foreground">{value || "—"}</span>
+                    <span className="text-xs text-muted-foreground truncate max-w-[150px] block">{value || "—"}</span>
                   ),
                 },
                 {
@@ -214,12 +288,13 @@ export default function SchoolAdminDashboard() {
                   accessor: "status",
                   cell: (value) => {
                     const colors: Record<string, string> = {
-                      Active: "bg-brand/10 text-brand-dark dark:bg-brand/20 dark:text-brand",
-                      Inactive: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+                      Active: "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300 border-green-200 dark:border-green-800",
+                      Inactive: "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200",
+                      Pending: "bg-amber-100 text-amber-700 border-amber-200"
                     };
                     return (
                       <span
-                        className={`capitalize px-2.5 py-0.5 text-xs font-semibold rounded-full ${
+                        className={`capitalize px-2.5 py-0.5 text-[10px] font-bold border rounded-full ${
                           colors[value] || "bg-secondary text-secondary-foreground"
                         }`}
                       >

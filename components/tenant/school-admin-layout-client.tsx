@@ -29,12 +29,12 @@ function SchoolAdminLayoutContent({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-background overflow-x-hidden">
+    <div className="flex h-screen w-screen bg-background overflow-hidden">
       <TenantSidebar />
       {/* min-w-0 stops this flex child from overflowing its parent */}
-      <div className={`flex-1 min-w-0 transition-all duration-300 ${isCollapsed ? 'ml-28' : 'ml-64'}`}>
+      <div className={`flex-1 min-w-0 flex flex-col h-full transition-all duration-300 ${isCollapsed ? 'ml-28' : 'ml-64'}`}>
         <TenantNavbar />
-        <main className="min-h-[calc(100vh-4rem)] overflow-x-hidden">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8 py-6">
             {children}
           </div>

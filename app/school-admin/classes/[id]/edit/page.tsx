@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,13 @@ import { mockFaculty, mockClasses } from "@/lib/tenant-mock-data";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const programLabels: Record<string, string> = {
+  "Computer Science": "cs",
+  "Engineering": "eng",
+  "Business Administration": "bus",
+  "Arts & Humanities": "arts",
+};
+
+const programValues: Record<string, string> = {
   cs: "Computer Science",
   eng: "Engineering",
   bus: "Business Administration",
@@ -27,14 +34,24 @@ const programLabels: Record<string, string> = {
 };
 
 const semesterLabels: Record<string, string> = {
+  "Fall Semester": "fall",
+  "Spring Semester": "spring",
+  "Summer Semester": "summer",
+};
+
+const semesterValues: Record<string, string> = {
   fall: "Fall Semester",
   spring: "Spring Semester",
   summer: "Summer Semester",
 };
 
-export default function CreateClassPage() {
+export default function EditClassPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params?.id as string;
+
   const [isLoading, setIsLoading] = useState(false);
+  const [classData, setClassData] = useState<any>(null);
   
   // Form States
   const [program, setProgram] = useState("cs");
@@ -45,6 +62,39 @@ export default function CreateClassPage() {
   const [semester, setSemester] = useState("fall");
   const [session, setSession] = useState("2024-2025");
   const [selectedInstructorIds, setSelectedInstructorIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!id) return;
+    const saved = localStorage.getItem("school_admin_classes");
+    let currentClasses: any[] = [];
+    if (saved) {
+      try {
+        currentClasses = JSON.parse(saved);
+      } catch (err) {
+        currentClasses = [...mockClasses];
+      }
+    } else {
+      currentClasses = [...mockClasses];
+    }
+
+    const item = currentClasses.find(c => c.id === id);
+    if (item) {
+      setClassData(item);
+      setProgram(programLabels[item.program] || "cs");
+      setCourseTitle(item.name || "");
+      setCourseCode(item.courseCode || "");
+      setCapacity(String(item.capacity || ""));
+      setSemester(semesterLabels[item.semester] || "fall");
+      setSession(item.academicYear || "2024-2025");
+      
+      // Resolve instructors to IDs
+      const instructorNames = item.instructors || [];
+      const instIds = mockFaculty
+        .filter(f => instructorNames.includes(f.name))
+        .map(f => f.id);
+      setSelectedInstructorIds(instIds);
+    }
+  }, [id]);
 
   const handleSelectInstructor = (instructorId: string) => {
     if (instructorId && !selectedInstructorIds.includes(instructorId)) {
@@ -75,28 +125,40 @@ export default function CreateClassPage() {
       currentClasses = [...mockClasses];
     }
 
-    const newClass = {
-      id: `class-${Date.now()}`,
-      name: courseTitle,
-      program: programLabels[program] || "Computer Science",
-      courseCode: courseCode.toUpperCase(),
-      semester: semesterLabels[semester] || "Fall Semester",
-      instructors: selectedInstructorsData.map(inst => inst.name).length > 0
-        ? selectedInstructorsData.map(inst => inst.name)
-        : ["Unassigned"],
-      totalStudents: 0,
-      capacity: Number(capacity) || 50,
-      status: "Active",
-      academicYear: session,
-    };
+    const updated = currentClasses.map(c => {
+      if (c.id === id) {
+        return {
+          ...c,
+          name: courseTitle,
+          program: programValues[program] || "Computer Science",
+          courseCode: courseCode.toUpperCase(),
+          semester: semesterValues[semester] || "Fall Semester",
+          instructors: selectedInstructorsData.map(inst => inst.name).length > 0
+            ? selectedInstructorsData.map(inst => inst.name)
+            : ["Unassigned"],
+          capacity: Number(capacity) || 50,
+          academicYear: session,
+        };
+      }
+      return c;
+    });
 
-    const updated = [...currentClasses, newClass];
     localStorage.setItem("school_admin_classes", JSON.stringify(updated));
 
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsLoading(false);
     router.push("/school-admin/classes");
   };
+
+  if (!classData) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-muted-foreground animate-pulse">Loading class details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
@@ -105,13 +167,13 @@ export default function CreateClassPage() {
         items={[
           { label: "Dashboard", href: "/school-admin" },
           { label: "Classes", href: "/school-admin/classes" },
-          { label: "Create Class" }
+          { label: `Edit ${classData.name}` }
         ]}
         className="mb-2"
       />
       <PageHeader
-        title="Add New Course Class"
-        description="Fill in the details below to create a new course class."
+        title={`Edit Class: ${classData.name}`}
+        description="Update class configuration, schedule settings, and assigned instructors."
         titleAction={
           <Button variant="outline" asChild>
             <Link href="/school-admin/classes">

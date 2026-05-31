@@ -14,6 +14,7 @@ import {
   AwardIcon as Award,
   AssignmentsIcon as Assignments,
   QuizzesIcon as Quizzes,
+  ScheduleIcon,
 } from "@/components/shared/colored-icons";
 
 export const TENANT_NAV_ITEMS = [
@@ -44,6 +45,12 @@ export const TENANT_NAV_ITEMS = [
         icon: Faculty,
         tooltip: "Instructors",
       },
+      {
+        label: "Schedule",
+        href: "/school-admin/schedule",
+        icon: ScheduleIcon,
+        tooltip: "School Calendar & Schedule",
+      },
     ],
   },
   {
@@ -60,12 +67,6 @@ export const TENANT_NAV_ITEMS = [
         href: "/school-admin/courses",
         icon: BookOpen,
         tooltip: "Course Management",
-      },
-      {
-        label: "Assessments",
-        href: "/school-admin/assessments",
-        icon: FileText,
-        tooltip: "Tests & Exams",
       },
       {
         label: "Assignments",

@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PageHeader } from "@/components/admin/page-header";
+import { PageHeader } from "@/components/instructor/page-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { KPICard } from "@/components/tenant/kpi-card";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -36,8 +35,7 @@ import {
   Filter,
   Check,
   X,
-  AlertCircle,
-  ListFilter
+  AlertCircle
 } from "lucide-react";
 import { MOCK_MEETINGS, MOCK_STUDENTS } from "@/lib/instructor-mock-data";
 import { mockClasses } from "@/lib/tenant-mock-data";
@@ -45,12 +43,8 @@ import { toast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
-export default function AttendancePage() {
+export default function InstructorAttendancePage() {
   const [activeTab, setActiveTab] = useState<"live" | "manual">("live");
-
-  // --- Filter State for Live Class ---
-  type LiveFilter = "all" | "joined" | "did_not_join" | "present" | "absent" | "partial";
-  const [liveFilter, setLiveFilter] = useState<LiveFilter>("all");
 
   // --- Live Class Attendance State ---
   const liveClasses = useMemo(() => {
@@ -110,29 +104,14 @@ export default function AttendancePage() {
     setSelectedLiveIds(new Set()); // Reset selections on meeting swap
   }, [selectedMeeting]);
 
-  const filteredLiveAttendees = useMemo(() => {
-    const attendees = Object.values(attendeeStates);
-    switch (liveFilter) {
-      case "joined":
-        return attendees.filter((a) => a.status !== "did_not_join");
-      case "did_not_join":
-        return attendees.filter((a) => a.status === "did_not_join");
-      case "present":
-        return attendees.filter((a) => a.status === "present");
-      case "absent":
-        return attendees.filter((a) => a.status === "absent");
-      case "partial":
-        return attendees.filter((a) => a.status === "partial");
-      case "all":
-      default:
-        return attendees;
-    }
-  }, [attendeeStates, liveFilter]);
+  const liveAttendees = useMemo(() => {
+    return Object.values(attendeeStates);
+  }, [attendeeStates]);
 
   const liveStats = useMemo(() => {
-    const total = Object.values(attendeeStates).length;
+    const total = liveAttendees.length;
     if (total === 0) return { present: 0, absent: 0, rate: 0 };
-    const presentCount = Object.values(attendeeStates).filter(
+    const presentCount = liveAttendees.filter(
       (a) => a.status === "present" || a.status === "partial"
     ).length;
     const rate = Math.round((presentCount / total) * 100);
@@ -141,25 +120,27 @@ export default function AttendancePage() {
       absent: total - presentCount,
       rate,
     };
-  }, [attendeeStates]);
+  }, [liveAttendees]);
 
   // Bulk Selection Handlers (Live Classes)
-  const handleSelectAllLive = () => {
-    if (selectedLiveIds.size === filteredLiveAttendees.length && filteredLiveAttendees.length > 0) {
-      setSelectedLiveIds(new Set());
+  const handleSelectAllLive = (checked: boolean) => {
+    if (checked) {
+      setSelectedLiveIds(new Set(liveAttendees.map((a) => a.student_id)));
     } else {
-      setSelectedLiveIds(new Set(filteredLiveAttendees.map((a) => a.student_id)));
+      setSelectedLiveIds(new Set());
     }
   };
 
-  const handleSelectRowLive = (studentId: string) => {
-    const next = new Set(selectedLiveIds);
-    if (next.has(studentId)) {
-      next.delete(studentId);
-    } else {
-      next.add(studentId);
-    }
-    setSelectedLiveIds(next);
+  const handleSelectRowLive = (studentId: string, checked: boolean) => {
+    setSelectedLiveIds((prev) => {
+      const next = new Set(prev);
+      if (checked) {
+        next.add(studentId);
+      } else {
+        next.delete(studentId);
+      }
+      return next;
+    });
   };
 
   // Bulk Action Dispatchers (Live Classes)
@@ -185,7 +166,7 @@ export default function AttendancePage() {
 
     toast({
       title: "Bulk Action Applied",
-      description: `Marked ${selectedLiveIds.size} selected student(s) as ${status.toUpperCase()}.`,
+      description: `Marked ${selectedLiveIds.size} student(s) as ${status.toUpperCase()} in class.`,
     });
     setSelectedLiveIds(new Set()); // Reset selections
   };
@@ -231,22 +212,24 @@ export default function AttendancePage() {
   }, [manualStudentStates]);
 
   // Bulk Selection Handlers (Manual Sheets)
-  const handleSelectAllManual = () => {
-    if (selectedManualIds.size === manualStudents.length && manualStudents.length > 0) {
-      setSelectedManualIds(new Set());
-    } else {
+  const handleSelectAllManual = (checked: boolean) => {
+    if (checked) {
       setSelectedManualIds(new Set(manualStudents.map((s) => s.id)));
+    } else {
+      setSelectedManualIds(new Set());
     }
   };
 
-  const handleSelectRowManual = (studentId: string) => {
-    const next = new Set(selectedManualIds);
-    if (next.has(studentId)) {
-      next.delete(studentId);
-    } else {
-      next.add(studentId);
-    }
-    setSelectedManualIds(next);
+  const handleSelectRowManual = (studentId: string, checked: boolean) => {
+    setSelectedManualIds((prev) => {
+      const next = new Set(prev);
+      if (checked) {
+        next.add(studentId);
+      } else {
+        next.delete(studentId);
+      }
+      return next;
+    });
   };
 
   // Bulk Action Dispatchers (Manual Sheets)
@@ -302,12 +285,12 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="space-y-6 pb-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="space-y-6 relative pb-20">
       {/* Breadcrumb */}
       <Breadcrumb
         showHome={false}
         items={[
-          { label: "Dashboard", href: "/school-admin" },
+          { label: "Dashboard", href: "/instructor" },
           { label: "Attendance" }
         ]}
         className="mb-2"
@@ -316,7 +299,7 @@ export default function AttendancePage() {
       {/* Page Title */}
       <PageHeader
         title="Attendance Management"
-        description="Comprehensive daily logs and live class participation tracking"
+        description="Track student participation and oversee daily course rosters"
       />
 
       {/* KPI Section */}
@@ -324,7 +307,7 @@ export default function AttendancePage() {
         <KPICard
           title="Daily Average Attendance"
           value="94.2%"
-          hint="Across all courses"
+          hint="Across your assigned courses"
           icon={Award}
           trend={1.8}
           color="green"
@@ -332,7 +315,7 @@ export default function AttendancePage() {
         <KPICard
           title="Students Present Today"
           value="182"
-          hint="From 195 enrolled"
+          hint="Across active rosters"
           icon={TrendingUp}
           trend={3}
           color="blue"
@@ -340,7 +323,7 @@ export default function AttendancePage() {
         <KPICard
           title="Excused / Late"
           value="13"
-          hint="Awaiting excuse validation"
+          hint="Validation pending"
           icon={Clock}
           trend={-2}
           color="orange"
@@ -383,128 +366,64 @@ export default function AttendancePage() {
 
       {/* --- Live Classes Tab --- */}
       {activeTab === "live" && (
-        <div className="space-y-6 animate-in fade-in duration-200">
-          
-          {/* Stretched Inline Bulk Action Toolbar or Filters */}
-          {selectedLiveIds.size > 0 ? (
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-primary/5 p-4 border border-primary/20 rounded-xl animate-in fade-in duration-200">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap">
-                  {selectedLiveIds.size} Selected
-                </div>
-                <p className="text-xs text-muted-foreground hidden sm:inline">
-                  Apply bulk attendance updates to selected students
-                </p>
+        <div className="space-y-6">
+          <Card className="p-6 border border-border shadow-sm">
+            <h2 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
+              <Filter className="h-4 w-4 text-primary" /> Filter Session & Details
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase">Select Live Class</label>
+                <Select onValueChange={setSelectedMeetingId} value={selectedMeetingId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pick a session" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {liveClasses.map((meeting) => (
+                      <SelectItem key={meeting.id} value={meeting.id}>
+                        {meeting.name} ({meeting.status})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              
-              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                <Button 
-                  size="sm" 
-                  onClick={() => handleBulkLiveStatus("present")}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white h-10 gap-1.5 px-4 flex-1 sm:flex-initial"
-                >
-                  <Check className="h-4 w-4 shrink-0" />
-                  <span>Mark Present</span>
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="destructive"
-                  onClick={() => handleBulkLiveStatus("absent")}
-                  className="h-10 gap-1.5 px-4 flex-1 sm:flex-initial"
-                >
-                  <X className="h-4 w-4 shrink-0" />
-                  <span>Mark Absent</span>
-                </Button>
-                <div className="hidden md:block h-6 w-px bg-border/80 mx-1" />
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setSelectedLiveIds(new Set())} 
-                  className="text-xs text-muted-foreground hover:text-foreground h-10 flex-1 sm:flex-initial"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <Card className="p-4 border border-border shadow-sm">
-              <h2 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-                <Filter className="h-4 w-4 text-primary" /> Filter Session & Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase">Select Live Class</label>
-                  <Select onValueChange={(val) => { setSelectedMeetingId(val); setLiveFilter("all"); setSelectedLiveIds(new Set()); }} value={selectedMeetingId}>
-                    <SelectTrigger className="w-full h-10 bg-background">
-                      <SelectValue placeholder="Pick a session" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {liveClasses.map((meeting) => (
-                        <SelectItem key={meeting.id} value={meeting.id}>
-                          {meeting.name} ({meeting.status})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase">Filter Attendees</label>
-                  <Select onValueChange={(val) => { setLiveFilter(val as LiveFilter); setSelectedLiveIds(new Set()); }} value={liveFilter}>
-                    <SelectTrigger className="w-full h-10 bg-background">
-                      <ListFilter className="h-3.5 w-3.5 text-muted-foreground mr-2" />
-                      <SelectValue placeholder="Filter by status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Students</SelectItem>
-                      <SelectItem value="joined">Joined (Any Status)</SelectItem>
-                      <SelectItem value="did_not_join">Did Not Join</SelectItem>
-                      <SelectItem value="present">Present (100%)</SelectItem>
-                      <SelectItem value="partial">Partial Attendance</SelectItem>
-                      <SelectItem value="absent">Marked Absent</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {selectedMeeting && (
-                  <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg bg-muted/30 border border-border text-sm">
-                    <div>
-                      <span className="text-xs text-muted-foreground block">Duration</span>
-                      <span className="font-semibold text-foreground">{selectedMeeting.duration} mins</span>
-                    </div>
-                    <div>
-                      <span className="text-xs text-muted-foreground block">Password</span>
-                      <span className="font-semibold text-foreground">{selectedMeeting.password || "None"}</span>
-                    </div>
-                    <div>
-                      <span className="text-xs text-muted-foreground block">Status</span>
-                      <Badge variant={selectedMeeting.status === "live" ? "default" : "outline"} className="mt-0.5 capitalize">
-                        {selectedMeeting.status}
-                      </Badge>
-                    </div>
-                    <div>
-                      <span className="text-xs text-muted-foreground block">Join Threshold</span>
-                      <span className="font-semibold text-foreground">
-                        {selectedMeeting.attendance.tracking_enabled 
-                          ? `${selectedMeeting.attendance.threshold_percentage}%` 
-                          : "Disabled"}
-                      </span>
-                    </div>
+              {selectedMeeting && (
+                <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl bg-muted/30 border border-border text-sm">
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Duration</span>
+                    <span className="font-semibold text-foreground">{selectedMeeting.duration} mins</span>
                   </div>
-                )}
-              </div>
-            </Card>
-          )}
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Password</span>
+                    <span className="font-semibold text-foreground">{selectedMeeting.password || "None"}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Status</span>
+                    <Badge variant={selectedMeeting.status === "live" ? "default" : "outline"} className="mt-0.5 capitalize">
+                      {selectedMeeting.status}
+                    </Badge>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground block">Required Join Threshold</span>
+                    <span className="font-semibold text-foreground">
+                      {selectedMeeting.attendance.tracking_enabled 
+                        ? `${selectedMeeting.attendance.threshold_percentage}%` 
+                        : "Disabled"}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
 
           {/* Session Attendance Report */}
-          <Card className="border border-border shadow-sm overflow-hidden p-2">
-            <div className="p-4 border-b border-border bg-gradient-to-b from-background to-muted/10 flex items-center justify-between flex-wrap gap-4">
+          <Card className="border border-border shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border bg-gradient-to-b from-background to-muted/10 flex items-center justify-between flex-wrap gap-4">
               <div>
-                <h3 className="text-base font-bold text-foreground">Attendance Logs</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {liveFilter === "all" 
-                    ? "Select rows to apply bulk select actions." 
-                    : `Showing ${filteredLiveAttendees.length} of ${Object.values(attendeeStates).length} students (${liveFilter.replace(/_/g, " ")})`}
+                <h3 className="text-lg font-bold text-foreground">Attendance Logs</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Select rows to apply bulk select actions below.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -520,23 +439,16 @@ export default function AttendancePage() {
               </div>
             </div>
 
-            {/* Select All Bar preceding the table */}
-            <div className="p-3 border-b bg-muted/10 flex items-center gap-3">
-              <Checkbox 
-                checked={filteredLiveAttendees.length > 0 && selectedLiveIds.size === filteredLiveAttendees.length}
-                onCheckedChange={handleSelectAllLive}
-                id="select-all-live"
-              />
-              <Label htmlFor="select-all-live" className="text-xs font-semibold cursor-pointer text-foreground/80">
-                Select All {filteredLiveAttendees.length > 0 ? `(${filteredLiveAttendees.length})` : ""}
-              </Label>
-            </div>
-
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-muted/40">
                   <TableRow>
-                    <TableHead className="w-[50px] px-4"></TableHead>
+                    <TableHead className="w-[50px] text-center">
+                      <Checkbox
+                        checked={liveAttendees.length > 0 && selectedLiveIds.size === liveAttendees.length}
+                        onCheckedChange={(checked) => handleSelectAllLive(!!checked)}
+                      />
+                    </TableHead>
                     <TableHead>Student Name</TableHead>
                     <TableHead>Joined At</TableHead>
                     <TableHead>Left At</TableHead>
@@ -546,17 +458,7 @@ export default function AttendancePage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredLiveAttendees.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                        <div className="flex flex-col items-center gap-2">
-                          <Filter className="h-8 w-8 opacity-40" />
-                          <p className="text-sm font-medium">No attendees match the selected filter.</p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {filteredLiveAttendees.map((student) => {
+                  {liveAttendees.map((student) => {
                     const isSelected = selectedLiveIds.has(student.student_id);
                     return (
                       <TableRow 
@@ -566,11 +468,12 @@ export default function AttendancePage() {
                           isSelected && "bg-primary/5 hover:bg-primary/10"
                         )}
                       >
-                        <TableCell className="px-4">
+                        <TableCell className="text-center">
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={() => handleSelectRowLive(student.student_id)}
-                            aria-label={`Select student ${student.student_name}`}
+                            onCheckedChange={(checked) =>
+                              handleSelectRowLive(student.student_id, !!checked)
+                            }
                           />
                         </TableCell>
                         <TableCell>
@@ -618,137 +521,110 @@ export default function AttendancePage() {
               </Table>
             </div>
           </Card>
+
+          {/* Floating Bulk Action Bar for Live Classes */}
+          {selectedLiveIds.size > 0 && (
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-background/85 dark:bg-background/90 backdrop-blur-md border border-border px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-4 fade-in duration-300 max-w-lg w-full">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-primary shrink-0" />
+                <div className="text-sm font-semibold text-foreground leading-none">
+                  {selectedLiveIds.size} Selected
+                </div>
+              </div>
+              <div className="h-6 w-px bg-border shrink-0" />
+              <div className="flex-1 flex gap-2 justify-end">
+                <Button 
+                  size="sm" 
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
+                  onClick={() => handleBulkLiveStatus("present")}
+                >
+                  <Check className="h-3.5 w-3.5" /> Mark Present
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="destructive" 
+                  className="gap-1"
+                  onClick={() => handleBulkLiveStatus("absent")}
+                >
+                  <X className="h-3.5 w-3.5" /> Mark Absent
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 hover:bg-muted"
+                  onClick={() => setSelectedLiveIds(new Set())}
+                >
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* --- Manual Sheets Tab --- */}
       {activeTab === "manual" && (
-        <div className="space-y-6 animate-in fade-in duration-200">
-          
-          {/* Stretched Inline Bulk Action Toolbar or Configuration */}
-          {selectedManualIds.size > 0 ? (
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-primary/5 p-4 border border-primary/20 rounded-xl animate-in fade-in duration-200">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap">
-                  {selectedManualIds.size} Selected
-                </div>
-                <p className="text-xs text-muted-foreground hidden sm:inline">
-                  Apply daily attendance status updates to selected students
-                </p>
+        <div className="space-y-6">
+          <Card className="p-6 border border-border shadow-sm">
+            <h2 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-primary" /> Daily Class Sheet Configuration
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase">Target Academic Class</label>
+                <Select onValueChange={setSelectedClassId} value={selectedClassId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pick a class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockClasses.map((cls) => (
+                      <SelectItem key={cls.id} value={cls.id}>
+                        {cls.name} ({cls.courseCode})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              
-              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                <Button 
-                  size="sm" 
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white h-10 gap-1.5 px-4"
-                  onClick={() => handleBulkManualStatus("Present")}
-                >
-                  Present
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="destructive" 
-                  className="h-10 gap-1.5 px-4"
-                  onClick={() => handleBulkManualStatus("Absent")}
-                >
-                  Absent
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="h-10 gap-1.5 px-4 border-amber-200 hover:bg-amber-50 text-amber-700 dark:border-amber-900"
-                  onClick={() => handleBulkManualStatus("Late")}
-                >
-                  Late
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="h-10 gap-1.5 px-4 border-blue-200 hover:bg-blue-50 text-blue-700 dark:border-blue-900"
-                  onClick={() => handleBulkManualStatus("Excused")}
-                >
-                  Excused
-                </Button>
-                <div className="hidden md:block h-6 w-px bg-border/80 mx-1" />
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setSelectedManualIds(new Set())} 
-                  className="text-xs text-muted-foreground hover:text-foreground h-10"
-                >
-                  Cancel
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground uppercase">Attendance Date</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full h-10 border border-input rounded-md px-3 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-sm"
+                />
+              </div>
+
+              <div>
+                <Button className="w-full gap-2" onClick={handleSaveManualAttendance}>
+                  <Save className="h-4 w-4" /> Save Daily Sheet
                 </Button>
               </div>
             </div>
-          ) : (
-            <Card className="p-6 border border-border shadow-sm">
-              <h2 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" /> Daily Class Sheet Configuration
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase">Target Academic Class</label>
-                  <Select onValueChange={setSelectedClassId} value={selectedClassId}>
-                    <SelectTrigger className="w-full h-10 bg-background">
-                      <SelectValue placeholder="Pick a class" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockClasses.map((cls) => (
-                        <SelectItem key={cls.id} value={cls.id}>
-                          {cls.name} ({cls.courseCode})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase">Attendance Date</label>
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full h-10 border border-input rounded-md px-3 bg-background focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-sm"
-                  />
-                </div>
-
-                <div>
-                  <Button className="w-full h-10 gap-2" onClick={handleSaveManualAttendance}>
-                    <Save className="h-4 w-4" /> Save Daily Sheet
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
+          </Card>
 
           {/* Manual Register Table */}
-          <Card className="border border-border shadow-sm overflow-hidden p-2">
+          <Card className="border border-border shadow-sm overflow-hidden">
             <div className="p-6 border-b border-border bg-gradient-to-b from-background to-muted/10 flex items-center justify-between flex-wrap gap-4">
               <div>
                 <h3 className="text-lg font-bold text-foreground">Student Attendance Grid</h3>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  Select student records to apply bulk daily attendance updates.
+                  Select rows to apply bulk select actions below.
                 </p>
               </div>
-            </div>
-
-            {/* Select All Bar preceding the table */}
-            <div className="p-3 border-b bg-muted/10 flex items-center gap-3">
-              <Checkbox 
-                checked={manualStudents.length > 0 && selectedManualIds.size === manualStudents.length}
-                onCheckedChange={handleSelectAllManual}
-                id="select-all-manual"
-              />
-              <Label htmlFor="select-all-manual" className="text-xs font-semibold cursor-pointer text-foreground/80">
-                Select All {manualStudents.length > 0 ? `(${manualStudents.length})` : ""}
-              </Label>
             </div>
 
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-muted/40">
                   <TableRow>
-                    <TableHead className="w-[80px] px-4"></TableHead>
+                    <TableHead className="w-[80px] text-center">
+                      <Checkbox 
+                        checked={manualStudents.length > 0 && selectedManualIds.size === manualStudents.length}
+                        onCheckedChange={(checked) => handleSelectAllManual(!!checked)}
+                      />
+                    </TableHead>
                     <TableHead>Roll ID</TableHead>
                     <TableHead>Student Name</TableHead>
                     <TableHead className="text-center">Status Summary</TableHead>
@@ -765,11 +641,12 @@ export default function AttendancePage() {
                           isSelected && "bg-primary/5 hover:bg-primary/10"
                         )}
                       >
-                        <TableCell className="px-4">
+                        <TableCell className="text-center">
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={() => handleSelectRowManual(student.id)}
-                            aria-label={`Select student ${student.name}`}
+                            onCheckedChange={(checked) =>
+                              handleSelectRowManual(student.id, !!checked)
+                            }
                           />
                         </TableCell>
                         <TableCell className="font-mono text-xs font-semibold text-muted-foreground">
@@ -788,6 +665,60 @@ export default function AttendancePage() {
               </Table>
             </div>
           </Card>
+
+          {/* Floating Bulk Action Bar for Manual Attendance */}
+          {selectedManualIds.size > 0 && (
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-background/85 dark:bg-background/90 backdrop-blur-md border border-border px-6 py-4 rounded-2xl shadow-2xl flex flex-wrap items-center gap-4 animate-in slide-in-from-bottom-4 fade-in duration-300 max-w-xl w-full">
+              <div className="flex items-center gap-2 shrink-0">
+                <AlertCircle className="h-5 w-5 text-primary shrink-0" />
+                <div className="text-sm font-semibold text-foreground leading-none">
+                  {selectedManualIds.size} Selected
+                </div>
+              </div>
+              <div className="h-6 w-px bg-border shrink-0 hidden sm:block" />
+              <div className="flex-1 flex flex-wrap gap-1.5 justify-end">
+                <Button 
+                  size="sm" 
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 text-xs px-2.5"
+                  onClick={() => handleBulkManualStatus("Present")}
+                >
+                  Present
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="destructive" 
+                  className="h-8 text-xs px-2.5"
+                  onClick={() => handleBulkManualStatus("Absent")}
+                >
+                  Absent
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-8 text-xs px-2.5 border-amber-200 hover:bg-amber-50 text-amber-700 dark:border-amber-900 dark:hover:bg-amber-950/20"
+                  onClick={() => handleBulkManualStatus("Late")}
+                >
+                  Late
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-8 text-xs px-2.5 border-blue-200 hover:bg-blue-50 text-blue-700 dark:border-blue-900 dark:hover:bg-blue-950/20"
+                  onClick={() => handleBulkManualStatus("Excused")}
+                >
+                  Excused
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 hover:bg-muted"
+                  onClick={() => setSelectedManualIds(new Set())}
+                >
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

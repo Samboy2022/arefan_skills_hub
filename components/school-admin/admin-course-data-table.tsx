@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,10 +47,16 @@ export function AdminCourseDataTable({
   courses,
   variant = "active",
   onDelete,
+  selectedRowIds,
+  toggleSelectRow,
+  toggleSelectAll,
 }: {
   courses: Course[];
   variant?: "active" | "archived";
   onDelete: (id: string) => void;
+  selectedRowIds?: Set<string>;
+  toggleSelectRow?: (id: string) => void;
+  toggleSelectAll?: () => void;
 }) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -68,6 +75,15 @@ export function AdminCourseDataTable({
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
+              {selectedRowIds && toggleSelectAll && (
+                <TableHead className="w-[50px] px-4">
+                  <Checkbox 
+                    checked={selectedRowIds.size > 0 && selectedRowIds.size === courses.length}
+                    onCheckedChange={toggleSelectAll}
+                    aria-label="Select all courses"
+                  />
+                </TableHead>
+              )}
               <TableHead className="w-[100px]">Code</TableHead>
               <TableHead className="min-w-[200px]">Course</TableHead>
               <TableHead>Semester</TableHead>
@@ -86,6 +102,15 @@ export function AdminCourseDataTable({
 
               return (
                 <TableRow key={course.id} className={variant === 'archived' ? 'opacity-80' : ''}>
+                  {selectedRowIds && toggleSelectRow && (
+                    <TableCell className="px-4">
+                      <Checkbox 
+                        checked={selectedRowIds.has(course.id)}
+                        onCheckedChange={() => toggleSelectRow(course.id)}
+                        aria-label={`Select course ${course.id}`}
+                      />
+                    </TableCell>
+                  )}
                   <TableCell className="font-medium">
                     <span className="rounded bg-muted px-2 py-1 text-xs font-bold uppercase tracking-wide">
                       {course.code}

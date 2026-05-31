@@ -5,13 +5,11 @@ import Link from "next/link";
 import {
   BookOpen,
   Award,
-  AlertCircle,
-  CheckCircle,
+  Trash2
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/admin/page-header";
-import { mockCourses } from "@/lib/tenant-mock-data";
 import { AdminCourseCard } from "@/components/school-admin/admin-course-card";
 import { AdminCourseListItem } from "@/components/school-admin/admin-course-list-item";
 import { AdminCourseDataTable } from "@/components/school-admin/admin-course-data-table";
@@ -19,24 +17,56 @@ import { AdminCourseViewToolbar, ViewMode, SortOption } from "@/components/schoo
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { Course } from "@/lib/tenant-types";
 
-function enrollmentPct(course: Course) {
-  if (!course.maxStudents) return 0;
-  return Math.min(
-    100,
-    Math.round((course.enrollmentCount / course.maxStudents) * 100)
-  );
-}
+import { MOCK_INSTRUCTOR_COURSES } from "@/lib/instructor-mock-data";
+
+const getSeedCourses = (): Course[] => {
+  return MOCK_INSTRUCTOR_COURSES.map(c => ({
+    id: c.id,
+    title: c.title,
+    code: c.code,
+    categoryId: "science",
+    level: "beginner",
+    status: c.status === "active" ? "active" : "draft",
+    credits: c.credits,
+    maxStudents: c.maxStudents,
+    enrollmentCount: c.enrollmentCount,
+    semester: c.semester,
+    thumbnail: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=600",
+    description: c.description,
+    createdAt: new Date().toISOString(),
+  }));
+};
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>(mockCourses);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Bulk Selection state
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
+
+  // Load from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("instructor-course-view");
-    if (saved === "list" || saved === "table" || saved === "grid") {
-      setViewMode(saved as ViewMode);
+    const saved = localStorage.getItem("school_admin_courses");
+    if (saved) {
+      try {
+        setCourses(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse courses", e);
+        const seed = getSeedCourses();
+        setCourses(seed);
+        localStorage.setItem("school_admin_courses", JSON.stringify(seed));
+      }
+    } else {
+      const seed = getSeedCourses();
+      setCourses(seed);
+      localStorage.setItem("school_admin_courses", JSON.stringify(seed));
+    }
+
+    const savedView = localStorage.getItem("instructor-course-view");
+    if (savedView === "list" || savedView === "table" || savedView === "grid") {
+      setViewMode(savedView as ViewMode);
     }
   }, []);
 
@@ -64,7 +94,7 @@ export default function CoursesPage() {
         const pctB = b.maxStudents ? b.enrollmentCount / b.maxStudents : 0;
         return pctB - pctA;
       }
-      return parseInt(b.id) - parseInt(a.id); // Newest heuristic since no date
+      return parseInt(b.id.replace(/\D/g, "") || "0") - parseInt(a.id.replace(/\D/g, "") || "0");
     });
   }, [courses, searchQuery, sortBy]);
 
@@ -81,15 +111,44 @@ export default function CoursesPage() {
   }, [courses, searchQuery]);
 
   const draftCourses = useMemo(() => {
-    return courses.filter((c) => c.status === "inactive" || c.status === ("draft" as any));
+    return courses.filter((c) => c.status === "inactive" || c.status === "draft");
   }, [courses]);
 
+  // Bulk Selection Handlers
+  const toggleSelectAll = () => {
+    if (selectedRowIds.size === activeCourses.length && activeCourses.length > 0) {
+      setSelectedRowIds(new Set());
+    } else {
+      setSelectedRowIds(new Set(activeCourses.map((c) => c.id)));
+    }
+  };
+
+  const toggleSelectRow = (id: string) => {
+    const newSelected = new Set(selectedRowIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedRowIds(newSelected);
+  };
+
+  const handleBulkDelete = () => {
+    const ids = Array.from(selectedRowIds);
+    const updated = courses.filter((c) => !ids.includes(c.id));
+    setCourses(updated);
+    localStorage.setItem("school_admin_courses", JSON.stringify(updated));
+    setSelectedRowIds(new Set());
+  };
+
   const handleDelete = (id: string) => {
-    setCourses((prev) => prev.filter((c) => c.id !== id));
+    const updated = courses.filter((c) => c.id !== id);
+    setCourses(updated);
+    localStorage.setItem("school_admin_courses", JSON.stringify(updated));
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
       <Breadcrumb 
         showHome={false}
         items={[
@@ -155,14 +214,49 @@ export default function CoursesPage() {
             </h2>
           </div>
 
-          <AdminCourseViewToolbar 
-            viewMode={viewMode}
-            onViewModeChange={handleViewModeChange}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-          />
+          {/* Stretched Bulk Action Toolbar or Filters */}
+          {selectedRowIds.size > 0 ? (
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center bg-primary/5 p-4 border border-primary/20 rounded-xl animate-in fade-in duration-200">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary text-primary-foreground px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm whitespace-nowrap">
+                  {selectedRowIds.size} Courses Selected
+                </div>
+                <p className="text-xs text-muted-foreground hidden sm:inline">
+                  Apply a bulk action to all selected course modules
+                </p>
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  onClick={handleBulkDelete} 
+                  className="text-xs h-10 gap-1.5 px-4 flex-1 sm:flex-initial"
+                >
+                  <Trash2 className="h-4 w-4 shrink-0" />
+                  <span>Delete Selected</span>
+                </Button>
+                <div className="hidden md:block h-6 w-px bg-border/80 mx-1" />
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedRowIds(new Set())} 
+                  className="text-xs text-muted-foreground hover:text-foreground h-10 flex-1 sm:flex-initial"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <AdminCourseViewToolbar 
+              viewMode={viewMode}
+              onViewModeChange={handleViewModeChange}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
+          )}
         </div>
 
         {activeCourses.length === 0 ? (
@@ -201,7 +295,14 @@ export default function CoursesPage() {
           </div>
         ) : (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <AdminCourseDataTable courses={activeCourses} variant="active" onDelete={handleDelete} />
+            <AdminCourseDataTable 
+              courses={activeCourses} 
+              variant="active" 
+              onDelete={handleDelete}
+              selectedRowIds={selectedRowIds}
+              toggleSelectRow={toggleSelectRow}
+              toggleSelectAll={toggleSelectAll}
+            />
           </div>
         )}
       </section>
@@ -244,7 +345,14 @@ export default function CoursesPage() {
               ))}
             </div>
           ) : (
-            <AdminCourseDataTable courses={archivedCourses} variant="archived" onDelete={handleDelete} />
+            <AdminCourseDataTable 
+              courses={archivedCourses} 
+              variant="archived" 
+              onDelete={handleDelete}
+              selectedRowIds={selectedRowIds}
+              toggleSelectRow={toggleSelectRow}
+              toggleSelectAll={toggleSelectAll}
+            />
           )}
         </section>
       )}
