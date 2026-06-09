@@ -5,8 +5,15 @@ import { ThemeProvider } from '@/components/theme-provider'
 import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geistSans = Geist({
+  variable: '--font-sans',
+  subsets: ['latin'],
+})
+
+const geistMono = Geist_Mono({
+  variable: '--font-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
   title: {
@@ -36,15 +43,13 @@ export const metadata: Metadata = {
   },
 }
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <NextTopLoader color="oklch(0.61 0.19 149.213)" showSpinner={false} height={3} crawl={true} />
