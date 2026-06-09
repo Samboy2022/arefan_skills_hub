@@ -242,6 +242,7 @@ export default function EditStudentPage() {
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="pending">Pending Verification</SelectItem>
                   <SelectItem value="inactive">Inactive / Suspended</SelectItem>
+                  <SelectItem value="dropped">Dropped / Disenrolled</SelectItem>
                 </SelectContent>
               </Select>
             </div>

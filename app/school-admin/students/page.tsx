@@ -215,6 +215,7 @@ export default function StudentsPage() {
           active: "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300 border-green-200 dark:border-green-800",
           pending: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-200 dark:border-amber-800",
           inactive: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 border-red-200 dark:border-red-800",
+          dropped: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-700",
         };
         return (
           <Badge className={`capitalize px-2 py-0.5 text-[10px] font-bold border ${colors[v] || "bg-secondary text-secondary-foreground"}`}>
@@ -429,6 +430,7 @@ export default function StudentsPage() {
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="dropped">Dropped</SelectItem>
                 </SelectContent>
               </Select>
             </div>
