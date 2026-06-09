@@ -9,24 +9,24 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | FnSkills',
-    default: 'FnSkills - Advanced Learning Management System',
+    template: '%s | Arefan Skills Hub',
+    default: 'Arefan Skills Hub - Advanced Learning Management System',
   },
-  description: 'A comprehensive platform for skills development, course management, and educational tracking. Empower your learning journey with FnSkills.',
-  keywords: ['FnSkills', 'LMS', 'Learning Management System', 'Skills Development', 'Education', 'Online Courses'],
-  authors: [{ name: 'FnSkills Team' }],
-  metadataBase: new URL('https://fnskills.app'),
+  description: 'A comprehensive platform for skills development, course management, and educational tracking. Empower your learning journey with Arefan Skills Hub.',
+  keywords: ['Arefan Skills Hub', 'LMS', 'Learning Management System', 'Skills Development', 'Education', 'Online Courses'],
+  authors: [{ name: 'Arefan Skills Hub Team' }],
+  metadataBase: new URL('https://arefanskillshub.com'),
   openGraph: {
-    title: 'FnSkills - Advanced Learning Management System',
+    title: 'Arefan Skills Hub - Advanced Learning Management System',
     description: 'Empowering growth through skill-based learning and advanced education management solutions.',
-    url: 'https://fnskills.app',
-    siteName: 'FnSkills',
+    url: 'https://arefanskillshub.com',
+    siteName: 'Arefan Skills Hub',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FnSkills - Advanced Learning Management System',
+    title: 'Arefan Skills Hub - Advanced Learning Management System',
     description: 'Empowering growth through skill-based learning and advanced education management solutions.',
   },
   icons: {

@@ -62,8 +62,8 @@ import { mockTenants } from '@/lib/mock-data'
 import { Tenant } from '@/lib/types'
 import { format } from 'date-fns'
 
-const TENANTS_STORAGE_KEY = 'fnskills:super-admin:tenants'
-const TENANT_DETAILS_STORAGE_KEY = 'fnskills:super-admin:tenant-details'
+const TENANTS_STORAGE_KEY = 'arefan-skills-hub:super-admin:tenants'
+const TENANT_DETAILS_STORAGE_KEY = 'arefan-skills-hub:super-admin:tenant-details'
 
 type TenantTab = 'all' | 'active' | 'trial' | 'suspended' | 'pending'
 type TenantWizardStep = 0 | 1 | 2 | 3

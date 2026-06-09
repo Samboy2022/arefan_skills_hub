@@ -16,7 +16,7 @@ export default function TermsPage() {
               Terms of <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Service</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              The rules, guidelines, and agreements for using FnSkills.
+              The rules, guidelines, and agreements for using Arefan Skills Hub.
             </p>
           </div>
         </section>
@@ -32,7 +32,7 @@ export default function TermsPage() {
 
               <h2>1. Agreement to Terms</h2>
               <p>
-                By accessing or using the FnSkills platform ("Site" or "Platform"), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the Service.
+                By accessing or using the Arefan Skills Hub platform ("Site" or "Platform"), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the Service.
               </p>
 
               <h2>2. Intellectual Property Rights</h2>
@@ -70,7 +70,7 @@ export default function TermsPage() {
 
               <h2>8. Governing Law</h2>
               <p>
-                These Terms shall be governed by and defined following the laws of the jurisdiction in which FnSkills operates. FnSkills and yourself irrevocably consent that the courts of that jurisdiction shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these terms.
+                These Terms shall be governed by and defined following the laws of the jurisdiction in which Arefan Skills Hub operates. Arefan Skills Hub and yourself irrevocably consent that the courts of that jurisdiction shall have exclusive jurisdiction to resolve any dispute which may arise in connection with these terms.
               </p>
 
             </div>

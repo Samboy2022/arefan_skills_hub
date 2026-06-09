@@ -32,7 +32,7 @@ export default function PrivacyPage() {
 
               <h2>1. Introduction</h2>
               <p>
-                At FnSkills, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our cloud-based, multi-tenant Learning Management System (LMS) platform.
+                At Arefan Skills Hub, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our cloud-based, multi-tenant Learning Management System (LMS) platform.
               </p>
 
               <h2>2. Information We Collect</h2>
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
 
               <h2>7. Contact Us</h2>
               <p>If you have questions or comments about this Privacy Policy, please contact us at:</p>
-              <p>privacy@fnskills.com</p>
+              <p>privacy@arefanskillshub.com</p>
 
             </div>
           </div>

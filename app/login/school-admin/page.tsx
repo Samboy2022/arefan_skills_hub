@@ -84,8 +84,8 @@ export default function SchoolAdminLoginPage() {
               
               {/* Logo & Title Inside Card */}
               <div className="space-y-3 mb-10 text-center md:text-left flex flex-col items-center md:items-start">
-                <img src="/fnskillslogo11W.png" alt="FN Skills Logo" className="h-12 w-auto dark:hidden" />
-                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-12 w-auto hidden dark:block" />
+                <img src="/arefanskillshub3.png" alt="Arefan Skills Hub Logo" className="h-12 w-auto dark:hidden" />
+                <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-12 w-auto hidden dark:block" />
                 <p className="text-muted-foreground font-medium">School Administration Portal</p>
               </div>
 

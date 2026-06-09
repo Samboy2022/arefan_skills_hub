@@ -53,8 +53,8 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex flex-col items-center justify-center gap-3 mb-6">
-            <img src="/fnskillslogo11W.png" alt="FN Skills Logo" className="h-16 w-auto dark:hidden" />
-            <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-16 w-auto hidden dark:block" />
+            <img src="/arefanskillshub3.png" alt="Arefan Skills Hub Logo" className="h-16 w-auto dark:hidden" />
+            <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-16 w-auto hidden dark:block" />
           </div>
           <h2 className="text-4xl font-bold text-foreground mb-3">Choose Your Role</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">

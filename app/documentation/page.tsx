@@ -5,11 +5,11 @@ import { Book, MonitorPlay, FileCheck, Code, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
-  title: 'Documentation — FnSkills LMS',
-  description: 'Comprehensive guides for students and instructors. Learn how to navigate courses, build curriculum, manage grades, and more with FnSkills.',
+  title: 'Documentation — Arefan Skills Hub LMS',
+  description: 'Comprehensive guides for students and instructors. Learn how to navigate courses, build curriculum, manage grades, and more with Arefan Skills Hub.',
   openGraph: {
-    title: 'FnSkills Documentation',
-    description: 'Step-by-step guides for students, instructors, and administrators using the FnSkills platform.',
+    title: 'Arefan Skills Hub Documentation',
+    description: 'Step-by-step guides for students, instructors, and administrators using the Arefan Skills Hub platform.',
   },
 }
 
@@ -19,7 +19,7 @@ export default function DocumentationOverview() {
       <h2 className="text-3xl font-bold border-b border-border pb-4 mb-8">Documentation Overview</h2>
 
       <p className="text-muted-foreground text-lg mb-8">
-        Welcome to the FnSkills documentation. Select a guide below to explore detailed workflows and features.
+        Welcome to the Arefan Skills Hub documentation. Select a guide below to explore detailed workflows and features.
       </p>
 
       <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -71,7 +71,7 @@ export default function DocumentationOverview() {
             <Code className="h-8 w-8 text-muted-foreground mb-2" aria-hidden="true" />
             <CardTitle>Developer API</CardTitle>
             <CardDescription>
-              Integrate FnSkills with your existing tools using our RESTful API.
+              Integrate Arefan Skills Hub with your existing tools using our RESTful API.
               <span className="inline-block mt-2 text-xs font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
                 Coming Soon
               </span>

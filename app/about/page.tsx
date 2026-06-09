@@ -6,11 +6,11 @@ import { Card } from '@/components/ui/card'
 import { HeartHandshake, Shield, Lightbulb, ShieldCheck, Users, Globe2 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'About FnSkills — Our Story & Mission',
-  description: 'FnSkills is on a mission to democratize access to enterprise-grade educational technology. Learn about our story, mission, and core values.',
+  title: 'About Arefan Skills Hub — Our Story & Mission',
+  description: 'Arefan Skills Hub is on a mission to democratize access to enterprise-grade educational technology. Learn about our story, mission, and core values.',
   openGraph: {
-    title: 'About FnSkills — Democratizing Education Technology',
-    description: 'We believe technology should be an enabler, not a barrier. Discover the FnSkills story.',
+    title: 'About Arefan Skills Hub — Democratizing Education Technology',
+    description: 'We believe technology should be an enabler, not a barrier. Discover the Arefan Skills Hub story.',
   },
 }
 
@@ -25,7 +25,7 @@ export default function AboutPage() {
           <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.08] bg-[url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center" />
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl relative z-10">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              About <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400">FnSkills</span>
+              About <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-500 to-green-400">Arefan Skills Hub</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 max-w-3xl mx-auto leading-relaxed">
               We are on a mission to democratize access to enterprise-grade educational technology for institutions of all sizes.
@@ -44,10 +44,10 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-4xl font-bold mb-6 text-foreground">Where it all began</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  FnSkills was founded with a simple observation: while large universities had access to incredibly powerful learning management systems, smaller institutions, private tutors, and corporate training teams were left stitching together fragmented tools.
+                  Arefan Skills Hub was founded with a simple observation: while large universities had access to incredibly powerful learning management systems, smaller institutions, private tutors, and corporate training teams were left stitching together fragmented tools.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  We built FnSkills to bridge this gap. By utilizing a secure, multi-tenant cloud infrastructure, we are able to provide organizations of all sizes with a dedicated, white-labeled platform that scales effortlessly as they grow.
+                  We built Arefan Skills Hub to bridge this gap. By utilizing a secure, multi-tenant cloud infrastructure, we are able to provide organizations of all sizes with a dedicated, white-labeled platform that scales effortlessly as they grow.
                 </p>
               </div>
               <div className="relative h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl border border-border/50 animate-in fade-in slide-in-from-right-8 duration-700">

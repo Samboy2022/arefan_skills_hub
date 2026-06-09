@@ -142,7 +142,7 @@ async function fetchLesson(lessonId: string) {
 }
 
 export const metadata: Metadata = {
-  title: 'Lesson Player | FnSkills',
+  title: 'Lesson Player | Arefan Skills Hub',
 };
 
 export default async function LessonPlayerPage({

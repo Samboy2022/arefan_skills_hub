@@ -71,7 +71,7 @@ export default function HelpCenterPage() {
             <h2 className="text-2xl font-bold mb-8 text-center">Popular Articles</h2>
             <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
               <div className="divide-y divide-border">
-                <ArticleLink title="How to map your custom domain to FnSkills" category="Platform Configuration" />
+                <ArticleLink title="How to map your custom domain to Arefan Skills Hub" category="Platform Configuration" />
                 <ArticleLink title="Bulk importing students via CSV" category="Getting Started" />
                 <ArticleLink title="Setting up Zoom integration for live classes" category="Integrations & API" />
                 <ArticleLink title="Why are my students not receiving email notifications?" category="Troubleshooting" />

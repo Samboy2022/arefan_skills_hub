@@ -20,10 +20,10 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Features — FnSkills LMS',
-  description: 'Explore FnSkills features built for school administrators, instructors, and students. White-label subdomains, drag-and-drop course builder, gamified learning, and more.',
+  title: 'Features — Arefan Skills Hub LMS',
+  description: 'Explore Arefan Skills Hub features built for school administrators, instructors, and students. White-label subdomains, drag-and-drop course builder, gamified learning, and more.',
   openGraph: {
-    title: 'FnSkills Features — Built for Scale',
+    title: 'Arefan Skills Hub Features — Built for Scale',
     description: 'Comprehensive LMS tools for administrators, instructors, and students.',
   },
 }

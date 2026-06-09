@@ -62,7 +62,7 @@ export default function StudentLoginPage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      if (formData.email === 'student@fnskills.com' && formData.password === 'student123') {
+      if (formData.email === 'student@arefanskillshub.com' && formData.password === 'student123') {
         localStorage.setItem('studentLoggedIn', 'true');
         router.push('/student');
       } else {
@@ -84,8 +84,8 @@ export default function StudentLoginPage() {
               
               {/* Logo & Title Inside Card */}
               <div className="space-y-3 mb-10 text-center md:text-left flex flex-col items-center md:items-start">
-                <img src="/fnskillslogo11W.png" alt="FN Skills Logo" className="h-12 w-auto dark:hidden" />
-                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-12 w-auto hidden dark:block" />
+                <img src="/arefanskillshub3.png" alt="Arefan Skills Hub Logo" className="h-12 w-auto dark:hidden" />
+                <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-12 w-auto hidden dark:block" />
                 <p className="text-muted-foreground font-medium">Student Learning Platform</p>
               </div>
 
@@ -104,7 +104,7 @@ export default function StudentLoginPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="student@fnskills.com"
+                      placeholder="student@arefanskillshub.com"
                       value={formData.email}
                       onChange={(e) => {
                         setFormData({ ...formData, email: e.target.value });
@@ -185,11 +185,11 @@ export default function StudentLoginPage() {
 
                 {/* Demo Credentials */}
                 <div 
-                  onClick={() => setFormData({ ...formData, email: 'student@fnskills.com', password: 'student123' })}
+                  onClick={() => setFormData({ ...formData, email: 'student@arefanskillshub.com', password: 'student123' })}
                   className="bg-muted/50 border border-border rounded-lg p-3 mt-6 text-xs text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
                 >
                   <p className="font-semibold text-foreground mb-1">Demo Credentials (Click to fill):</p>
-                  <p>Email: student@fnskills.com</p>
+                  <p>Email: student@arefanskillshub.com</p>
                   <p>Password: student123</p>
                 </div>
               </form>

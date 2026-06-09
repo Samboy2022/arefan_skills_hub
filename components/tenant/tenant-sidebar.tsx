@@ -64,7 +64,7 @@ export function TenantSidebar() {
               {logoUrl ? (
                 <img src={logoUrl} alt={schoolName} className="h-8 w-8 object-contain rounded-md bg-white/5 p-0.5" />
               ) : (
-                <img src="/fnskillslogo11.png" alt="FN Skills Logo" className="h-8 w-auto" />
+                <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-8 w-auto" />
               )}
             </div>
           ) : (
@@ -79,7 +79,7 @@ export function TenantSidebar() {
               ) : (
                 <div className="flex items-center gap-3 w-full">
                   <div className="flex items-center justify-center shrink-0">
-                    <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-10 w-auto" />
+                    <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-10 w-auto" />
                   </div>
                 </div>
               )}

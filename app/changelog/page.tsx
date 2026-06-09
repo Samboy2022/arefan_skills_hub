@@ -15,7 +15,7 @@ export default function ChangelogPage() {
               Product <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Changelog</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              Stay up to date with the latest features, fixes, and improvements to FnSkills.
+              Stay up to date with the latest features, fixes, and improvements to Arefan Skills Hub.
             </p>
           </div>
         </section>

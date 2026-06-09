@@ -24,7 +24,7 @@ interface FormErrors {
 export default function SuperAdminLoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
-    email: 'admin@fnskills.com',
+    email: 'admin@arefanskillshub.com',
     password: 'admin123',
     rememberMe: true,
   });
@@ -73,7 +73,7 @@ export default function SuperAdminLoginPage() {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      if (formData.email === 'admin@fnskills.com' && formData.password === 'admin123') {
+      if (formData.email === 'admin@arefanskillshub.com' && formData.password === 'admin123') {
         router.push('/super-admin');
       } else {
         setErrors({ submit: 'Invalid email or password' });
@@ -96,8 +96,8 @@ export default function SuperAdminLoginPage() {
               
               {/* Logo & Title Inside Card */}
               <div className="space-y-3 mb-10 text-center md:text-left flex flex-col items-center md:items-start">
-                <img src="/fnskillslogo11W.png" alt="FN Skills Logo" className="h-12 w-auto dark:hidden" />
-                <img src="/fnskillslogo2.png" alt="FN Skills Logo" className="h-12 w-auto hidden dark:block" />
+                <img src="/arefanskillshub3.png" alt="Arefan Skills Hub Logo" className="h-12 w-auto dark:hidden" />
+                <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-12 w-auto hidden dark:block" />
                 <p className="text-muted-foreground font-medium">Sign in to manage your platform</p>
               </div>
 
@@ -117,7 +117,7 @@ export default function SuperAdminLoginPage() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="admin@fnskills.com"
+                      placeholder="admin@arefanskillshub.com"
                       value={formData.email}
                       onChange={handleInputChange}
                       disabled={isLoading}
@@ -202,11 +202,11 @@ export default function SuperAdminLoginPage() {
 
                 {/* Demo Credentials */}
                 <div 
-                  onClick={() => setFormData({ ...formData, email: 'admin@fnskills.com', password: 'admin123' })}
+                  onClick={() => setFormData({ ...formData, email: 'admin@arefanskillshub.com', password: 'admin123' })}
                   className="bg-muted/50 border border-border rounded-lg p-3 mt-6 text-xs text-muted-foreground cursor-pointer hover:bg-muted transition-colors"
                 >
                   <p className="font-semibold text-foreground mb-1">Demo Credentials (Click to fill):</p>
-                  <p>Email: admin@fnskills.com</p>
+                  <p>Email: admin@arefanskillshub.com</p>
                   <p>Password: admin123</p>
                 </div>
               </form>

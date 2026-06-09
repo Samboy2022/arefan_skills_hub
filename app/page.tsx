@@ -201,7 +201,7 @@ export default function Home() {
 
             {/* Subheadline */}
             <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-              Instantly deploy a secure, branded learning environment. FnSkills
+              Instantly deploy a secure, branded learning environment. Arefan Skills Hub
               provides the cloud infrastructure so you can focus on delivering
               exceptional educational experiences.
             </p>
@@ -239,13 +239,13 @@ export default function Home() {
                     </div>
                     <div className="flex-1 flex justify-center">
                       <div className="h-5 w-48 rounded-md bg-muted/60 text-[10px] flex items-center justify-center text-muted-foreground">
-                        dashboard.fnskills.app
+                        dashboard.arefanskillshub.com
                       </div>
                     </div>
                   </div>
                   <Image
                     src="/dashboard-preview.png"
-                    alt="FnSkills Dashboard Preview"
+                    alt="Arefan Skills Hub Dashboard Preview"
                     width={1920}
                     height={1080}
                     className="w-full h-auto object-cover"
@@ -413,7 +413,7 @@ export default function Home() {
                 Seamlessly Integrated. Infinitely Scalable.
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                FnSkills connects with the tools your institution already uses,
+                Arefan Skills Hub connects with the tools your institution already uses,
                 creating a unified educational ecosystem.
               </p>
             </div>
@@ -499,7 +499,7 @@ export default function Home() {
                 </h2>
                 <p className="text-primary-foreground/85 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
                   Join the growing network of educational organizations
-                  leveraging FnSkills&apos; cloud infrastructure.
+                  leveraging Arefan Skills Hub&apos; cloud infrastructure.
                 </p>
                 <Link href="/login">
                   <button

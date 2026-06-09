@@ -13,7 +13,7 @@ export default function CareersPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Careers at <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">FnSkills</span>
+              Careers at <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Arefan Skills Hub</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
               Help us build the infrastructure that powers global education.

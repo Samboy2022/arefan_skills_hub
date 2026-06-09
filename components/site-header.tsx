@@ -12,8 +12,8 @@ export function SiteHeader() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm">
-            <Image src="/fnskillslogo11W.png" alt="FnSkills Logo" width={140} height={40} className="h-8 w-auto dark:hidden" priority />
-            <Image src="/fnskillslogo11.png" alt="FnSkills Logo" width={140} height={40} className="h-8 w-auto hidden dark:block" priority />
+            <Image src="/arefanskillshub3.png" alt="Arefan Skills Hub Logo" width={140} height={40} className="h-8 w-auto dark:hidden" priority />
+            <Image src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" width={140} height={40} className="h-8 w-auto hidden dark:block" priority />
           </Link>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">

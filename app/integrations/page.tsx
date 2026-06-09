@@ -7,10 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Video, Mail, MessageSquare, CreditCard, Plug, Code } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Integrations — FnSkills LMS',
-  description: 'Connect FnSkills with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
+  title: 'Integrations — Arefan Skills Hub LMS',
+  description: 'Connect Arefan Skills Hub with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
   openGraph: {
-    title: 'FnSkills Integrations — Connect Your Favorite Tools',
+    title: 'Arefan Skills Hub Integrations — Connect Your Favorite Tools',
     description: 'Powerful integrations for live classes, payments, email marketing, SMS notifications, and custom API development.',
   },
 }
@@ -28,7 +28,7 @@ export default function IntegrationsPage() {
               Connect with your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Favorite Tools</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              Extend FnSkills with powerful third-party integrations to automate your workflow and enhance the learning experience.
+              Extend Arefan Skills Hub with powerful third-party integrations to automate your workflow and enhance the learning experience.
             </p>
           </div>
         </section>

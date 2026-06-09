@@ -57,7 +57,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { mockUsers, mockTenants } from '@/lib/mock-data'
 
-const USERS_STORAGE_KEY = 'fnskills:super-admin:users'
+const USERS_STORAGE_KEY = 'arefan-skills-hub:super-admin:users'
 
 type AccessLevel = 'system_admin' | 'tenant_admin' | 'tenant_instructor' | 'tenant_student'
 type UsersTab = 'all' | AccessLevel | 'suspended'
