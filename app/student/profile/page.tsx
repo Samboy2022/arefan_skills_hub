@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, GraduationCap, Calendar, Edit, AlertTriangle, Phone, User, BookOpen } from "lucide-react";
+import { Mail, GraduationCap, Calendar, Edit, AlertTriangle, Phone, User, BookOpen, ClipboardList } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { STUDENT_COURSES, STUDENT_GRADES } from "@/lib/student-mock-data";
 import Link from "next/link";
 import { useMemo } from "react";
+import { listCardClass, pageStackClass, statGridClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
+import { StudentKPICard } from "@/components/student/kpi-card";
 
 export default function ProfilePage() {
   const avgGpa = useMemo(() => {
@@ -23,12 +25,17 @@ export default function ProfilePage() {
     STUDENT_COURSES.reduce((sum, c) => sum + c.credits, 0),
   []);
 
+  const pendingWork = useMemo(() =>
+    STUDENT_COURSES.reduce((sum, c) => sum + c.due_assignments, 0),
+  []);
+
   return (
-    <div className="space-y-6">
+    <div className={pageStackClass}>
       <Breadcrumb items={[{ label: "Profile" }]} className="mb-2" />
 
       {/* Security Warning */}
-      <div className="flex items-start gap-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-4 py-3">
+      <div role="alert" className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-950/30 sm:flex-row sm:items-center">
+        <div className="flex flex-1 min-w-0 items-start gap-3">
         <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-amber-800 dark:text-amber-400">Default password detected</p>
@@ -36,26 +43,27 @@ export default function ProfilePage() {
             Please update your password immediately to secure your account.
           </p>
         </div>
-        <Button variant="outline" size="sm" asChild className="shrink-0 text-xs border-amber-300 hover:bg-amber-100 dark:border-amber-700 dark:hover:bg-amber-900/40">
-          <Link href="/student/profile/edit">Change Password</Link>
+        </div>
+        <Button variant="outline" size="sm" asChild className="shrink-0 self-start border-amber-300 bg-transparent text-xs hover:bg-amber-100 dark:border-amber-700 dark:hover:bg-amber-900/40 sm:self-auto">
+          <Link href="/student/profile/edit#password">Change Password</Link>
         </Button>
       </div>
 
       {/* Hero Card */}
-      <Card className="border-border overflow-hidden">
+      <Card className="gap-0 py-0 rounded-2xl border-border shadow-none overflow-hidden">
         {/* Banner */}
         <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent" />
 
         <div className="px-6 pb-6 -mt-10 flex flex-col sm:flex-row sm:items-end gap-4">
           <Avatar className="h-20 w-20 border-4 border-background ring-2 ring-border shrink-0">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
+            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="John Doe" />
             <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">JD</AvatarFallback>
           </Avatar>
 
           <div className="flex-1 space-y-1 sm:mb-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl font-bold text-foreground">John Doe</h1>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary ring-1 ring-inset ring-primary/20">
                 Verified Student
               </span>
             </div>
@@ -75,40 +83,20 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <Button asChild size="sm" className="self-start sm:self-auto shrink-0">
+          <Button asChild size="sm" className="shrink-0 gap-1.5 self-start sm:self-auto">
             <Link href="/student/profile/edit">
-              <Edit className="h-3.5 w-3.5 mr-1.5" />
+              <Edit className="h-3.5 w-3.5" />
               Edit Profile
             </Link>
           </Button>
         </div>
       </Card>
 
-      {/* ── Prominent summary bar ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/certificate.png" alt="GPA" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">GPA</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{avgGpa}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center sm:border-l sm:border-r border-border px-6">
-          <img src="https://img.icons8.com/scribby/96/star.png" alt="Enrolled Credits" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Enrolled Credits</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{totalCredits}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/book.png" alt="Active Courses" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Active Courses</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{STUDENT_COURSES.length}</p>
-          </div>
-        </div>
+      <div className={statGridClass}>
+        <StudentKPICard title="GPA" value={avgGpa} icon={GraduationCap} variant="purple" />
+        <StudentKPICard title="Enrolled Credits" value={totalCredits} icon={BookOpen} />
+        <StudentKPICard title="Active Courses" value={STUDENT_COURSES.length} icon={User} />
+        <StudentKPICard title="Pending Work" value={pendingWork} icon={ClipboardList} variant="warning" />
       </div>
 
       {/* Main Content */}
@@ -116,10 +104,10 @@ export default function ProfilePage() {
 
         {/* Academic Performance Table */}
         <div className="lg:col-span-2">
-          <Card className="border-border overflow-hidden">
+          <Card className={listCardClass}>
             <div className="px-5 py-4 border-b border-border flex items-center justify-between">
               <h2 className="font-semibold text-foreground">Academic Performance</h2>
-              <Link href="/student/grades" className="text-xs font-semibold text-primary hover:underline">
+              <Link href="/student/grades" className="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/10">
                 View Grades
               </Link>
             </div>
@@ -130,12 +118,12 @@ export default function ProfilePage() {
                 <Link
                   key={course.id}
                   href={`/student/courses/${course.id}`}
-                  className="block px-4 py-3.5 hover:bg-muted/20 transition-colors"
+                  className="block px-4 py-3.5 hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex items-center justify-between gap-3 mb-2">
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm text-foreground line-clamp-1">{course.name}</p>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-md">
                         {course.code}
                       </span>
                     </div>
@@ -159,18 +147,18 @@ export default function ProfilePage() {
 
             {/* Desktop table layout */}
             <Table className="w-full table-fixed hidden lg:table">
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="w-[38%] pl-5">Course</TableHead>
-                  <TableHead className="w-[12%]">Code</TableHead>
-                  <TableHead className="w-[30%]">Progress</TableHead>
-                  <TableHead className="w-[10%] text-center">Grade</TableHead>
-                  <TableHead className="w-[10%] text-right pr-5">GPA</TableHead>
+              <TableHeader>
+                <TableRow className={tableHeadRowClass}>
+                  <TableHead className={cn(tableHeadClass, "w-[38%] pl-5")}>Course</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[12%]")}>Code</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[30%]")}>Progress</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[10%] text-center")}>Grade</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[10%] text-right pr-5")}>GPA</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {STUDENT_COURSES.map(course => (
-                  <TableRow key={course.id} className="hover:bg-muted/20">
+                  <TableRow key={course.id} className="hover:bg-muted/30">
                     <TableCell className="font-medium pl-5 py-3.5">
                       <Link
                         href={`/student/courses/${course.id}`}
@@ -180,7 +168,7 @@ export default function ProfilePage() {
                       </Link>
                     </TableCell>
                     <TableCell className="py-3.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-md">
                         {course.code}
                       </span>
                     </TableCell>
@@ -214,7 +202,7 @@ export default function ProfilePage() {
         <div className="space-y-4">
 
           {/* Personal Info */}
-          <Card className="border-border p-5">
+          <Card className="gap-0 p-5 rounded-2xl border-border shadow-none">
             <h3 className="font-semibold text-foreground mb-4 text-sm">Personal Information</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
@@ -249,8 +237,8 @@ export default function ProfilePage() {
           </Card>
 
           {/* Institution Info */}
-          <Card className="border-border p-5 relative overflow-hidden">
-            <img src="https://img.icons8.com/color/96/university.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-10 pointer-events-none" alt="" />
+          <Card className="gap-0 p-5 rounded-2xl border-border shadow-none relative overflow-hidden">
+            <img src="https://img.icons8.com/color/96/university.png" className="absolute right-3 top-3 h-10 w-10 opacity-20 pointer-events-none" alt="" aria-hidden="true" />
             <h3 className="font-semibold text-foreground mb-4 text-sm relative z-10">Institution</h3>
             <div className="space-y-3 relative z-10">
               <div>

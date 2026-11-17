@@ -4,18 +4,16 @@ import {
   CheckCircle,
   Clock,
   ArrowRight,
-  Filter,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { PageHeader } from "@/components/student/page-header";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { PageHeader } from "@/components/student/page-header";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import Link from "next/link";
-import { STUDENT_COURSES } from "@/lib/student-mock-data";
+import { pageStackClass } from "@/lib/student-ui";
 
 export default async function GroupCoursePage({ params }: { params: Promise<{ groupId: string }> }) {
-  const resolvedParams = await params;
-  const groupId = resolvedParams.groupId;
+  await params;
 
   // Demo data for the "Full-Stack Web Development Mastery" group
   const groupInfo = {
@@ -24,7 +22,7 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
     description: "A comprehensive learning path covering modern web technologies from frontend to backend. This path is designed to take you from a beginner to a production-ready software engineer.",
     credits: 12,
     progress: 45,
-    instructor: "Arefan Skills Hub Engineering School",
+    instructor: "Fnskills Engineering School",
     totalCourses: 4,
     enrolledAt: "January 2024",
     courses: [
@@ -57,7 +55,7 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
       },
       {
         id: "system-design",
-        name: "Scalable Systems & Infrastructure Desing",
+        name: "Scalable Systems & Infrastructure Design",
         code: "SYS401",
         progress: 0,
         status: "enrolled",
@@ -68,36 +66,35 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
   };
 
   return (
-    <div className="font-sans">
+    <div className={pageStackClass}>
       <Breadcrumb 
         items={[
           { label: "My Courses", href: "/student/courses" },
           { label: groupInfo.title }
         ]}
-        className="mb-6"
+      />
+
+      <PageHeader
+        title={groupInfo.title}
+        description={groupInfo.description}
       />
       
-      <div className="bg-primary/5 border border-primary/20 rounded-xl p-8 mb-8">
+      <div className="rounded-2xl border border-border bg-card p-5 md:p-8">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex-1">
              <div className="flex items-center gap-3 mb-4">
                  <div className="p-3 bg-primary/10 rounded-lg text-primary">
                     <LayoutGrid className="h-8 w-8" />
                  </div>
-                 <span className="text-xs font-black uppercase tracking-[0.2em] text-primary">Professional Path</span>
+                 <span className="text-xs font-bold uppercase tracking-widest text-primary">Professional Path</span>
              </div>
-             <h1 className="text-3xl font-black text-foreground mb-4">{groupInfo.title}</h1>
-             <p className="text-muted-foreground leading-relaxed max-w-2xl mb-6">
-               {groupInfo.description}
-             </p>
-
              <div className="flex flex-wrap gap-6 items-center">
                 <div className="flex items-center gap-2">
                    <BookOpen className="h-4 w-4 text-primary" />
                    <span className="text-sm font-semibold">{groupInfo.totalCourses} Featured Courses</span>
                 </div>
                 <div className="flex items-center gap-2">
-                   <CheckCircle className="h-4 w-4 text-emerald-600" />
+                   <CheckCircle className="h-4 w-4 text-primary" />
                    <span className="text-sm font-semibold">{groupInfo.credits} Credits Path</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
@@ -107,7 +104,7 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
              </div>
           </div>
           
-          <div className="md:w-64 flex flex-col items-center justify-center p-6 bg-background rounded-xl border border-primary/10">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-muted/30 p-6 md:w-64">
              <CircularProgress
                 value={groupInfo.progress}
                 size={120}
@@ -121,14 +118,9 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-black uppercase font-sans tracking-widest text-foreground pb-4 border-b-2 border-primary inline-block">
-             Courses in this Path
-          </h2>
-          <div className="flex items-center gap-2 text-muted-foreground text-sm font-semibold">
-             <Filter className="h-4 w-4" />
-             <span>Filter By Status</span>
-          </div>
+      <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold text-foreground">Courses in this path</h2>
+          <p className="text-sm text-muted-foreground">{groupInfo.courses.length} courses</p>
       </div>
 
       <div className="space-y-4">
@@ -136,13 +128,13 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
            <Link
              href={`/student/courses/${course.id}`}
              key={course.id}
-             className="block group"
+             className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
            >
-              <Card className="p-0 border border-border group-hover:border-primary/50 transition-all overflow-hidden flex flex-col md:flex-row items-stretch">
+              <Card className="flex flex-col items-stretch gap-0 overflow-hidden rounded-2xl border border-border p-0 shadow-none transition-colors group-hover:border-primary/40 md:flex-row">
                  <div className="w-1.5 bg-muted group-hover:bg-primary transition-colors shrink-0" />
                  
-                 <div className="p-6 md:w-32 bg-muted/20 flex flex-col items-center justify-center border-r border-border shrink-0">
-                    <span className="text-xs font-black text-muted-foreground mb-1">{course.code}</span>
+                 <div className="px-6 py-4 md:py-6 md:w-32 bg-muted/30 flex flex-row md:flex-col items-center justify-center gap-2 md:gap-0 border-b md:border-b-0 md:border-r border-border shrink-0">
+                    <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary ring-1 ring-inset ring-primary/15 md:mb-1.5">{course.code}</span>
                     <span className="text-[10px] font-bold text-muted-foreground/60 uppercase">{course.credits} Credits</span>
                  </div>
 
@@ -150,38 +142,38 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
                     <div className="flex-1 min-w-0 text-center md:text-left">
                        <h3 className="text-lg font-bold group-hover:text-primary transition-colors mb-2">{course.name}</h3>
                        <div className="flex items-center gap-4 justify-center md:justify-start">
-                          <span className="text-xs font-medium text-muted-foreground">Arefan Skills Hub Certified</span>
+                          <span className="text-xs font-medium text-muted-foreground">Fnskills Certified</span>
                           {course.due_assignments > 0 && (
-                             <span className="text-[10px] font-bold text-amber-600 bg-amber-100/50 px-2 py-0.5 rounded flex items-center gap-1">
+                             <span className="text-[11px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 ring-1 ring-inset ring-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
-                                {course.due_assignments} PENDING
+                                {course.due_assignments} pending
                              </span>
                           )}
                        </div>
                     </div>
 
-                    <div className="w-48 shrink-0 space-y-2">
+                    <div className="w-full md:w-48 shrink-0 space-y-2">
                        <div className="flex items-center justify-between text-xs mb-1">
                           <span className="font-semibold text-muted-foreground">Course Coverage</span>
                           <span className="font-bold text-foreground">{course.progress}%</span>
                        </div>
-                       <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                       <div className="h-1.5 w-full bg-primary/15 rounded-full overflow-hidden">
                           <div 
-                             className="h-full bg-primary" 
+                             className="h-full rounded-full bg-primary" 
                              style={{ width: `${course.progress}%` }} 
                           />
                        </div>
                     </div>
 
-                    <div className="shrink-0 flex flex-col items-center gap-2">
+                    <div className="shrink-0 flex w-full md:w-44 justify-center md:justify-end">
                        {course.status === "active" ? (
-                          <div className="flex items-center gap-2 text-primary font-bold text-sm group-hover:translate-x-1 transition-transform">
-                             Resume Course <ArrowRight className="h-4 w-4" />
-                          </div>
+                          <span className="inline-flex h-8 items-center gap-2 whitespace-nowrap bg-primary px-3 text-xs font-medium text-primary-foreground">
+                             Resume <ArrowRight className="h-3.5 w-3.5" />
+                          </span>
                        ) : (
-                          <div className="text-muted-foreground font-semibold text-sm">
-                             Enroll to Start
-                          </div>
+                          <span className="inline-flex h-8 items-center whitespace-nowrap border border-border bg-card px-3 text-xs font-medium text-foreground">
+                             View course
+                          </span>
                        )}
                     </div>
                  </div>

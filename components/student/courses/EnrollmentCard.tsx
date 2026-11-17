@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Share2Icon, Loader2, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,6 +24,22 @@ interface EnrollmentCardProps {
 export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Share sheet dismissed or clipboard unavailable — nothing to do
+    }
+  };
   
   const handleEnroll = () => {
     setIsLoading(true);
@@ -37,16 +54,16 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
   };
   
   return (
-    <Card className="shadow-none border border-border rounded-md overflow-hidden bg-card">
+    <Card className="gap-0 overflow-hidden rounded-2xl border border-border bg-card py-0 shadow-none">
       <CardContent className="p-6">
         
         {/* Action Button */}
         {isEnrolled ? (
-          <div className="space-y-6">
+          <div className="space-y-5">
             <h3 className="text-lg font-semibold text-foreground">Ready to resume?</h3>
             <Button 
               onClick={handleContinue}
-              className="w-full shadow-none hover:bg-primary/90 text-primary-foreground font-semibold transition-colors flex items-center justify-center gap-2"
+              className="flex w-full items-center justify-center gap-2 font-semibold"
               size="lg"
             >
               Continue Learning
@@ -54,8 +71,8 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
             </Button>
             
             {/* Progress */}
-            <div className="bg-muted/40 rounded-xl p-4 flex items-center gap-4 border border-transparent">
-              <div className="flex items-center justify-center rounded-full bg-card shadow-sm shrink-0 w-[64px] h-[64px]">
+            <div className="flex items-center gap-4 rounded-lg border border-border bg-muted/40 p-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-card">
                  <CircularProgress 
                    value={course.user_progress || 0} 
                    size={52} 
@@ -66,7 +83,7 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
               </div>
               <div className="min-w-0">
                 <span className="text-foreground font-semibold block mb-0.5 text-sm">Course Progress</span>
-                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{course.user_progress || 0}% completed</span>
+                <span className="text-xs text-muted-foreground font-medium">{course.user_progress || 0}% completed</span>
               </div>
             </div>
           </div>
@@ -76,7 +93,7 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
             <Button 
               onClick={handleEnroll}
               disabled={isLoading}
-              className="w-full shadow-none hover:bg-primary/90 text-primary-foreground font-semibold transition-colors"
+              className="w-full font-semibold"
               size="lg"
             >
               {isLoading ? (
@@ -92,10 +109,16 @@ export function EnrollmentCard({ course, isEnrolled }: EnrollmentCardProps) {
         )}
         
         {/* Share */}
-        <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
-          <p className="text-sm font-medium text-foreground">Share this course</p>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground">
-            <Share2Icon className="w-4 h-4" />
+        <div className="mt-6 pt-5 border-t border-border flex items-center justify-between">
+          <p className="text-sm font-medium text-foreground">{copied ? 'Link copied' : 'Share this course'}</p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShare}
+            aria-label="Share this course"
+            className="h-8 w-8 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            {copied ? <Check className="w-4 h-4 text-primary" /> : <Share2Icon className="w-4 h-4" />}
           </Button>
         </div>
       </CardContent>

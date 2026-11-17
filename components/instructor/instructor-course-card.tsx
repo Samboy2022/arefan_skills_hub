@@ -60,7 +60,7 @@ export function InstructorCourseCard({
   if (variant === "archived") {
     return (
       <div className="h-full">
-        <Card className="h-full bg-card group flex flex-col overflow-hidden border border-border/80 relative rounded-xl opacity-80 hover:opacity-100 transition-all duration-300 hover:border-primary/40 hover:shadow-lg">
+        <Card className="h-full bg-card group flex flex-col overflow-hidden border border-border/80 relative rounded-none opacity-80 hover:opacity-100 transition-all duration-300 hover:border-primary/40 hover:shadow-lg">
           {/* Thumbnail Header area */}
           <div className="relative aspect-[16/9] w-full bg-muted overflow-hidden">
             <div className="absolute inset-0 grayscale transition-all duration-500 group-hover:grayscale-0">
@@ -157,7 +157,7 @@ export function InstructorCourseCard({
 
   return (
     <div className="h-full">
-      <Card className="group h-full bg-card hover:border-primary/40 hover:shadow-lg rounded-xl flex flex-col overflow-hidden border border-border/80 relative transition-all duration-300 hover:translate-y-[-4px]">
+      <Card className="group h-full bg-card hover:border-primary/40 hover:shadow-lg rounded-none flex flex-col overflow-hidden border border-border/80 relative transition-all duration-300 hover:translate-y-[-4px]">
         {/* Thumbnail Header area */}
         <div className="relative aspect-[16/9] w-full bg-muted overflow-hidden z-0">
           <Link href={viewHref} className="absolute inset-0 z-[1] block">

@@ -1,17 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import {
-  CheckCircle,
-  AlertCircle,
-  PlayCircle,
-  FileText,
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { AlertCircle, BookOpen, CheckCircle, FileText, PlayCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/ui/circular-progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { rowActionClass } from "@/lib/student-ui";
 import type { StudentCourse } from "@/lib/student-types";
 
 interface StudentCourseListItemProps {
@@ -19,131 +12,89 @@ interface StudentCourseListItemProps {
   variant?: "active" | "completed";
 }
 
-export function StudentCourseListItem({
-  course,
-  variant = "active",
-}: StudentCourseListItemProps) {
+const codeBadge =
+  "inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary ring-1 ring-inset ring-primary/15";
+
+export function StudentCourseListItem({ course, variant = "active" }: StudentCourseListItemProps) {
   const href = `/student/courses/${course.id}`;
+  const isCompleted = variant === "completed";
 
   return (
-    <Card className={`relative flex flex-col md:flex-row overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all duration-300 hover:border-primary/50 hover:shadow-md group ${variant === 'completed' ? 'opacity-90' : ''}`}>
-      
-      {/* Left: Thumbnail & Code wrapper */}
-      <div className="relative shrink-0 border-b md:border-b-0 md:border-r border-border w-full md:w-56 lg:w-64">
-        <div className="relative w-full h-32 md:h-full min-h-[120px] bg-muted overflow-hidden">
-          <Link href={href} className="absolute inset-0 z-[1] block">
-            <span className="sr-only">View {course.name}</span>
-          </Link>
-          <Image
-            src={course.thumbnail}
-            alt={course.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+    <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary/40 sm:flex-row sm:items-center">
+      <div className="flex min-w-0 flex-1 items-center gap-4">
+        {isCompleted ? (
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <CheckCircle className="h-5 w-5" />
+          </div>
+        ) : (
+          <CircularProgress
+            value={course.progress}
+            size={44}
+            strokeWidth={3}
+            className="shrink-0"
+            labelClassName="text-[10px] font-semibold"
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-          
-          <div className="absolute left-3 top-3 z-[2]">
-            <span className="rounded bg-black/60 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white border border-white/10 shadow-sm">
-              {course.code}
-            </span>
+        )}
+        <div className="min-w-0">
+          <div className="mb-1 flex flex-wrap items-center gap-2">
+            <span className={codeBadge}>{course.code}</span>
+            <span className="text-xs text-muted-foreground">{course.credits} credits</span>
+            {isCompleted && (
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary ring-1 ring-inset ring-primary/20">
+                Completed
+              </span>
+            )}
+          </div>
+          <Link href={href} className="line-clamp-1 font-semibold text-foreground transition-colors hover:text-primary">
+            {course.name}
+          </Link>
+          <p className="mt-0.5 truncate text-xs text-muted-foreground">{course.instructor}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
+            {isCompleted ? (
+              <span className="inline-flex items-center gap-1.5 font-medium text-primary">
+                <CheckCircle className="h-3.5 w-3.5" />
+                Final grade {course.grade}
+              </span>
+            ) : course.due_assignments > 0 ? (
+              <span className="inline-flex items-center gap-1.5 font-medium text-amber-700 dark:text-amber-400">
+                <AlertCircle className="h-3.5 w-3.5" />
+                {course.due_assignments} pending
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 font-medium text-emerald-700 dark:text-emerald-400">
+                <CheckCircle className="h-3.5 w-3.5" />
+                Up to date
+              </span>
+            )}
           </div>
         </div>
-
-        {/* Floating Progress Circle safe from overflow */}
-        <div className="absolute -bottom-4 right-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:-right-[22px] z-[5] shrink-0">
-           <div className="flex items-center justify-center rounded-full border border-border/50 bg-card shadow-md w-[44px] h-[44px] transition-transform group-hover:scale-105 duration-300">
-             {variant === "completed" ? (
-               <div className="w-[36px] h-[36px] rounded-full flex items-center justify-center border-[3px] border-emerald-500/20 text-emerald-500 bg-emerald-500/10">
-                 <CheckCircle className="w-5 h-5" />
-               </div>
-             ) : (
-               <CircularProgress
-                  value={course.progress}
-                  size={36}
-                  strokeWidth={4}
-                  className="shrink-0"
-                  labelClassName="text-[10px] font-bold text-foreground"
-                />
-             )}
-           </div>
-        </div>
       </div>
 
-      {/* Center: Metadata */}
-      <div className="flex flex-1 flex-col justify-center p-4 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            {course.credits} Credits
-          </span>
-          {variant === "completed" && (
-            <span className="text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground uppercase font-bold tracking-wider">Completed</span>
-          )}
-        </div>
-        
-        <Link href={href}>
-          <h4 className="line-clamp-1 mb-2 text-base md:text-lg font-bold leading-snug text-foreground transition-colors hover:text-primary">
-            {course.name}
-          </h4>
-        </Link>
-
-        <div className="flex items-center gap-2 mb-2">
-            <Avatar className="h-5 w-5 border border-border shadow-none">
-              <AvatarImage src={course.instructor_avatar} />
-              <AvatarFallback className="text-[8px] bg-primary/10 text-primary font-bold">
-                {course.instructor.split(" ").map((n) => n[0]).join("")}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-xs text-muted-foreground block truncate">{course.instructor}</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-auto">
-          {variant === "completed" ? (
-             <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
-                <CheckCircle className="h-3.5 w-3.5 shrink-0" />
-                <span>Final Grade: {course.grade}</span>
-             </div>
-          ) : (
-            course.due_assignments > 0 ? (
-              <div className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-500">
-                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                <span>{course.due_assignments} pending task{course.due_assignments !== 1 ? 's' : ''}</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 text-xs font-medium text-primary">
-                <CheckCircle className="h-3.5 w-3.5 shrink-0" />
-                <span>Up to date</span>
-              </div>
-            )
-          )}
-        </div>
-      </div>
-
-      {/* Right: Actions */}
-      <div className="flex items-center gap-2 p-4 md:border-l border-border bg-muted/10 md:bg-transparent">
-        {variant === "completed" ? (
-            <Button size="sm" variant="outline" className="w-full md:w-auto gap-1.5 shadow-none hover:bg-muted" asChild>
+      <div className="flex shrink-0 items-center gap-2 sm:flex-col sm:items-stretch">
+        {isCompleted ? (
+          <Button size="sm" variant="outline" className={rowActionClass} asChild>
+            <Link href={href}>
+              <FileText className="h-3.5 w-3.5" />
+              Details
+            </Link>
+          </Button>
+        ) : (
+          <>
+            <Button size="sm" className={rowActionClass} asChild>
               <Link href={href}>
-                <FileText className="h-3.5 w-3.5" />
-                Details
+                <PlayCircle className="h-3.5 w-3.5" />
+                Resume
               </Link>
             </Button>
-        ) : (
-            <div className="flex w-full md:w-[120px] flex-col gap-2 justify-center">
-                <Button size="sm" variant="default" className="w-full gap-1.5 shadow-none hover:bg-primary/90 font-semibold" asChild>
-                  <Link href={href}>
-                    <PlayCircle className="h-4 w-4" />
-                    Resume
-                  </Link>
-                </Button>
-                <Button size="sm" variant="outline" className="w-full gap-1.5 shadow-none hover:bg-muted font-medium text-muted-foreground" asChild>
-                  <Link href={`${href}#syllabus`}>
-                    <FileText className="h-3.5 w-3.5" />
-                    Syllabus
-                  </Link>
-                </Button>
-            </div>
+            <Button size="sm" variant="outline" className={rowActionClass} asChild>
+              <Link href={`${href}#syllabus`}>
+                <BookOpen className="h-3.5 w-3.5" />
+                Syllabus
+              </Link>
+            </Button>
+          </>
         )}
       </div>
-    </Card>
+    </div>
   );
 }

@@ -572,6 +572,7 @@ export function NotesModal({ isOpen, onClose, lessonId, lessonTitle }: NotesModa
           <div className="space-y-4">
             <Input
               placeholder="Enter image URL..."
+              className="rounded-full px-4"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addImageFromUrl()}
@@ -597,11 +598,13 @@ export function NotesModal({ isOpen, onClose, lessonId, lessonTitle }: NotesModa
           <div className="space-y-4">
             <Input
               placeholder="Enter URL..."
+              className="rounded-full px-4"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
             />
             <Input
               placeholder="Link text (optional)"
+              className="rounded-full px-4"
               value={linkText}
               onChange={(e) => setLinkText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addLink()}

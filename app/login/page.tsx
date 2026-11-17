@@ -1,9 +1,10 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
-import { ShieldAlert, Building2, Users2, BookOpen, ArrowRight } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ShieldAlert, Building2, Users2, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { IconBox, cardClasses, containerClasses } from '@/components/marketing';
+import { cn } from '@/lib/utils';
 
 const ROLES = [
   {
@@ -11,7 +12,6 @@ const ROLES = [
     label: 'Super Admin',
     description: 'Manage platform, schools, and system settings',
     icon: ShieldAlert,
-    color: 'bg-primary text-primary-foreground',
     path: '/login/super-admin',
   },
   {
@@ -19,7 +19,6 @@ const ROLES = [
     label: 'School Admin',
     description: 'Manage school operations and academic functions',
     icon: Building2,
-    color: 'bg-primary text-primary-foreground',
     path: '/login/school-admin',
   },
   {
@@ -27,7 +26,6 @@ const ROLES = [
     label: 'Instructor',
     description: 'Create courses, assignments, and manage students',
     icon: Users2,
-    color: 'bg-primary text-primary-foreground',
     path: '/login/instructor',
   },
   {
@@ -35,76 +33,73 @@ const ROLES = [
     label: 'Student',
     description: 'Access courses, submit assignments, and track grades',
     icon: BookOpen,
-    color: 'bg-primary text-primary-foreground',
     path: '/login/student',
   },
 ];
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const handleRoleSelect = (path: string) => {
-    router.push(path);
-  };
-
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl">
+    <div className="relative isolate flex min-h-screen flex-col bg-background text-foreground">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[radial-gradient(60%_45%_at_50%_0%,color-mix(in_oklch,var(--primary)_16%,transparent),transparent)]"
+      />
+
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+        <ThemeToggle />
+      </div>
+
+      <main className={cn(containerClasses, 'flex flex-1 flex-col justify-center py-16 md:py-24')}>
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex flex-col items-center justify-center gap-3 mb-6">
-            <img src="/arefanskillshub3.png" alt="Arefan Skills Hub Logo" className="h-16 w-auto dark:hidden" />
-            <img src="/arefanskillshub2_black.png" alt="Arefan Skills Hub Logo" className="h-16 w-auto hidden dark:block" />
-          </div>
-          <h2 className="text-4xl font-bold text-foreground mb-3">Choose Your Role</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Select your role to access the appropriate portal for managing your educational journey
+        <div className="mx-auto mb-12 max-w-2xl text-center md:mb-16">
+          <Link
+            href="/"
+            className="mb-8 inline-flex rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            <Image src="/fnskillslogo11W.png" alt="Fnskills home" width={220} height={100} className="h-14 w-auto dark:hidden" priority />
+            <Image src="/fnskillslogo2.png" alt="Fnskills home" width={889} height={304} className="hidden h-14 w-auto dark:block" priority />
+          </Link>
+          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-primary">Log in</p>
+          <h1 className="text-3xl font-bold tracking-tight text-balance md:text-4xl">Choose Your Role</h1>
+          <p className="mt-4 text-lg leading-relaxed text-muted-foreground text-pretty">
+            Select your role to access the right portal for your learning journey.
           </p>
         </div>
 
         {/* Role Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {ROLES.map((role) => {
-            const Icon = role.icon;
-            return (
-              <Card
-                key={role.id}
-                className="bg-card border-border hover:border-primary transition-all duration-300 overflow-hidden cursor-pointer group"
-                onClick={() => handleRoleSelect(role.path)}
-              >
-                {/* Header pattern */}
-                <div className={`h-24 ${role.color} relative overflow-hidden opacity-20`}>
-                </div>
+        <ul className="mx-auto grid w-full max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {ROLES.map((role) => (
+            <li key={role.id} className={cn(cardClasses, 'flex flex-col text-center')}>
+              <IconBox icon={role.icon} className="mx-auto mb-5" />
+              <h2 className="mb-2 text-lg font-semibold tracking-tight">{role.label}</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">{role.description}</p>
 
-                {/* Content */}
-                <div className="p-6 relative">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 -mt-14 bg-card border-4 border-background rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-foreground mb-2">{role.label}</h3>
-                  <p className="text-sm text-muted-foreground mb-6">{role.description}</p>
-
-                  <Button
-                    className={`w-full ${role.color} hover:opacity-90 font-semibold py-2 rounded-lg flex items-center justify-center gap-2 group-hover:gap-3 transition-all`}
+              <div className="mt-auto pt-6">
+                <Button asChild size="xl" className="w-full shadow-none">
+                  {/* The stretched link makes the whole card clickable */}
+                  <Link
+                    href={role.path}
+                    aria-label={`Continue as ${role.label}`}
+                    className="after:absolute after:inset-0 after:rounded-none"
                   >
-                    Continue <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                    Continue
+                  </Link>
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
 
         {/* Footer Info */}
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            Need help? <a href="#" className="text-primary hover:underline">Contact support</a> or <a href="#" className="text-primary hover:underline">view documentation</a>
-          </p>
-        </div>
-      </div>
+        <p className="mt-12 text-center text-sm text-muted-foreground">
+          Registering a school?{' '}
+          <Link href="/register" className="font-medium text-primary hover:underline">Request a subdomain</Link>
+          {' '}· Need help?{' '}
+          <Link href="/help-center" className="font-medium text-primary hover:underline">Contact support</Link>
+          {' '}or{' '}
+          <Link href="/documentation" className="font-medium text-primary hover:underline">view documentation</Link>
+        </p>
+      </main>
     </div>
   );
 }

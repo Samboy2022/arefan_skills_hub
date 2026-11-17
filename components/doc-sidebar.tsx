@@ -12,8 +12,8 @@ export function DocSidebar() {
   const [instructorOpen, setInstructorOpen] = useState(pathname.includes('/documentation/instructor'))
 
   return (
-    <div className="sticky top-24">
-      <h3 className="font-bold text-lg mb-4">Contents</h3>
+    <div>
+      <h3 className="mb-3 px-3 text-xs font-semibold uppercase tracking-widest text-primary">Contents</h3>
       <nav className="space-y-1">
 
         {/* Overview */}

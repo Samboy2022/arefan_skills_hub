@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { StudentCourse } from "@/lib/student-types";
+import { cn } from "@/lib/utils";
+import { rowActionClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
 
 interface StudentCourseDataTableProps {
   courses: StudentCourse[];
@@ -30,23 +32,23 @@ export function StudentCourseDataTable({
   if (courses.length === 0) return null;
 
   return (
-    <div className="rounded-md border border-border bg-card overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead className="w-[100px]">Code</TableHead>
-              <TableHead className="min-w-[200px]">Course</TableHead>
-              <TableHead>Instructor</TableHead>
+          <TableHeader>
+            <TableRow className={tableHeadRowClass}>
+              <TableHead className={cn(tableHeadClass, "w-[100px]")}>Code</TableHead>
+              <TableHead className={cn(tableHeadClass, "min-w-[200px]")}>Course</TableHead>
+              <TableHead className={tableHeadClass}>Instructor</TableHead>
               {variant === "active" ? (
                 <>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Tasks</TableHead>
+                  <TableHead className={tableHeadClass}>Progress</TableHead>
+                  <TableHead className={tableHeadClass}>Tasks</TableHead>
                 </>
               ) : (
-                <TableHead>Final Grade</TableHead>
+                <TableHead className={tableHeadClass}>Final Grade</TableHead>
               )}
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-right")}>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -56,7 +58,7 @@ export function StudentCourseDataTable({
               return (
                 <TableRow key={course.id} className={variant === 'completed' ? 'opacity-80' : ''}>
                   <TableCell className="font-medium">
-                    <span className="rounded bg-muted px-2 py-1 text-xs font-bold uppercase tracking-wide">
+                    <span className="rounded-md bg-primary/10 text-primary ring-1 ring-inset ring-primary/15 px-2 py-0.5 text-xs font-bold uppercase tracking-wide">
                       {course.code}
                     </span>
                   </TableCell>
@@ -69,7 +71,7 @@ export function StudentCourseDataTable({
                   <TableCell>
                     <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6 border border-border shadow-none">
-                            <AvatarImage src={course.instructor_avatar} />
+                            <AvatarImage src={course.instructor_avatar} alt="" />
                             <AvatarFallback className="text-[10px] bg-primary/10 text-primary font-bold">
                                 {course.instructor.split(" ").map((n) => n[0]).join("")}
                             </AvatarFallback>
@@ -80,25 +82,25 @@ export function StudentCourseDataTable({
                   {variant === "active" ? (
                     <>
                         <TableCell>
-                            <div className="flex flex-col gap-1 w-24">
-                              <span className="text-xs font-medium text-right">
-                                {course.progress}%
-                              </span>
-                              <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                            <div className="flex items-center gap-2.5 w-32">
+                              <div className="h-1.5 flex-1 bg-primary/15 rounded-full overflow-hidden">
                                 <div 
                                   className="h-full rounded-full bg-primary" 
                                   style={{ width: `${course.progress}%` }}
                                 />
                               </div>
+                              <span className="w-9 text-right text-xs font-semibold tabular-nums">
+                                {course.progress}%
+                              </span>
                             </div>
                         </TableCell>
                         <TableCell>
                             {course.due_assignments > 0 ? (
-                                <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-500 whitespace-nowrap">
+                                <Badge variant="outline" className="rounded-full text-amber-700 border-amber-500/20 bg-amber-500/10 dark:text-amber-400 whitespace-nowrap">
                                     {course.due_assignments} Due
                                 </Badge>
                             ) : (
-                                <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 whitespace-nowrap">
+                                <Badge variant="outline" className="rounded-full text-primary border-primary/20 bg-primary/10 whitespace-nowrap">
                                     Up to date
                                 </Badge>
                             )}
@@ -111,14 +113,14 @@ export function StudentCourseDataTable({
                   )}
                   <TableCell className="text-right">
                     {variant === "active" ? (
-                        <Button size="sm" variant="default" className="h-8 gap-1" asChild>
+                        <Button size="sm" variant="default" className={rowActionClass} asChild>
                             <Link href={href}>
                                 <PlayCircle className="h-3.5 w-3.5" />
                                 <span className="hidden sm:inline">Resume</span>
                             </Link>
                         </Button>
                     ) : (
-                        <Button size="sm" variant="outline" className="h-8 gap-1" asChild>
+                        <Button size="sm" variant="outline" className={rowActionClass} asChild>
                             <Link href={href}>
                                 <FileText className="h-3.5 w-3.5" />
                                 <span className="hidden sm:inline">Details</span>

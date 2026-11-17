@@ -33,6 +33,7 @@ export interface Lesson {
   lessonType: LessonType;
   order: number;
   published?: boolean;
+  href?: string;
 }
 
 export interface Module {

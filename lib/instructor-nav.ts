@@ -14,6 +14,7 @@ import {
   ResourcesIcon,
   SettingsIcon,
   VideoIcon,
+  ShieldIcon,
 } from "@/components/shared/colored-icons";
 
 export type InstructorNavItem = {
@@ -127,8 +128,20 @@ export const INSTRUCTOR_NAV_ITEMS: InstructorNavSection[] = [
       {
         label: "Analytics",
         href: "/instructor/analytics",
-        icon: GradesIcon, // Using GradesIcon for analytics
+        icon: GradesIcon,
         tooltip: "Student analytics and reports",
+      },
+      {
+        label: "Library",
+        href: "/instructor/library",
+        icon: ResourcesIcon,
+        tooltip: "Books for your courses",
+      },
+      {
+        label: "Plagiarism",
+        href: "/instructor/plagiarism",
+        icon: ShieldIcon,
+        tooltip: "Similarity report preview",
       },
       {
         label: "Resources",

@@ -1,254 +1,374 @@
 "use client";
 
-import { useState } from "react";
-import { CheckCircle, Clock, AlertCircle, Upload, Eye, Paperclip, BookOpen, ChevronRight, Timer } from "lucide-react";
-import { format } from "date-fns";
-import { Card } from "@/components/ui/card";
+import Link from "next/link";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { differenceInCalendarDays, format, isToday, isTomorrow, isValid } from "date-fns";
+import { ArrowRight, CheckCircle2, Circle, ClipboardCheck, ClipboardList, FilePen, Paperclip, Upload } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/student/page-header";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, pageStackClass } from "@/lib/student-ui";
 import { cn } from "@/lib/utils";
 import { STUDENT_ASSIGNMENTS, STUDENT_COURSES } from "@/lib/student-mock-data";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import Link from "next/link";
+import type { StudentAssignment } from "@/lib/student-types";
 
-type StatusFilter = "all" | "pending" | "submitted" | "graded" | "late" | "missing";
+type Tab = "all" | "upcoming" | "submitted" | "graded";
 
-const categoryLabel = (c: string) =>
-  ({ course: "Course", module: "Module", lesson: "Lesson" })[c] ?? "Assignment";
+const isOpen = (a: StudentAssignment) => a.status === "pending" || a.status === "missing";
+const isSubmitted = (a: StudentAssignment) => a.status === "submitted" || a.status === "late";
 
-const categoryColor = (c: string) =>
-  ({
-    course: "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-900/20 dark:text-violet-400",
-    module: "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-800 dark:bg-sky-900/20 dark:text-sky-400",
-    lesson: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400",
-  })[c] ?? "";
-
-const statusConfig: Record<string, { label: string; icon: React.ReactNode; cls: string }> = {
-  graded:    { label: "Graded",       icon: <CheckCircle className="h-3.5 w-3.5" />, cls: "text-emerald-700 dark:text-emerald-400" },
-  submitted: { label: "Under Review", icon: <Clock className="h-3.5 w-3.5" />,        cls: "text-blue-700 dark:text-blue-400" },
-  pending:   { label: "Pending",      icon: <AlertCircle className="h-3.5 w-3.5" />,  cls: "text-amber-700 dark:text-amber-400" },
-  late:      { label: "Late",         icon: <AlertCircle className="h-3.5 w-3.5" />,  cls: "text-orange-700 dark:text-orange-400" },
-  missing:   { label: "Missing",      icon: <AlertCircle className="h-3.5 w-3.5" />,  cls: "text-red-700 dark:text-red-400" },
+const categoryLabel: Record<StudentAssignment["category"], string> = {
+  course: "Course assignment",
+  module: "Module assignment",
+  lesson: "Lesson assignment",
 };
 
-const tabs: { key: StatusFilter; label: string }[] = [
-  { key: "all",       label: "All" },
-  { key: "pending",   label: "Pending" },
-  { key: "submitted", label: "Under Review" },
-  { key: "graded",    label: "Graded" },
-  { key: "late",      label: "Late" },
-  { key: "missing",   label: "Missing" },
-];
+const statusPill: Record<StudentAssignment["status"], { label: string; cls: string }> = {
+  pending: { label: "Not submitted", cls: "bg-muted text-muted-foreground" },
+  missing: { label: "Missing", cls: "bg-red-500/10 text-red-700 dark:text-red-400" },
+  submitted: { label: "Submitted", cls: "bg-sky-500/10 text-sky-700 dark:text-sky-400" },
+  late: { label: "Submitted late", cls: "bg-orange-500/10 text-orange-700 dark:text-orange-400" },
+  graded: { label: "Graded", cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" },
+};
+
+const actionLabel = (a: StudentAssignment) =>
+  isOpen(a) ? (a.status === "missing" ? "Submit now" : "View brief") : a.status === "graded" ? "Feedback" : "View detail";
+
+function fmtDate(iso: string | null, pattern = "MMM d, h:mm a") {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (!isValid(d)) return "—";
+  if (isToday(d)) return `Today, ${format(d, "h:mm a")}`;
+  if (isTomorrow(d)) return `Tomorrow, ${format(d, "h:mm a")}`;
+  return format(d, pattern);
+}
+
+/** Small coloured label describing how close the deadline is. */
+function dueBadge(a: StudentAssignment) {
+  const due = new Date(a.due_date);
+  if (!isValid(due)) return null;
+  if (!isOpen(a)) return { label: statusPill[a.status].label, cls: statusPill[a.status].cls };
+  const days = differenceInCalendarDays(due, new Date());
+  if (days < 0) return { label: `${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} overdue`, cls: "bg-red-500/10 text-red-700 dark:text-red-400" };
+  if (days === 0) return { label: "Due today", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400" };
+  if (days === 1) return { label: "Due tomorrow", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400" };
+  return { label: `Due in ${days} days`, cls: "bg-primary/10 text-primary" };
+}
+
+/** Secondary line under the title in the task list. */
+function metaLine(a: StudentAssignment) {
+  if (a.status === "graded") return `Graded · ${a.points_earned ?? "—"}/${a.total_points}`;
+  if (isSubmitted(a)) return `Submitted ${fmtDate(a.submission_date)}`;
+  return fmtDate(a.due_date);
+}
 
 export default function AssignmentsPage() {
-  const [filter, setFilter] = useState<StatusFilter>("all");
+  return (
+    <Suspense fallback={null}>
+      <AssignmentsContent />
+    </Suspense>
+  );
+}
 
-  const counts = tabs.reduce((acc, t) => {
-    acc[t.key] = t.key === "all"
-      ? STUDENT_ASSIGNMENTS.length
-      : STUDENT_ASSIGNMENTS.filter(a => a.status === t.key).length;
-    return acc;
-  }, {} as Record<string, number>);
+function AssignmentsContent() {
+  const searchParams = useSearchParams();
+  const session = (searchParams.get("session") ?? "2024-2025").replace("-", "/");
+  const [tab, setTab] = useState<Tab>("all");
+  const [courseId, setCourseId] = useState("all");
 
-  const filtered = STUDENT_ASSIGNMENTS
-    .filter(a => filter === "all" || a.status === filter)
-    .sort((a, b) => {
-      const order = { pending: 0, missing: 1, late: 2, submitted: 3, graded: 4 };
-      return (order[a.status as keyof typeof order] ?? 5) - (order[b.status as keyof typeof order] ?? 5);
-    });
+  const courseMap = useMemo(() => new Map(STUDENT_COURSES.map(c => [c.id, c])), []);
+
+  const byCourse = useMemo(
+    () => STUDENT_ASSIGNMENTS.filter(a => courseId === "all" || a.course_id === courseId),
+    [courseId],
+  );
+
+  const counts = {
+    all: byCourse.length,
+    upcoming: byCourse.filter(isOpen).length,
+    submitted: byCourse.filter(isSubmitted).length,
+    graded: byCourse.filter(a => a.status === "graded").length,
+  };
+
+  // Open work sorted by due date; finished work most recent first
+  const upcoming = useMemo(
+    () =>
+      byCourse
+        .filter(isOpen)
+        .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime()),
+    [byCourse],
+  );
+  const done = useMemo(
+    () =>
+      byCourse
+        .filter(a => !isOpen(a))
+        .sort((a, b) => new Date(b.submission_date ?? b.due_date).getTime() - new Date(a.submission_date ?? a.due_date).getTime()),
+    [byCourse],
+  );
+
+  const showUpcoming = tab === "all" || tab === "upcoming";
+  const doneVisible = done.filter(a => tab === "all" || (tab === "submitted" ? isSubmitted(a) : tab === "graded" ? a.status === "graded" : false));
+  const visible = [...(showUpcoming ? upcoming : []), ...doneVisible];
+
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = visible.find(a => a.id === selectedId) ?? visible[0] ?? null;
+
+  const tabs: { key: Tab; label: string }[] = [
+    { key: "all", label: "All tasks" },
+    { key: "upcoming", label: "Upcoming" },
+    { key: "submitted", label: "Submitted" },
+    { key: "graded", label: "Graded" },
+  ];
+
+  const Row = ({ a }: { a: StudentAssignment }) => {
+    const course = courseMap.get(a.course_id);
+    const pill = statusPill[a.status];
+    const active = selected?.id === a.id;
+    const Icon = isOpen(a) ? FilePen : ClipboardCheck;
+    const content = (
+      <>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Icon className="h-[18px] w-[18px]" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs text-muted-foreground">
+            {course?.code ?? "Course"}
+            <span className="hidden sm:inline"> – {course?.name ?? ""} · {categoryLabel[a.category]}</span>
+          </p>
+          <p className="line-clamp-2 text-sm font-semibold sm:truncate">{a.title}</p>
+          <p className={cn("text-xs", isOpen(a) ? "text-primary" : "text-muted-foreground")}>{metaLine(a)}</p>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold", pill.cls)}>{pill.label}</span>
+          <span className="hidden items-center gap-1 text-xs font-semibold text-primary sm:inline-flex">
+            {actionLabel(a)} <ArrowRight className="h-3 w-3" />
+          </span>
+        </div>
+      </>
+    );
+    const base = "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors";
+    return (
+      <li>
+        {/* Phones/tablets: open the assignment page */}
+        <Link prefetch={false} href={`/student/assignments/${a.id}`} className={cn(base, "hover:bg-muted/50 lg:hidden")}>
+          {content}
+        </Link>
+        {/* Desktop: show details in the side panel */}
+        <button
+          type="button"
+          onClick={() => setSelectedId(a.id)}
+          aria-pressed={active}
+          className={cn(base, "hidden lg:flex", active ? "bg-primary/5 ring-1 ring-primary/20" : "hover:bg-muted/50")}
+        >
+          {content}
+        </button>
+      </li>
+    );
+  };
 
   return (
-    <div className="space-y-5">
-      <Breadcrumb items={[{ label: "Assignments" }]} />
+    <div className={pageStackClass}>
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">My Assignments</h1>
 
-      <PageHeader
-        title="Assignments"
-        description="View and submit your course assignments"
-      />
-
-      {/* ── Prominent summary bar ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/todo-list.png" alt="Total Assigned" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Assigned</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{counts.all}</p>
+      {/* Tabs + course filter */}
+      <div className="space-y-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none]" role="tablist">
+            {tabs.map(t => (
+              <button
+                key={t.key}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.key}
+                onClick={() => setTab(t.key)}
+                className={cn(
+                  "shrink-0 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+                  tab === t.key ? "bg-primary/10 font-semibold text-primary" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t.label} · {counts[t.key]}
+              </button>
+            ))}
           </div>
+          <Select value={courseId} onValueChange={setCourseId}>
+            <SelectTrigger className="h-10 w-full bg-card sm:w-48" aria-label="Filter by course">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All courses</SelectItem>
+              {STUDENT_COURSES.map(c => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.code} – {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+          <span>
+            Academic Year {session} · {counts.upcoming} upcoming task{counts.upcoming === 1 ? "" : "s"} across your courses
+          </span>
+          <span className="font-medium">Sorted by due date ↓</span>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-5">
+        {/* Task list */}
+        <section className="min-w-0 rounded-2xl border border-border bg-card p-3 shadow-sm sm:p-4 lg:col-span-3">
+          <div className="mb-1 flex items-center justify-between px-2 pt-1">
+            <h2 className="text-lg font-semibold">Your task list</h2>
+          </div>
+
+          {visible.length === 0 ? (
+            <div className={cn(emptyStateClass, "border-0 bg-transparent")}>
+              <ClipboardList className="mb-3 h-10 w-10 text-muted-foreground/50" />
+              <h3 className={emptyTitleClass}>Nothing here</h3>
+              <p className={emptyBodyClass}>No assignments match this filter.</p>
+            </div>
+          ) : (
+            <>
+              {showUpcoming && upcoming.length > 0 && (
+                <>
+                  <p className="px-2 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Upcoming</p>
+                  <ul className="space-y-1">
+                    {upcoming.map(a => (
+                      <Row key={a.id} a={a} />
+                    ))}
+                  </ul>
+                </>
+              )}
+              {doneVisible.length > 0 && (
+                <>
+                  <p
+                    className={cn(
+                      "px-2 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
+                      showUpcoming && upcoming.length > 0 && "mt-2 border-t border-border",
+                    )}
+                  >
+                    Submitted &amp; graded
+                  </p>
+                  <ul className="space-y-1">
+                    {doneVisible.map(a => (
+                      <Row key={a.id} a={a} />
+                    ))}
+                  </ul>
+                </>
+              )}
+            </>
+          )}
+        </section>
+
+        {/* Detail panel (desktop) */}
+        {selected && <DetailPanel a={selected} courseMap={courseMap} />}
+      </div>
+    </div>
+  );
+}
+
+function DetailPanel({
+  a,
+  courseMap,
+}: {
+  a: StudentAssignment;
+  courseMap: Map<string, (typeof STUDENT_COURSES)[number]>;
+}) {
+  const course = courseMap.get(a.course_id);
+  const badge = dueBadge(a);
+  const due = new Date(a.due_date);
+  const open = isOpen(a);
+
+  // Checklist derived from the assignment state (no per-step tracking yet)
+  const steps = [
+    { label: a.has_attachment ? "Download the assignment brief" : "Read the instructions", done: !open },
+    { label: "Upload your solution", done: !open },
+  ];
+  const ready = steps.filter(s => s.done).length;
+
+  return (
+    <aside className="hidden min-w-0 lg:col-span-2 lg:block">
+      <div className="sticky top-20 rounded-2xl border border-border bg-muted/40 p-5 shadow-sm">
+        <div className="flex items-center justify-between gap-2">
+          {badge && <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", badge.cls)}>{badge.label}</span>}
+          <span className="text-xs tabular-nums text-muted-foreground">{isValid(due) ? format(due, "MMM d · h:mm a") : ""}</span>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
-          <img src="https://img.icons8.com/scribby/96/error.png" alt="Action Required" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Action Required</p>
-            <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">
-              {(counts.pending ?? 0) + (counts.missing ?? 0)}
+        <h2 className="mt-3 text-xl font-bold leading-snug text-primary">{a.title}</h2>
+
+        <div className="mt-3 flex items-center gap-3">
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={course?.instructor_avatar} alt="" />
+            <AvatarFallback>{course?.instructor?.[0] ?? "?"}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">
+              {course?.code} – {course?.name}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {course?.instructor} · {categoryLabel[a.category]}
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/check.png" alt="Graded" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Graded</p>
-            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.graded}</p>
+        <p className="mt-4 line-clamp-6 text-sm leading-relaxed text-muted-foreground">{a.description}</p>
+
+        {a.status === "graded" ? (
+          <div className="mt-5 rounded-xl border border-border bg-card p-4">
+            <div className="flex items-baseline justify-between">
+              <h3 className="font-semibold">Your grade</h3>
+              <p className="text-2xl font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
+                {a.points_earned}
+                <span className="text-sm font-medium text-muted-foreground">/{a.total_points}</span>
+              </p>
+            </div>
+            {a.feedback && <p className="mt-2 text-sm text-muted-foreground">&ldquo;{a.feedback}&rdquo;</p>}
           </div>
+        ) : (
+          <div className="mt-5">
+            <h3 className="font-semibold">Submission checklist</h3>
+            <p className="text-xs text-muted-foreground">
+              {ready} of {steps.length} steps ready
+            </p>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${(ready / steps.length) * 100}%` }} />
+            </div>
+            <ul className="mt-3 space-y-2 text-sm">
+              {steps.map(s => (
+                <li key={s.label} className="flex items-center gap-2">
+                  {s.done ? <CheckCircle2 className="h-4 w-4 text-primary" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
+                  <span className={cn(s.done && "text-muted-foreground")}>{s.label}</span>
+                </li>
+              ))}
+            </ul>
+            {!open && <p className="mt-3 text-xs text-muted-foreground">Submitted {fmtDate(a.submission_date)} · awaiting grade.</p>}
+          </div>
+        )}
+
+        <div className="mt-5 space-y-2">
+          <Button asChild className="w-full gap-2">
+            <Link prefetch={false} href={`/student/assignments/${a.id}`}>
+              {open ? (
+                <>
+                  <Upload className="h-4 w-4" /> Upload submission
+                </>
+              ) : (
+                <>
+                  View details <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Link>
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            {a.total_points} points
+            {a.has_attachment && (
+              <>
+                {" · "}
+                <Paperclip className="inline h-3 w-3" /> Brief attached
+              </>
+            )}
+          </p>
         </div>
       </div>
-
-      {/* Main Card with Tabs + List */}
-      <Card className="border-border overflow-hidden">
-
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-0.5 px-3 pt-3 border-b border-border overflow-x-auto scrollbar-hide">
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setFilter(tab.key)}
-              className={cn(
-                "px-3 py-2 text-sm font-medium rounded-t-md border-b-2 transition-colors -mb-px whitespace-nowrap flex items-center gap-1.5",
-                filter === tab.key
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {tab.label}
-              {counts[tab.key] > 0 && (
-                <span className={cn(
-                  "text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center",
-                  filter === tab.key ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                )}>
-                  {counts[tab.key]}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Desktop Table Header */}
-        <div className="hidden lg:flex items-center px-4 py-3 bg-muted/30 border-b border-border text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          <span className="flex-1">Assignment</span>
-          <span className="w-28 text-center">Deadline</span>
-          <span className="w-24 text-center">Marks</span>
-          <span className="w-24 text-center">Status</span>
-          <span className="w-20 text-right">Action</span>
-        </div>
-
-        {/* Assignment Rows */}
-        <div className="divide-y divide-border">
-          {filtered.length === 0 ? (
-            <div className="py-16 text-center">
-              <CheckCircle className="h-8 w-8 opacity-20 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">No assignments in this category.</p>
-            </div>
-          ) : (
-            filtered.map(a => {
-              const course = STUDENT_COURSES.find(c => c.id === a.course_id);
-              const dueDate = new Date(a.due_date);
-              const isOverdue = dueDate < new Date() && a.status === "pending";
-              const st = statusConfig[a.status] ?? { label: a.status, icon: null, cls: "text-muted-foreground" };
-
-              return (
-                <Link
-                  key={a.id}
-                  href={`/student/assignments/${a.id}`}
-                  className="block hover:bg-muted/20 transition-colors"
-                >
-                  {/* Mobile Layout */}
-                  <div className="lg:hidden px-4 py-4 space-y-2">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0", categoryColor(a.category))}>
-                            {categoryLabel(a.category)}
-                          </span>
-                          <span className={cn("inline-flex items-center gap-1 text-xs font-semibold", st.cls)}>
-                            {st.icon}{st.label}
-                          </span>
-                        </div>
-                        <p className="font-semibold text-sm text-foreground line-clamp-1">{a.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                          <BookOpen className="h-3 w-3 shrink-0" />{course?.code} · {a.target_name}
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
-                    </div>
-                    <div className="flex items-center justify-between pt-1">
-                      <div className={cn("text-xs font-medium flex items-center gap-1", isOverdue ? "text-red-600 dark:text-red-400" : "text-muted-foreground")}>
-                        <Timer className="h-3 w-3" />
-                        {format(dueDate, "MMM dd, yyyy")} · {format(dueDate, "h:mm a")}
-                      </div>
-                      <div className="text-xs font-semibold text-foreground">
-                        {a.status === "graded" && a.points_earned !== null
-                          ? <span className="text-emerald-600 dark:text-emerald-400">{a.points_earned}/{a.total_points} pts</span>
-                          : `${a.total_points} pts`}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Desktop Layout -> Flex Table Row */}
-                  <div className="hidden lg:flex items-center px-4 py-4 gap-4">
-                    {/* Name Column */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0", categoryColor(a.category))}>
-                          {categoryLabel(a.category)}
-                        </span>
-                        {a.has_attachment && (
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-primary shrink-0">
-                            <Paperclip className="h-3 w-3" /> Attachment
-                          </span>
-                        )}
-                      </div>
-                      <p className="font-medium text-sm text-foreground line-clamp-1">{a.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                        <BookOpen className="h-3 w-3 shrink-0" />
-                        {course?.code} · {a.target_name}
-                      </p>
-                    </div>
-
-                    {/* Deadline */}
-                    <div className="w-28 text-center">
-                      <p className={cn("text-xs font-medium", isOverdue ? "text-red-600 dark:text-red-400" : "text-foreground")}>
-                        {format(dueDate, "MMM dd, yyyy")}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">{format(dueDate, "h:mm a")}</p>
-                    </div>
-
-                    {/* Marks */}
-                    <div className="w-24 text-center text-sm">
-                      {a.status === "graded" && a.points_earned !== null
-                        ? <span className="font-semibold text-emerald-600 dark:text-emerald-400">{a.points_earned}/{a.total_points}</span>
-                        : <span className="text-foreground">{a.total_points} pts</span>}
-                    </div>
-
-                    {/* Status */}
-                    <div className="w-24 text-center">
-                      <span className={cn("inline-flex items-center gap-1 text-xs font-semibold", st.cls)}>
-                        {st.icon}{st.label}
-                      </span>
-                    </div>
-
-                    {/* Action */}
-                    <div className="w-20 flex justify-end" onClick={e => e.stopPropagation()}>
-                      {a.status === "pending" ? (
-                        <Button size="sm" className="h-8 text-xs gap-1.5" onClick={e => e.stopPropagation()}>
-                          <Upload className="h-3.5 w-3.5" /> Submit
-                        </Button>
-                      ) : a.status === "missing" ? (
-                        <span className="text-xs text-muted-foreground">Past Due</span>
-                      ) : (
-                        <Button size="sm" variant="ghost" className="h-8 text-xs gap-1.5 text-muted-foreground" onClick={e => e.stopPropagation()}>
-                          <Eye className="h-3.5 w-3.5" /> View
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })
-          )}
-        </div>
-      </Card>
-    </div>
+    </aside>
   );
 }

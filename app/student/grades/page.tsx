@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, BookOpen, ChevronDown, ChevronUp, Download, Eye, FileText, Info } from "lucide-react";
+import { Award, BarChart3, BookOpen, ChevronDown, ChevronUp, Download, Eye, FileText, Info, GraduationCap, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
 import { STUDENT_GRADES, STUDENT_COURSES } from "@/lib/student-mock-data";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, listCardClass, pageStackClass, rowActionClass, statGridClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
+import { StudentTip } from "@/components/student/tip";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { StudentKPICard } from "@/components/student/kpi-card";
 import type { StudentGrade, GradeComponent } from "@/lib/student-types";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -71,71 +75,45 @@ export default function GradesPage() {
   const avgFinal =
     STUDENT_GRADES.reduce((s, g) => s + g.final_grade, 0) / STUDENT_GRADES.length;
   const overallGPA = (avgFinal / 100 * 4).toFixed(2);
+  const totalCredits = STUDENT_COURSES.reduce((s, c) => s + c.credits, 0);
 
   return (
-    <div>
-      <Breadcrumb items={[{ label: "Grades" }]} className="mb-6" />
+    <div className={pageStackClass}>
+      <Breadcrumb items={[{ label: "Grades" }]} />
 
       <PageHeader
         title="Grades & Performance"
-        description="Your grade breakdown by course — all scores shown in points"
+        description="Your grade breakdown by course — all scores shown in points."
       />
 
-      {/* ── Prominent summary bar ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img
-            src="https://img.icons8.com/scribby/96/certificate.png"
-            alt="GPA"
-            className="h-12 w-12"
-          />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">GPA</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{overallGPA}</p>
-          </div>
-        </div>
+      <StudentTip>
+        Column weights are shown in the table header. Final grade uses those weights across assignments, tests, quizzes, and forum work.
+      </StudentTip>
 
-        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
-          <img
-            src="https://img.icons8.com/scribby/96/line-chart.png"
-            alt="Average"
-            className="h-12 w-12"
-          />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Avg Score</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{avgFinal.toFixed(1)}%</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img
-            src="https://img.icons8.com/scribby/96/book.png"
-            alt="Courses"
-            className="h-12 w-12"
-          />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Courses</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{STUDENT_GRADES.length}</p>
-          </div>
-        </div>
+      <div className={statGridClass}>
+        <StudentKPICard title="GPA" value={overallGPA} icon={GraduationCap} variant="purple" />
+        <StudentKPICard title="Avg Score" value={`${avgFinal.toFixed(1)}%`} icon={LineChart} />
+        <StudentKPICard title="Courses" value={STUDENT_GRADES.length} icon={BookOpen} />
+        <StudentKPICard title="Credits" value={totalCredits} icon={Award} variant="info" />
       </div>
 
       {/* ── Mobile Gradebook Cards ──────────────────────────────────── */}
       <div className="lg:hidden space-y-3">
         {STUDENT_GRADES.length === 0 ? (
-          <div className="py-16 text-center border rounded-xl bg-card">
-            <BookOpen className="h-8 w-8 opacity-30 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">No grades available yet.</p>
+          <div className={emptyStateClass}>
+            <BookOpen className="mb-3 h-10 w-10 text-muted-foreground/40" />
+            <h3 className={emptyTitleClass}>No grades available yet</h3>
+            <p className={emptyBodyClass}>Your grades will appear here once they are published.</p>
           </div>
         ) : (
           STUDENT_GRADES.map((grade) => {
             const course = STUDENT_COURSES.find(c => c.id === grade.course_id);
             return (
-              <div key={grade.course_id} className="rounded-xl border border-border bg-card overflow-hidden">
+              <div key={grade.course_id} className="overflow-hidden rounded-2xl border border-border bg-card">
                 {/* Course Header */}
                 <div className="px-4 py-3 border-b border-border bg-muted/20">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
                       {course?.code || grade.course_id.toUpperCase()}
                     </span>
                     <span className={cn("text-sm font-extrabold tabular-nums", letterColor(grade.letter_grade))}>
@@ -169,9 +147,9 @@ export default function GradesPage() {
                   <span className="text-xs text-muted-foreground">
                     {grade.final_points}/{grade.total_points} pts
                   </span>
-                  <Button variant="ghost" size="sm" asChild className="shadow-none hover:bg-muted font-medium text-xs h-7">
+                  <Button variant="outline" size="sm" asChild className={rowActionClass}>
                     <Link href={`/student/grades/${grade.course_id}`}>
-                      <Eye className="h-3 w-3 mr-1" /> Details
+                      <Eye className="h-3 w-3" /> Details
                     </Link>
                   </Button>
                 </div>
@@ -182,184 +160,138 @@ export default function GradesPage() {
       </div>
 
       {/* ── Desktop Gradebook Data Table ───────────────────────────── */}
-      <div className="w-full overflow-x-auto rounded-xl border border-border bg-card shadow-sm hidden lg:block">
-        <table className="w-full min-w-[720px] text-sm">
-          {/* thead */}
-          <thead>
-            <tr className="bg-muted/60 border-b border-border">
-              <th className="text-left px-5 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
-                Course
-              </th>
-              <th className="text-left px-4 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+      <div className={cn("hidden lg:block", listCardClass)}>
+        <Table className="min-w-[720px]">
+          <TableHeader>
+            <TableRow className={tableHeadRowClass}>
+              <TableHead className={cn(tableHeadClass, "pl-5")}>Course</TableHead>
+              <TableHead className={tableHeadClass}>
                 Assignments
                 <span className="ml-1 text-[9px] font-normal normal-case text-muted-foreground/70">(35%)</span>
-              </th>
-              <th className="text-left px-4 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+              </TableHead>
+              <TableHead className={tableHeadClass}>
                 Tests
                 <span className="ml-1 text-[9px] font-normal normal-case text-muted-foreground/70">(40%)</span>
-              </th>
-              <th className="text-left px-4 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+              </TableHead>
+              <TableHead className={tableHeadClass}>
                 Quizzes
                 <span className="ml-1 text-[9px] font-normal normal-case text-muted-foreground/70">(15%)</span>
-              </th>
-              <th className="text-left px-4 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+              </TableHead>
+              <TableHead className={tableHeadClass}>
                 Forum
                 <span className="ml-1 text-[9px] font-normal normal-case text-muted-foreground/70">(10%)</span>
-              </th>
-              <th className="text-left px-4 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
-                Final Grade
-              </th>
-              <th className="text-center px-4 py-3 font-semibold text-[11px] uppercase tracking-wider text-muted-foreground whitespace-nowrap">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          {/* tbody */}
-          <tbody className="divide-y divide-border">
+              </TableHead>
+              <TableHead className={tableHeadClass}>Final Grade</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-center")}>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {STUDENT_GRADES.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-5 py-16 text-center">
+              <TableRow>
+                <TableCell colSpan={7} className="px-5 py-16 text-center">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="p-3 rounded-full bg-muted">
-                      <BookOpen className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <p className="font-semibold text-foreground">No grades available</p>
-                    <p className="text-xs text-muted-foreground">Your grades will appear here once published.</p>
+                    <BookOpen className="h-8 w-8 text-muted-foreground/40" />
+                    <p className={emptyTitleClass}>No grades available</p>
+                    <p className={emptyBodyClass}>Your grades will appear here once published.</p>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               STUDENT_GRADES.map((grade) => {
                 const course = STUDENT_COURSES.find(c => c.id === grade.course_id);
                 return (
-                  <tr
-                    key={grade.course_id}
-                    className="hover:bg-muted/30 transition-colors group"
-                  >
-                    {/* Course */}
-                    <td className="px-5 py-4 align-top">
-                      <div className="flex flex-col gap-1 max-w-[220px]">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 self-start">
+                  <TableRow key={grade.course_id} className="group hover:bg-muted/30">
+                    <TableCell className="px-5 py-4">
+                      <div className="flex max-w-[220px] flex-col gap-1">
+                        <span className="self-start rounded-md border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
                           {course?.code || grade.course_id.toUpperCase()}
                         </span>
-                        <p className="font-semibold text-foreground text-sm leading-snug line-clamp-2">
+                        <p className="line-clamp-2 text-sm font-semibold leading-snug text-foreground">
                           {grade.course_name}
                         </p>
                         <p className="text-[11px] text-muted-foreground">
                           {course?.instructor || "Instructor"} · {course?.credits || 3} cr
                         </p>
                       </div>
-                    </td>
-
-                    {/* Assignments */}
-                    <td className="px-4 py-4 align-top">
-                      <PointCell comp={grade.assignments} />
-                    </td>
-
-                    {/* Tests */}
-                    <td className="px-4 py-4 align-top">
-                      <PointCell comp={grade.tests} />
-                    </td>
-
-                    {/* Quizzes */}
-                    <td className="px-4 py-4 align-top">
-                      <PointCell comp={grade.quizzes} />
-                    </td>
-
-                    {/* Forum Activities */}
-                    <td className="px-4 py-4 align-top">
-                      <PointCell comp={grade.forum_activities} />
-                    </td>
-
-                    {/* Final Grade */}
-                    <td className="px-4 py-4 align-top">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <span className={cn("text-sm font-extrabold tabular-nums", letterColor(grade.letter_grade))}>
-                            {grade.final_grade.toFixed(1)}%
-                          </span>
-                          <span className="text-muted-foreground text-[11px] font-medium">
-                            ({grade.final_points}/{grade.total_points} pts)
-                          </span>
-                        </div>
+                    </TableCell>
+                    <TableCell><PointCell comp={grade.assignments} /></TableCell>
+                    <TableCell><PointCell comp={grade.tests} /></TableCell>
+                    <TableCell><PointCell comp={grade.quizzes} /></TableCell>
+                    <TableCell><PointCell comp={grade.forum_activities} /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2.5">
+                        <span className={cn("text-sm font-extrabold tabular-nums", letterColor(grade.letter_grade))}>
+                          {grade.final_grade.toFixed(1)}%
+                        </span>
+                        <span className="text-[11px] font-medium text-muted-foreground">
+                          ({grade.final_points}/{grade.total_points} pts)
+                        </span>
                       </div>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-4 py-4 align-middle text-center">
-                      <Button variant="ghost" size="sm" asChild className="shadow-none hover:bg-muted font-medium border border-transparent">
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button variant="outline" size="sm" asChild className={rowActionClass}>
                         <Link href={`/student/grades/${grade.course_id}`}>
-                          <Eye className="h-3.5 w-3.5 mr-1.5" />
+                          <Eye className="h-3.5 w-3.5" />
                           View Details
                         </Link>
                       </Button>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })
             )}
-          </tbody>
-
-          {/* tfoot — totals */}
+          </TableBody>
           {STUDENT_GRADES.length > 0 && (
-            <tfoot>
-              <tr className="bg-muted/40 border-t-2 border-border">
-                <td className="px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Totals / Avg
-                </td>
-                {/* Assignments total */}
-                <td className="px-4 py-3">
+            <TableFooter>
+              <TableRow className="bg-muted/40 hover:bg-muted/40">
+                <TableCell className={cn(tableHeadClass, "pl-5")}>Totals / Avg</TableCell>
+                <TableCell>
                   <span className="text-sm font-bold tabular-nums text-foreground">
                     {STUDENT_GRADES.reduce((s, g) => s + g.assignments.earned, 0)}
-                    <span className="text-muted-foreground font-normal text-xs">
+                    <span className="text-xs font-normal text-muted-foreground">
                       /{STUDENT_GRADES.reduce((s, g) => s + g.assignments.total, 0)}
                     </span>
                   </span>
-                </td>
-                {/* Tests total */}
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   <span className="text-sm font-bold tabular-nums text-foreground">
                     {STUDENT_GRADES.reduce((s, g) => s + g.tests.earned, 0)}
-                    <span className="text-muted-foreground font-normal text-xs">
+                    <span className="text-xs font-normal text-muted-foreground">
                       /{STUDENT_GRADES.reduce((s, g) => s + g.tests.total, 0)}
                     </span>
                   </span>
-                </td>
-                {/* Quizzes total */}
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   <span className="text-sm font-bold tabular-nums text-foreground">
                     {STUDENT_GRADES.reduce((s, g) => s + g.quizzes.earned, 0)}
-                    <span className="text-muted-foreground font-normal text-xs">
+                    <span className="text-xs font-normal text-muted-foreground">
                       /{STUDENT_GRADES.reduce((s, g) => s + g.quizzes.total, 0)}
                     </span>
                   </span>
-                </td>
-                {/* Forum total */}
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   <span className="text-sm font-bold tabular-nums text-foreground">
                     {STUDENT_GRADES.reduce((s, g) => s + g.forum_activities.earned, 0)}
-                    <span className="text-muted-foreground font-normal text-xs">
+                    <span className="text-xs font-normal text-muted-foreground">
                       /{STUDENT_GRADES.reduce((s, g) => s + g.forum_activities.total, 0)}
                     </span>
                   </span>
-                </td>
-                {/* Final total */}
-                <td className="px-4 py-3" colSpan={2}>
+                </TableCell>
+                <TableCell colSpan={2}>
                   <span className="text-sm font-bold tabular-nums text-foreground">
                     {STUDENT_GRADES.reduce((s, g) => s + g.final_points, 0)}
-                    <span className="text-muted-foreground font-normal text-xs">
+                    <span className="text-xs font-normal text-muted-foreground">
                       /{STUDENT_GRADES.reduce((s, g) => s + g.total_points, 0)} pts
                     </span>
                   </span>
                   <span className="ml-2 text-xs text-muted-foreground">
                     avg {avgFinal.toFixed(1)}%
                   </span>
-                </td>
-              </tr>
-            </tfoot>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           )}
-        </table>
+        </Table>
       </div>
 
       {/* ── Footer actions ────────────────────────────────────────────── */}

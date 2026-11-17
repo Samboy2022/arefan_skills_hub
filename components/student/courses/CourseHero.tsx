@@ -1,8 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronRightIcon, StarIcon } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface Course {
@@ -29,90 +28,58 @@ interface CourseHeroProps {
   isEnrolled: boolean;
 }
 
-export function CourseHero({ course, isEnrolled }: CourseHeroProps) {
+export function CourseHero({ course }: CourseHeroProps) {
   return (
-    <div className="relative w-full h-56 bg-black overflow-hidden border-b border-border">
-      {/* Background thumbnail */}
-      {course.thumbnail_url && (
-        <div className="absolute inset-0 w-full h-full">
-          {/* We push the image to the right side so the left text overlay is solid */}
-          <div className="absolute inset-0 md:left-1/3">
+    <section className="overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="grid md:grid-cols-[minmax(0,1fr)_240px] lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="px-5 py-6 sm:px-8">
+          {course.category?.name && (
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {course.category.name}
+            </p>
+          )}
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {course.title}
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            {course.short_description}
+          </p>
+
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+              {course.rating.toFixed(1)}
+              <span className="font-normal text-muted-foreground">
+                ({course.reviews_count.toLocaleString()} reviews)
+              </span>
+            </span>
+            <span>{course.enrolled_students_count.toLocaleString()} students</span>
+            {course.duration_hours ? <span>{course.duration_hours}h total</span> : null}
+            {course.lessons_count ? <span>{course.lessons_count} lessons</span> : null}
+            <span className="inline-flex items-center gap-2">
+              <Avatar className="h-6 w-6 border border-border">
+                <AvatarImage src={course.instructor.profile_photo_url || ''} alt="" />
+                <AvatarFallback className="bg-primary/10 text-[9px] font-bold text-primary">
+                  {course.instructor.name.split(' ').map((n) => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <span className="font-medium text-foreground">{course.instructor.name}</span>
+            </span>
+          </div>
+        </div>
+
+        {course.thumbnail_url ? (
+          <div className="relative hidden min-h-44 border-l border-border bg-muted md:block">
             <Image
               src={course.thumbnail_url}
-              alt={course.title}
+              alt=""
               fill
               className="object-cover"
               priority
             />
           </div>
-          {/* Gradient overlay blending the image smoothly into the black background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/20" />
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="relative h-full flex flex-col justify-center px-6 py-6 max-w-6xl mx-auto w-full">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-xs text-white/50 mb-4">
-          <Link href="/student/courses" className="hover:text-white transition-colors">
-            My Courses
-          </Link>
-          <ChevronRightIcon className="w-3 h-3 text-white/50" />
-          <span className="text-white/80">{course.category?.name || 'Course'}</span>
-        </div>
-
-        {/* Bottom row: title + meta */}
-        <div className="flex items-end justify-between gap-6">
-          <div className="min-w-0 max-w-2xl">
-            <h1 className="text-white font-bold text-2xl md:text-3xl leading-tight truncate">
-              {course.title}
-            </h1>
-            <p className="text-white/70 text-sm mt-2 line-clamp-2">
-              {course.short_description}
-            </p>
-
-            {/* Meta row */}
-            <div className="flex items-center gap-y-3 gap-x-4 mt-5 flex-wrap text-sm text-white/70">
-              {/* Rating */}
-              <div className="flex items-center gap-1.5 text-white/90 font-medium">
-                <StarIcon className="w-4 h-4 text-yellow-500 fill-current" />
-                <span>{course.rating.toFixed(1)}</span>
-                <span className="text-white/50 font-normal">({course.reviews_count.toLocaleString()} reviews)</span>
-              </div>
-              
-              <span className="text-white/30 hidden sm:inline">&bull;</span>
-              <span>{course.enrolled_students_count.toLocaleString()} students</span>
-              
-              {course.duration_hours && (
-                <>
-                  <span className="text-white/30 hidden sm:inline">&bull;</span>
-                  <span>{course.duration_hours}h total</span>
-                </>
-              )}
-              
-              {course.lessons_count && (
-                <>
-                  <span className="text-white/30 hidden sm:inline">&bull;</span>
-                  <span>{course.lessons_count} lessons</span>
-                </>
-              )}
-              
-              <span className="text-white/30 hidden sm:inline">&bull;</span>
-              
-              {/* Instructor */}
-              <div className="flex items-center gap-2 text-white">
-                <Avatar className="h-6 w-6 border border-white/20 shadow-none">
-                  <AvatarImage src={course.instructor.profile_photo_url || ''} />
-                  <AvatarFallback className="text-[9px] font-bold bg-white/20 text-white">
-                    {course.instructor.name.split(" ").map((n) => n[0]).join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="font-semibold">{course.instructor.name}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        ) : null}
       </div>
-    </div>
+    </section>
   );
 }

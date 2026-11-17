@@ -198,7 +198,7 @@ export default function EventDetailsPage() {
         {/* Sidebar Info Column */}
         <div className="space-y-6">
           {/* Scheduling Sidebar Card */}
-          <Card className="p-5 space-y-4 border rounded-xl shadow-sm">
+          <Card className="p-5 space-y-4 border rounded-none shadow-sm">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5 border-b pb-2">
               <Calendar className="h-4 w-4 text-primary" /> Scheduling Details
             </h3>

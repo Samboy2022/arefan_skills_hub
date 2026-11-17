@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Play, CheckCircle, Clock, Eye, HelpCircle, Timer, Award, BookOpen, ChevronRight } from "lucide-react";
+import { Play, CheckCircle, Clock, Eye, HelpCircle, Timer, Award, BookOpen, ChevronRight, FileText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/student/page-header";
 import { cn } from "@/lib/utils";
 import { STUDENT_QUIZZES, STUDENT_COURSES } from "@/lib/student-mock-data";
@@ -18,6 +17,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, listCardClass, pageStackClass, pillClass, rowActionClass, statGridClass, tabButtonClass, tabCountClass, tabRowClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
+import { StudentKPICard } from "@/components/student/kpi-card";
+import { StudentTip } from "@/components/student/tip";
 
 type StatusFilter = "all" | "not_started" | "in_progress" | "submitted";
 
@@ -42,11 +44,11 @@ const getCategoryColor = (category: string) => {
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "submitted":
-      return <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400"><CheckCircle className="h-3.5 w-3.5" /> Completed</span>;
+      return <span className={pillClass("success")}><CheckCircle className="h-3.5 w-3.5" /> Completed</span>;
     case "in_progress":
-      return <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400"><Clock className="h-3.5 w-3.5" /> In Progress</span>;
+      return <span className={pillClass("info")}><Clock className="h-3.5 w-3.5" /> In Progress</span>;
     case "not_started":
-      return <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><HelpCircle className="h-3.5 w-3.5" /> Not Started</span>;
+      return <span className={pillClass("neutral")}><HelpCircle className="h-3.5 w-3.5" /> Not Started</span>;
     default:
       return null;
   }
@@ -55,7 +57,7 @@ const getStatusBadge = (status: string) => {
 const getActionButton = (quiz: typeof STUDENT_QUIZZES[0]) => {
   if (quiz.status === "submitted") {
     return (
-      <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground gap-1.5" asChild>
+      <Button size="sm" variant="outline" className={rowActionClass} asChild>
         <Link href={`/student/quizzes/${quiz.id}`}>
           <Eye className="h-3.5 w-3.5" /> Review
         </Link>
@@ -64,7 +66,7 @@ const getActionButton = (quiz: typeof STUDENT_QUIZZES[0]) => {
   }
   if (quiz.status === "in_progress") {
     return (
-      <Button size="sm" className="gap-1.5" asChild>
+      <Button size="sm" className={rowActionClass} asChild>
         <Link href={`/student/quizzes/${quiz.id}`}>
           <Play className="h-3.5 w-3.5 fill-current" /> Continue
         </Link>
@@ -72,7 +74,7 @@ const getActionButton = (quiz: typeof STUDENT_QUIZZES[0]) => {
     );
   }
   return (
-    <Button size="sm" variant="outline" className="gap-1.5" asChild>
+    <Button size="sm" variant="outline" className={rowActionClass} asChild>
       <Link href={`/student/quizzes/${quiz.id}`}>
         <Play className="h-3.5 w-3.5" /> Take Quiz
       </Link>
@@ -105,61 +107,37 @@ export default function QuizzesPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className={pageStackClass}>
       <Breadcrumb items={[{ label: "Quizzes & Exams" }]} />
 
       <PageHeader
         title="Quizzes & Exams"
-        description="Track and take your assessments"
+        description="Track and take your assessments."
       />
 
-      {/* ── Prominent summary bar ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/document.png" alt="Total Assigned" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Assigned</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{counts.all}</p>
-          </div>
-        </div>
+      <StudentTip>
+        The timer starts when you click Continue and cannot be paused. Finish before you run out of time.
+      </StudentTip>
 
-        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
-          <img src="https://img.icons8.com/scribby/96/clock.png" alt="Upcoming" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Upcoming</p>
-            <p className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 leading-none">{counts.not_started + counts.in_progress}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/check.png" alt="Completed" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Completed</p>
-            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.submitted}</p>
-          </div>
-        </div>
+      <div className={statGridClass}>
+        <StudentKPICard title="Total Assigned" value={counts.all} icon={FileText} />
+        <StudentKPICard title="In Progress" value={counts.in_progress} icon={Play} variant="info" />
+        <StudentKPICard title="Upcoming" value={counts.not_started} icon={Clock} variant="warning" />
+        <StudentKPICard title="Completed" value={counts.submitted} icon={CheckCircle} variant="success" />
       </div>
 
       {/* Filter Tabs + Table */}
-      <Card className="border-border overflow-hidden">
+      <Card className={listCardClass}>
         {/* Tab Row */}
-        <div className="flex items-center gap-1 px-4 pt-4 border-b border-border overflow-x-auto">
+        <div className={tabRowClass}>
           {tabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => setFilter(tab.key)}
-              className={cn(
-                "px-4 py-2 text-sm font-medium rounded-t-md border-b-2 transition-colors -mb-px",
-                filter === tab.key
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
-              )}
+              className={tabButtonClass(filter === tab.key)}
             >
               {tab.label}
-              <span className={cn(
-                "ml-2 text-[11px] font-bold px-1.5 py-0.5 rounded-full",
-                filter === tab.key ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-              )}>
+              <span className={tabCountClass(filter === tab.key)}>
                 {counts[tab.key]}
               </span>
             </button>
@@ -169,9 +147,10 @@ export default function QuizzesPage() {
         {/* Mobile card layout */}
         <div className="lg:hidden divide-y divide-border">
           {filtered.length === 0 ? (
-            <div className="py-16 text-center">
-              <HelpCircle className="h-8 w-8 opacity-30 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">No quizzes in this category.</p>
+            <div className={cn(emptyStateClass, "m-3 border-0 bg-transparent py-14")}>
+              <HelpCircle className="mb-3 h-10 w-10 text-muted-foreground/40" />
+              <h3 className={emptyTitleClass}>No quizzes in this category</h3>
+              <p className={emptyBodyClass}>Try another filter to see the rest of your assessments.</p>
             </div>
           ) : (
             filtered.map((quiz) => {
@@ -180,12 +159,12 @@ export default function QuizzesPage() {
                 <Link
                   key={quiz.id}
                   href={`/student/quizzes/${quiz.id}`}
-                  className="block px-4 py-4 hover:bg-muted/20 transition-colors"
+                  className="block px-4 py-4 hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border", getCategoryColor(quiz.category))}>
+                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border", getCategoryColor(quiz.category))}>
                           {getCategoryLabel(quiz.category)}
                         </span>
                         {getStatusBadge(quiz.status)}
@@ -218,14 +197,14 @@ export default function QuizzesPage() {
         {/* Desktop table layout */}
         <Table className="hidden lg:table w-full">
           <TableHeader>
-            <TableRow className="bg-muted/30 hover:bg-muted/30">
-              <TableHead className="w-[40%] pl-6">Quiz</TableHead>
-              <TableHead>Course / Topic</TableHead>
-              <TableHead className="text-center">Duration</TableHead>
-              <TableHead className="text-center">Attempts</TableHead>
-              <TableHead className="text-center">Best Score</TableHead>
-              <TableHead className="text-center">Status</TableHead>
-              <TableHead className="text-right pr-6">Action</TableHead>
+            <TableRow className={tableHeadRowClass}>
+              <TableHead className={cn(tableHeadClass, "w-[34%] pl-6")}>Quiz</TableHead>
+              <TableHead className={tableHeadClass}>Course / Topic</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-center")}>Duration</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-center")}>Attempts</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-center")}>Best Score</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-center")}>Status</TableHead>
+              <TableHead className={cn(tableHeadClass, "text-right pr-6")}>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -242,12 +221,12 @@ export default function QuizzesPage() {
               filtered.map((quiz) => {
                 const course = STUDENT_COURSES.find(c => c.id === quiz.course_id);
                 return (
-                  <TableRow key={quiz.id} className="group hover:bg-muted/20">
+                  <TableRow key={quiz.id} className="group hover:bg-muted/30">
                     {/* Quiz Name */}
                     <TableCell className="pl-6 py-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border", getCategoryColor(quiz.category))}>
+                          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border", getCategoryColor(quiz.category))}>
                             {getCategoryLabel(quiz.category)}
                           </span>
                         </div>

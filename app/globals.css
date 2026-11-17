@@ -44,9 +44,9 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
+  --card: oklch(0.185 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
+  --popover: oklch(0.185 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.60 0.18 149.213);
   --primary-foreground: oklch(0.145 0 0);
@@ -145,14 +145,15 @@
 
 @layer base {
   html {
-    overflow-x: hidden;
+    /* clip (not hidden) so position: sticky keeps working */
+    overflow-x: clip;
   }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   button,

@@ -133,11 +133,11 @@ export default function MeetingRoomPage({ params }: { params: Promise<{ id: stri
       {/* Room Layout */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 min-h-[70vh]">
         {/* Zoom Embed Panel */}
-        <div className="md:col-span-8 rounded-xl border border-border bg-zinc-950 flex flex-col overflow-hidden min-h-[400px]">
+        <div className="md:col-span-8 rounded-2xl border border-border bg-zinc-950 flex flex-col overflow-hidden min-h-[400px]">
           {/* Simulated Zoom UI */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none" />
               <span className="text-xs text-zinc-400 font-medium">Live · {meeting.name}</span>
             </div>
             <span className="text-xs text-zinc-500">Meeting ID: {meeting.zoom.meeting_id}</span>
@@ -164,15 +164,15 @@ export default function MeetingRoomPage({ params }: { params: Promise<{ id: stri
               variant="destructive"
               size="sm"
               onClick={handleLeave}
-              className="bg-red-700 hover:bg-red-800"
+              className="rounded-full px-5 bg-red-700 hover:bg-red-800 text-white"
             >
               Leave Session
             </Button>
           </div>
         </div>
 
-        {/* Attendance Tracker — desktop sidebar */}
-        <div className="md:col-span-4 hidden md:block">
+        {/* Attendance Tracker — sidebar on desktop, below the video on mobile */}
+        <div className="md:col-span-4">
           <AttendanceTracker
             joinTimestamp={joinTimestamp}
             durationMinutes={meeting.duration}

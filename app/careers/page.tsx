@@ -13,7 +13,7 @@ export default function CareersPage() {
         <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Careers at <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Arefan Skills Hub</span>
+              Careers at <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Fnskills</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
               Help us build the infrastructure that powers global education.
@@ -48,13 +48,13 @@ export default function CareersPage() {
                    We believe talent is global. Our team operates asynchronously and distributed across multiple time zones. We provide stipends for home office setups and co-working spaces to ensure you have what you need to do your best work.
                  </p>
                </div>
-               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl">
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-none">
                  <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Remote Team Working</span>
                </Card>
             </div>
 
             <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
-               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl order-2 md:order-1">
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-none order-2 md:order-1">
                  <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Growth & Benefits</span>
                </Card>
                <div className="prose prose-slate dark:prose-invert max-w-none order-1 md:order-2">

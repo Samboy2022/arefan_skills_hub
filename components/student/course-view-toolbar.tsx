@@ -35,17 +35,16 @@ export function CourseViewToolbar({
   onSortChange,
 }: CourseViewToolbarProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border pb-4 w-full">
-      
-      {/* Search Input */}
+    <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
       <div className="relative w-full sm:max-w-xs">
-        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           placeholder="Search courses..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9 h-10 w-full bg-card"
+          className="h-10 w-full bg-background pl-9"
+          aria-label="Search courses"
         />
       </div>
 
@@ -54,7 +53,7 @@ export function CourseViewToolbar({
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground hidden lg:inline-block">Sort by:</span>
           <Select value={sortBy} onValueChange={(v) => onSortChange(v as SortOption)}>
-            <SelectTrigger className="w-[160px] h-10 bg-card whitespace-nowrap">
+            <SelectTrigger className="h-10 w-[170px] whitespace-nowrap bg-background px-3" aria-label="Sort courses">
               <SelectValue placeholder="Sort order" />
             </SelectTrigger>
             <SelectContent>
@@ -68,15 +67,15 @@ export function CourseViewToolbar({
         </div>
 
         {/* View Toggle */}
-        <div className="hidden sm:flex border border-border rounded-md bg-card p-0.5">
+        <div className="hidden rounded-lg border border-border bg-muted/40 p-1 sm:flex">
           <ToggleGroup type="single" value={viewMode} onValueChange={(v) => { if(v) onViewModeChange(v as ViewMode) }}>
-            <ToggleGroupItem value="grid" aria-label="Grid View" className="h-8 w-8 p-0">
+            <ToggleGroupItem value="grid" aria-label="Grid View" className="h-8 w-8 rounded-md p-0">
               <LayoutGrid className="h-4 w-4" />
             </ToggleGroupItem>
-            <ToggleGroupItem value="list" aria-label="List View" className="h-8 w-8 p-0">
+            <ToggleGroupItem value="list" aria-label="List View" className="h-8 w-8 rounded-md p-0">
               <List className="h-4 w-4" />
             </ToggleGroupItem>
-            <ToggleGroupItem value="table" aria-label="Table View" className="h-8 w-8 p-0">
+            <ToggleGroupItem value="table" aria-label="Table View" className="h-8 w-8 rounded-md p-0">
               <TableIcon className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>

@@ -108,7 +108,7 @@ export function ForumRichEditor({ content, onChange, placeholder = "Share your t
   };
 
   return (
-    <div className="border border-border rounded-md bg-background relative">
+    <div className="border border-border rounded-2xl overflow-hidden bg-card relative transition-[border-color,box-shadow] hover:border-muted-foreground/40 focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-2 border-b border-border bg-muted/30">
         <Button

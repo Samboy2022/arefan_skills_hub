@@ -186,7 +186,7 @@ export default async function InstructorCourseViewPage({
             <div className="sticky top-24 space-y-6">
               
               {/* Manage Course Card (Replaces EnrollmentCard) */}
-              <Card className="border border-border shadow-md rounded-md bg-card overflow-hidden">
+              <Card className="border border-border shadow-md rounded-none bg-card overflow-hidden">
                 <div className="h-2 w-full bg-primary" />
                 <CardHeader className="pb-2">
                   <h3 className="font-bold text-lg text-foreground">Manage Course</h3>
@@ -221,7 +221,7 @@ export default async function InstructorCourseViewPage({
               </Card>
               
               {/* Course Meta Info Card with Edit Grading link */}
-              <Card className="border border-border shadow-none rounded-md bg-card relative overflow-hidden">
+              <Card className="border border-border shadow-none rounded-none bg-card relative overflow-hidden">
                 <CardHeader className="pb-4 border-b border-border/50 px-6 pt-6 relative z-10">
                   <h3 className="font-semibold text-foreground">Course Info</h3>
                 </CardHeader>

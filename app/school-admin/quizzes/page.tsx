@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, MoreHorizontal, Edit, Eye, Trash2, ShieldAlert } from "lucide-react";
+import { Plus, MoreHorizontal, Edit, Eye, Trash2, ShieldAlert, ListChecks } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -177,9 +177,8 @@ export default function QuizzesPage() {
             ) : quizzes.map((quiz) => (
               <TableRow key={quiz.id}>
                 <TableCell className="font-medium text-foreground">
-                  {quiz.title}
-                  <Link href={`/school-admin/quizzes/${quiz.id}/questions`} className="block mt-1 text-[10px] text-primary hover:underline font-normal uppercase tracking-wider">
-                    Build Questions
+                  <Link href={`/school-admin/quizzes/${quiz.id}/questions`} className="font-bold text-foreground hover:text-primary hover:underline">
+                    {quiz.title}
                   </Link>
                 </TableCell>
                 <TableCell>{quiz.attemptsAllowed || 1}</TableCell>
@@ -203,6 +202,17 @@ export default function QuizzesPage() {
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                  <Button variant="outline" size="sm" onClick={() => executePreview(quiz)}>
+                    <Eye className="h-4 w-4" />
+                    Preview
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link href={`/school-admin/quizzes/${quiz.id}/questions`}>
+                      <ListChecks className="h-4 w-4" />
+                      Open Builder
+                    </Link>
+                  </Button>
                   <AlertDialog>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -213,6 +223,12 @@ export default function QuizzesPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/school-admin/quizzes/${quiz.id}/questions`}>
+                            <ListChecks className="mr-2 h-4 w-4 text-primary" />
+                            Open Builder
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => executePreview(quiz)}>
                           <Eye className="mr-2 h-4 w-4 text-emerald-500" />
                           View Quiz
@@ -251,6 +267,7 @@ export default function QuizzesPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -269,7 +286,8 @@ export default function QuizzesPage() {
       <QuizPreviewModal 
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        quizTitle={activeQuizForModals?.title || ""}
+        role="school-admin"
+        quiz={activeQuizForModals}
       />
 
       <OverrideStudentModal 

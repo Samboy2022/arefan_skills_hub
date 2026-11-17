@@ -6,24 +6,36 @@ import { format, isValid } from "date-fns";
 import { ArrowLeft, Calendar, Clock, User, Video, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/student/page-header";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useStudentMeeting } from "@/lib/hooks/use-student-meetings";
+import { detailCardClass, detailFooterClass, detailSectionClass, detailWrapClass, emptyBodyClass, emptyStateClass, emptyTitleClass, pillClass, sectionTitleClass } from "@/lib/student-ui";
 
 export default function MeetingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { meeting, isLoading } = useStudentMeeting(id);
 
-  if (isLoading) return <div className="flex items-center justify-center py-32 text-muted-foreground">Loading…</div>;
-  if (!meeting) return (
-    <div className="flex flex-col items-center justify-center py-32 gap-4 text-muted-foreground">
-      <Video className="h-12 w-12 opacity-30" />
-      <p>Meeting not found.</p>
-      <Button asChild variant="outline"><Link href="/student/live-classes"><ArrowLeft className="h-4 w-4 mr-2" />Back</Link></Button>
-    </div>
-  );
+  if (isLoading) {
+    return (
+      <div className="space-y-6" aria-busy="true" aria-label="Loading">
+        <div className="h-9 w-64 animate-pulse rounded bg-muted" />
+        <div className="h-64 animate-pulse rounded-2xl bg-muted" />
+      </div>
+    );
+  }
+  if (!meeting) {
+    return (
+      <div className={emptyStateClass}>
+        <Video className="mb-4 h-12 w-12 text-muted-foreground/50" />
+        <h2 className={emptyTitleClass}>Live class not found</h2>
+        <p className={emptyBodyClass}>This session may have been cancelled, or the link is incorrect.</p>
+        <Button asChild variant="outline" className="mt-6 gap-1.5">
+          <Link href="/student/live-classes"><ArrowLeft className="h-4 w-4" /> Back to live classes</Link>
+        </Button>
+      </div>
+    );
+  }
 
   const startDate = new Date(meeting.start_time);
   const validDate = isValid(startDate);
@@ -32,161 +44,87 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
   const canJoin = meeting.status === "live" || (meeting.status === "upcoming" && minsUntilStart <= 15);
   const thresholdMinutes = Math.ceil(meeting.duration * 0.8);
 
+  const statusPill =
+    meeting.status === "live" ? (
+      <span className={pillClass("success")}>
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none" /> Live Now
+      </span>
+    ) : meeting.status === "upcoming" ? (
+      <span className={pillClass("info")}><Clock className="h-3 w-3" /> Upcoming</span>
+    ) : (
+      <span className={pillClass("neutral")}>Ended</span>
+    );
+
+  const attendancePill =
+    meeting.attendance.status === "present" ? (
+      <span className={pillClass("success")}><CheckCircle className="h-3 w-3" /> Present ({meeting.attendance.percentage}%)</span>
+    ) : meeting.attendance.status === "absent" ? (
+      <span className={pillClass("danger")}><XCircle className="h-3 w-3" /> Absent ({meeting.attendance.percentage}%)</span>
+    ) : (
+      <span className={pillClass("neutral")}>Pending</span>
+    );
+
   return (
-    <div className="space-y-6">
+    <div className={detailWrapClass}>
       <Breadcrumb items={[
         { label: "Live Classes", href: "/student/live-classes" },
         { label: meeting.name },
       ]} />
 
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <PageHeader
-            title={meeting.name}
-            description={`Hosted by ${meeting.creator.name}`}
-          />
+      <Card className={detailCardClass}>
+        {/* ── Header ── */}
+        <div className={cn(detailSectionClass, "border-b border-border")}>
+          <div className="mb-3">{statusPill}</div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-2">{meeting.name}</h1>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={meeting.creator.avatar_url} alt="" />
+              <AvatarFallback className="text-[10px]">
+                {meeting.creator.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+            Hosted by <span className="font-medium text-foreground">{meeting.creator.name}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
-          {meeting.status === "live" && (
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2.5 py-1 rounded-full">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Live Now
-            </span>
-          )}
-          {canJoin ? (
-            <Button asChild className="bg-emerald-600 hover:bg-emerald-700 text-white">
-              <Link href={`/student/live-classes/${meeting.id}/join`}>
-                <Video className="h-4 w-4 mr-2" />
-                Join Now
-              </Link>
-            </Button>
-          ) : meeting.status === "upcoming" ? (
-            <Button disabled title={`Class starts in ${Math.round(minsUntilStart)} minutes`}>
-              <Clock className="h-4 w-4 mr-2" />
-              Starts in {Math.round(minsUntilStart)} min
-            </Button>
-          ) : null}
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Details */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Details Card */}
-          <Card className="border-border overflow-hidden">
-            <div className="px-5 py-4 border-b border-border">
-              <h2 className="font-semibold text-foreground">Session Details</h2>
-            </div>
-            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="flex items-start gap-3">
-                <User className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Instructor</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={meeting.creator.avatar_url} />
-                      <AvatarFallback className="text-[10px]">
-                        {meeting.creator.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p className="text-sm font-medium text-foreground">{meeting.creator.name}</p>
-                  </div>
-                </div>
-              </div>
+        {/* ── Key details ── */}
+        <dl className="grid grid-cols-2 sm:grid-cols-4 border-b border-border bg-muted/30 [&>div]:px-5 [&>div]:py-4 sm:[&>div]:px-6 [&>div]:border-border [&>div:nth-child(odd)]:border-r sm:[&>div:not(:last-child)]:border-r [&>div:nth-child(-n+2)]:border-b sm:[&>div:nth-child(-n+2)]:border-b-0">
+          <div>
+            <dt className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1"><Calendar className="h-3.5 w-3.5" /> Date</dt>
+            <dd className="text-sm font-semibold text-foreground">{validDate ? format(startDate, "MMM dd, yyyy") : "—"}</dd>
+          </div>
+          <div>
+            <dt className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1"><Clock className="h-3.5 w-3.5" /> Start Time</dt>
+            <dd className="text-sm font-semibold text-foreground">{validDate ? format(startDate, "hh:mm a") : "—"}</dd>
+          </div>
+          <div>
+            <dt className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1"><Video className="h-3.5 w-3.5" /> Duration</dt>
+            <dd className="text-sm font-semibold text-foreground">{meeting.duration} minutes</dd>
+          </div>
+          <div>
+            <dt className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1"><User className="h-3.5 w-3.5" /> Your Attendance</dt>
+            <dd>{attendancePill}</dd>
+          </div>
+        </dl>
 
-              <div className="flex items-start gap-3">
-                <Calendar className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Scheduled Date</p>
-                  <p className="text-sm font-medium text-foreground mt-0.5">
-                    {validDate ? format(startDate, "MMMM dd, yyyy") : "—"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Clock className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Start Time</p>
-                  <p className="text-sm font-medium text-foreground mt-0.5">
-                    {validDate ? format(startDate, "hh:mm a") : "—"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Clock className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Duration</p>
-                  <p className="text-sm font-medium text-foreground mt-0.5">{meeting.duration} minutes</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Video className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Status</p>
-                  <p className="text-sm font-medium text-foreground mt-0.5 capitalize">{meeting.status}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Attendance Requirement</p>
-                  <p className="text-sm font-medium text-foreground mt-0.5">
-                    80% — {thresholdMinutes} min of {meeting.duration} min
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 sm:col-span-2">
-                {meeting.attendance.status === "present" ? (
-                  <CheckCircle className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
-                ) : meeting.attendance.status === "absent" ? (
-                  <XCircle className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
-                ) : (
-                  <Clock className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                )}
-                <div>
-                  <p className="text-xs text-muted-foreground">Your Attendance</p>
-                  <p className={cn(
-                    "text-sm font-semibold mt-0.5",
-                    meeting.attendance.status === "present" ? "text-emerald-600 dark:text-emerald-400" :
-                    meeting.attendance.status === "absent" ? "text-red-600 dark:text-red-400" :
-                    "text-muted-foreground"
-                  )}>
-                    {meeting.attendance.status === "present"
-                      ? `✓ Present (${meeting.attendance.percentage}%)`
-                      : meeting.attendance.status === "absent"
-                      ? `✗ Absent (${meeting.attendance.percentage}%)`
-                      : "Pending —"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Description */}
+        {/* ── Body ── */}
+        <div className={cn(detailSectionClass, "space-y-7")}>
           {meeting.description && (
-            <Card className="border-border p-5 space-y-2">
-              <h2 className="font-semibold text-foreground">About This Session</h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">{meeting.description}</p>
-            </Card>
+            <section>
+              <h2 className={sectionTitleClass}>About This Session</h2>
+              <p className="text-sm text-foreground leading-relaxed">{meeting.description}</p>
+            </section>
           )}
-        </div>
 
-        {/* Right sidebar — Attendance Policy */}
-        <div className="space-y-4">
-          <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-5">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+          <section>
+            <h2 className={sectionTitleClass}>Attendance Requirement</h2>
+            <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800/60 dark:bg-amber-950/30">
+              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
               <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-400">
-                  Attendance Policy
+                <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                  Attendance Policy · 80% — {thresholdMinutes} min of {meeting.duration} min
                 </h3>
-                <p className="text-xs text-amber-700 dark:text-amber-500 leading-relaxed">
+                <p className="text-sm text-amber-700 dark:text-amber-400/90 leading-relaxed">
                   You must be present in the session for at least{" "}
                   <strong>{thresholdMinutes} minutes</strong> (80% of {meeting.duration} min) to be
                   recorded as <strong>Present</strong>. The app will track this automatically once you
@@ -194,16 +132,32 @@ export default function MeetingDetailPage({ params }: { params: Promise<{ id: st
                 </p>
               </div>
             </div>
-          </Card>
+          </section>
+        </div>
 
-          <Button asChild variant="outline" className="w-full">
+        {/* ── Footer actions ── */}
+        <div className={detailFooterClass}>
+          <Button asChild variant="outline" className="gap-1.5">
             <Link href="/student/live-classes">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="h-4 w-4" />
               Back to Live Classes
             </Link>
           </Button>
+          {canJoin ? (
+            <Button asChild className="gap-2 px-6">
+              <Link href={`/student/live-classes/${meeting.id}/join`}>
+                <Video className="h-4 w-4" />
+                Join Now
+              </Link>
+            </Button>
+          ) : meeting.status === "upcoming" ? (
+            <Button disabled className="gap-2 px-6" title={`Class starts in ${Math.round(minsUntilStart)} minutes`}>
+              <Clock className="h-4 w-4" />
+              Starts in {Math.round(minsUntilStart)} min
+            </Button>
+          ) : null}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

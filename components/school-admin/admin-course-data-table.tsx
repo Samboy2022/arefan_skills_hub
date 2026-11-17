@@ -1,14 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import {
-  MoreVertical,
-  Eye,
-  Pencil,
-  FilePenLine,
-  Trash2,
-} from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,161 +9,88 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import type { Course } from "@/lib/tenant-types";
+import type { SchoolAdminCourse } from "@/lib/school-admin-courses";
 
-function enrollmentPct(course: Course) {
-  if (!course.maxStudents) return 0;
-  return Math.min(100, Math.round((course.enrollmentCount / course.maxStudents) * 100));
+function statusLabel(status: SchoolAdminCourse["status"]) {
+  if (status === "active") return "Active";
+  if (status === "archived") return "Archived";
+  if (status === "inactive") return "Inactive";
+  return "Draft";
+}
+
+function statusClass(status: SchoolAdminCourse["status"]) {
+  if (status === "active") return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300";
+  if (status === "archived") return "border-border bg-muted text-muted-foreground";
+  return "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-300";
 }
 
 export function AdminCourseDataTable({
   courses,
-  variant = "active",
+  instructorNames,
+  onEdit,
   onDelete,
-  selectedRowIds,
-  toggleSelectRow,
-  toggleSelectAll,
 }: {
-  courses: Course[];
-  variant?: "active" | "archived";
-  onDelete: (id: string) => void;
-  selectedRowIds?: Set<string>;
-  toggleSelectRow?: (id: string) => void;
-  toggleSelectAll?: () => void;
+  courses: SchoolAdminCourse[];
+  instructorNames: (course: SchoolAdminCourse) => string[];
+  onEdit: (course: SchoolAdminCourse) => void;
+  onDelete: (course: SchoolAdminCourse) => void;
 }) {
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-
-  const handleDeleteConfirm = () => {
-    if (deleteId) {
-      onDelete(deleteId);
-      setDeleteId(null);
-    }
-  };
-
   if (courses.length === 0) return null;
 
   return (
-    <div className="rounded-md border border-border bg-card overflow-hidden">
+    <div className="rounded-lg border border-border bg-card overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              {selectedRowIds && toggleSelectAll && (
-                <TableHead className="w-[50px] px-4">
-                  <Checkbox 
-                    checked={selectedRowIds.size > 0 && selectedRowIds.size === courses.length}
-                    onCheckedChange={toggleSelectAll}
-                    aria-label="Select all courses"
-                  />
-                </TableHead>
-              )}
-              <TableHead className="w-[100px]">Code</TableHead>
-              <TableHead className="min-w-[200px]">Course</TableHead>
-              <TableHead>Semester</TableHead>
-              <TableHead>Enrollment</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="min-w-[220px]">Course</TableHead>
+              <TableHead className="w-[110px]">Code</TableHead>
+              <TableHead className="min-w-[180px]">Instructors</TableHead>
+              <TableHead className="w-[120px]">Status</TableHead>
+              <TableHead className="w-[160px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {courses.map((course) => {
-              const viewHref = `/school-admin/courses/${course.id}`;
-              const editHref = `/school-admin/courses/${course.id}/edit`;
-              const contentHref = `/school-admin/lessons?courseId=${encodeURIComponent(course.id)}`;
-              const pct = enrollmentPct(course);
-              const atCapacity = course.maxStudents ? course.enrollmentCount >= course.maxStudents : false;
-
+              const names = instructorNames(course);
               return (
-                <TableRow key={course.id} className={variant === 'archived' ? 'opacity-80' : ''}>
-                  {selectedRowIds && toggleSelectRow && (
-                    <TableCell className="px-4">
-                      <Checkbox 
-                        checked={selectedRowIds.has(course.id)}
-                        onCheckedChange={() => toggleSelectRow(course.id)}
-                        aria-label={`Select course ${course.id}`}
-                      />
-                    </TableCell>
-                  )}
-                  <TableCell className="font-medium">
-                    <span className="rounded bg-muted px-2 py-1 text-xs font-bold uppercase tracking-wide">
-                      {course.code}
-                    </span>
+                <TableRow key={course.id}>
+                  <TableCell>
+                    <p className="font-medium text-foreground">{course.title}</p>
+                    {course.semester ? (
+                      <p className="text-xs text-muted-foreground">{course.semester}</p>
+                    ) : null}
                   </TableCell>
                   <TableCell>
-                    <Link href={viewHref} className="font-semibold text-foreground hover:text-primary transition-colors hover:underline line-clamp-1 block">
-                      {course.title}
-                    </Link>
-                    <span className="text-xs text-muted-foreground">{course.credits} Credits</span>
+                    <span className="font-mono text-xs font-semibold tracking-wide">{course.code || "—"}</span>
                   </TableCell>
-                  <TableCell className="text-sm">{course.semester}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-sm font-medium">
-                        {course.maxStudents ? `${course.enrollmentCount} / ${course.maxStudents}` : course.enrollmentCount}
-                      </span>
-                      <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full ${variant === "archived" ? "bg-muted-foreground" : atCapacity ? "bg-amber-500" : "bg-primary"}`} 
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
-                    </div>
+                  <TableCell className="text-sm text-foreground">
+                    {names.length > 0 ? names.join(", ") : <span className="text-muted-foreground">Unassigned</span>}
                   </TableCell>
                   <TableCell>
-                    {variant === "archived" ? (
-                      <Badge variant="secondary" className="bg-muted text-muted-foreground">Archived</Badge>
-                    ) : atCapacity ? (
-                      <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-500">Full</Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5">Active</Badge>
-                    )}
+                    <Badge variant="outline" className={statusClass(course.status)}>
+                      {statusLabel(course.status)}
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={viewHref}><Eye className="mr-2 h-4 w-4" /> View Details</Link>
-                        </DropdownMenuItem>
-                        {variant !== "archived" && (
-                          <>
-                            <DropdownMenuItem asChild>
-                              <Link href={editHref}><Pencil className="mr-2 h-4 w-4" /> Edit Details</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link href={contentHref}><FilePenLine className="mr-2 h-4 w-4" /> Edit Content</Link>
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                        <DropdownMenuItem className="text-destructive focus:bg-destructive focus:text-destructive-foreground" onClick={() => setDeleteId(course.id)}>
-                          <Trash2 className="mr-2 h-4 w-4" /> Delete Section
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex justify-end gap-1">
+                      <Button type="button" variant="ghost" size="sm" onClick={() => onEdit(course)}>
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => onDelete(course)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
@@ -179,26 +98,6 @@ export function AdminCourseDataTable({
           </TableBody>
         </Table>
       </div>
-
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete this course section?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure? Students will lose access after the change is saved in production. This demo only removes the item from your current view.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleDeleteConfirm}
-            >
-              Delete course
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   MessageIcon as MessageSquare,
   BellIcon as Bell,
   DownloadIcon as Download,
+  ResourcesIcon,
   UserIcon as User,
   MessageIcon as Inbox,
   VideoIcon,
@@ -85,6 +86,12 @@ export const STUDENT_NAV_ITEMS = [
   {
     section: "Resources",
     items: [
+      {
+        label: "Library",
+        href: "/student/library",
+        icon: ResourcesIcon,
+        tooltip: "School and course books",
+      },
       {
         label: "Materials",
         href: "/student/materials",

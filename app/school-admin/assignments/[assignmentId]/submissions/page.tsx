@@ -19,11 +19,14 @@ import {
 } from "@/components/ui/table";
 import { MOCK_ASSIGNMENTS, MOCK_STUDENTS } from "@/lib/instructor-mock-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { documentFiles } from "@/lib/plagiarism-documents";
+import { useReports } from "@/components/plagiarism/use-reports";
 
 export default function AssignmentSubmissionsPage() {
   const params = useParams();
   const assignmentId = params.assignmentId as string;
 
+  const { reports } = useReports();
   const assignment = useMemo(
     () => MOCK_ASSIGNMENTS.find((a) => a.id === assignmentId),
     [assignmentId]
@@ -101,11 +104,24 @@ export default function AssignmentSubmissionsPage() {
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/school-admin/assignments/${assignment.id}/submissions/${submission.id}`}>
-                        Review Submission
-                      </Link>
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      {documentFiles(submission.files).length > 0 ? (
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/school-admin/plagiarism?submission=${submission.id}`}>
+                            {reports.some((report) => report.submissionId === submission.id) ? "Check again" : "Run check"}
+                          </Link>
+                        </Button>
+                      ) : (
+                        <Button variant="outline" size="sm" disabled title="Only a PDF, Word, or text submission can be checked.">
+                          No document
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/school-admin/assignments/${assignment.id}/submissions/${submission.id}`}>
+                          Review Submission
+                        </Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );

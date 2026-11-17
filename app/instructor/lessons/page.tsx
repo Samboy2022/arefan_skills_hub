@@ -44,8 +44,8 @@ export default async function InstructorCurriculumPage({
       order: 2,
       lessons: [
         { id: "les_3", title: "Fundamentals", lessonType: "video", order: 1 },
-        { id: "les_4", title: "Chapter 1 Test", lessonType: "quiz", order: 2 },
-        { id: "les_5", title: "Final Assignment", lessonType: "assignment", order: 3 },
+        { id: "les_4", title: "Chapter 1 Test", lessonType: "quiz", order: 2, href: "/instructor/quizzes/quiz-1/questions" },
+        { id: "les_5", title: "Final Assignment", lessonType: "assignment", order: 3, href: "/instructor/assignments/edit/assign-1" },
       ]
     }
   ];

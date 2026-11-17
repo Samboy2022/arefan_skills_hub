@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { STUDENT_QUIZZES, STUDENT_COURSES } from "@/lib/student-mock-data";
 import Link from "next/link";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { detailCardClass, detailFooterClass, detailSectionClass, detailWrapClass, sectionTitleClass } from "@/lib/student-ui";
 
 export default function QuizInstructionsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -15,7 +18,7 @@ export default function QuizInstructionsPage({ params }: { params: Promise<{ id:
   if (!quiz) return null;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 py-4">
+    <div className={detailWrapClass}>
       <Breadcrumb
         items={[
           { label: "Quizzes", href: "/student/quizzes" },
@@ -24,35 +27,37 @@ export default function QuizInstructionsPage({ params }: { params: Promise<{ id:
         ]}
       />
 
+      <Card className={detailCardClass}>
       {/* Header */}
-      <div>
-        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">{course?.code}</p>
-        <h1 className="text-2xl font-bold text-foreground">{quiz.title}</h1>
-        <p className="text-sm text-muted-foreground mt-1">Read the instructions carefully before starting.</p>
+      <div className={cn(detailSectionClass, "border-b border-border")}>
+        <span className="inline-block text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 mb-3">{course?.code}</span>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{quiz.title}</h1>
+        <p className="text-sm text-muted-foreground mt-1.5">Read the instructions carefully before starting.</p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-border bg-card p-4 text-center">
+      <div className="grid grid-cols-3 border-b border-border bg-muted/30 divide-x divide-border">
+        <div className="px-3 py-4 text-center">
           <HelpCircle className="h-4 w-4 text-muted-foreground mx-auto mb-1.5" />
           <p className="text-xl font-bold text-foreground">{quiz.total_questions}</p>
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Questions</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4 text-center">
+        <div className="px-3 py-4 text-center">
           <Clock className="h-4 w-4 text-muted-foreground mx-auto mb-1.5" />
           <p className="text-xl font-bold text-foreground">{quiz.time_limit}</p>
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Minutes</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4 text-center">
+        <div className="px-3 py-4 text-center">
           <Target className="h-4 w-4 text-muted-foreground mx-auto mb-1.5" />
           <p className="text-xl font-bold text-foreground">{quiz.attempts_allowed - quiz.attempts.length}</p>
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider">Attempts Left</p>
         </div>
       </div>
 
+      <div className={cn(detailSectionClass, "space-y-7")}>
       {/* Instructions */}
-      <div className="space-y-4">
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Instructions</h2>
+      <section>
+        <h2 className={sectionTitleClass}>Instructions</h2>
         <ol className="space-y-4">
           {[
             {
@@ -83,29 +88,32 @@ export default function QuizInstructionsPage({ params }: { params: Promise<{ id:
             </li>
           ))}
         </ol>
-      </div>
+      </section>
 
       {/* Warning */}
-      <div className="flex items-start gap-3 p-4 rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-800/50 text-sm">
+      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm dark:border-amber-800/50 dark:bg-amber-900/10">
         <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
         <p className="text-amber-800 dark:text-amber-300">
           <strong>Academic Integrity:</strong> By proceeding, you confirm you will complete this assessment independently. Switching browser tabs may be flagged.
         </p>
       </div>
 
+      </div>
+
       {/* Actions */}
-      <div className="flex items-center justify-between pt-2 border-t border-border">
-        <Button variant="ghost" size="sm" asChild>
+      <div className={detailFooterClass}>
+        <Button variant="outline" className="gap-1.5" asChild>
           <Link href={`/student/quizzes/${quiz.id}`}>
-            <ArrowLeft className="h-4 w-4 mr-1.5" /> Back
+            <ArrowLeft className="h-4 w-4" /> Back
           </Link>
         </Button>
-        <Button size="lg" className="px-8" asChild>
+        <Button className="gap-2 px-8" asChild>
           <Link href={`/student/quizzes/${quiz.id}/take`}>
-            Continue <Play className="h-4 w-4 ml-2 fill-current" />
+            Continue <Play className="h-4 w-4 fill-current" />
           </Link>
         </Button>
       </div>
+      </Card>
     </div>
   );
 }

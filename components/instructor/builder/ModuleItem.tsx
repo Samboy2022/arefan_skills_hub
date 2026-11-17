@@ -18,6 +18,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import Link from "next/link";
 import {
   GripVertical,
   Edit2,
@@ -26,6 +27,8 @@ import {
   ChevronUp,
   PlusCircle,
   BookOpen,
+  HelpCircle,
+  FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -93,6 +96,10 @@ export function ModuleItem({
       onDeleteModule(module.id);
     }
   };
+
+  const shortcuts = module.lessons.filter(
+    (lesson) => lesson.lessonType === "quiz" || lesson.lessonType === "assignment"
+  );
 
   return (
     <div
@@ -178,6 +185,23 @@ export function ModuleItem({
           </Button>
         </div>
       </div>
+
+      {shortcuts.length > 0 ? (
+        <div className="flex flex-wrap gap-2 border-b border-border bg-background px-4 py-3">
+          {shortcuts.map((lesson) => {
+            const isQuiz = lesson.lessonType === "quiz";
+            const href = lesson.href ?? (isQuiz ? "/instructor/quizzes" : "/instructor/assignments");
+            return (
+              <Button key={lesson.id} variant="outline" size="sm" asChild>
+                <Link href={href}>
+                  {isQuiz ? <HelpCircle className="h-4 w-4 text-purple-500" /> : <FileCheck className="h-4 w-4 text-emerald-500" />}
+                  {lesson.title}
+                </Link>
+              </Button>
+            );
+          })}
+        </div>
+      ) : null}
 
       {/* ── Lessons Area ── */}
       {isExpanded && (

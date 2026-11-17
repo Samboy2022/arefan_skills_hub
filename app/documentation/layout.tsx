@@ -1,6 +1,9 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { DocSidebar } from '@/components/doc-sidebar'
+import { PageHero, containerClasses } from '@/components/marketing'
+import { cn } from '@/lib/utils'
+import { BookOpen } from 'lucide-react'
 
 export default function DocumentationLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,24 +11,20 @@ export default function DocumentationLayout({ children }: { children: React.Reac
       <SiteHeader />
 
       <main className="flex-1 pb-24">
-        {/* Header Section */}
-        <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-              Arefan Skills Hub Documentation
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Comprehensive guides to help you navigate and master the platform.
-            </p>
-          </div>
-        </section>
+        <PageHero
+          badge="Guides for every role"
+          badgeIcon={BookOpen}
+          title="Fnskills"
+          highlight="Documentation"
+          description="Comprehensive guides to help you navigate and master the platform."
+        />
 
         {/* Documentation Content Layout */}
-        <section className="py-12">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl flex flex-col md:flex-row gap-8">
+        <section className="py-12 md:py-16">
+          <div className={cn(containerClasses, 'max-w-7xl flex flex-col md:flex-row gap-8 lg:gap-12')}>
 
             {/* Sidebar Navigation */}
-            <aside className="w-full md:w-64 flex-shrink-0">
+            <aside className="w-full md:w-64 flex-shrink-0 rounded-2xl border border-border/60 bg-card p-4 shadow-sm md:self-start md:sticky md:top-24">
               <DocSidebar />
             </aside>
 

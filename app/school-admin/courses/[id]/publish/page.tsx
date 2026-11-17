@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useParams, useRouter, notFound } from "next/navigation";
-import { Copy, Eye, Globe, Share2 } from "lucide-react";
+import { Copy, Globe, Share2 } from "lucide-react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,7 +51,7 @@ export default function SchoolAdminCoursePublishSettingsPage() {
         }).catch(() => console.log("Mock toast: saved"));
       }
 
-      router.push(`/school-admin/courses/${course.id}`);
+      router.push(`/school-admin/courses/${course.id}/edit`);
     } catch (e) {
       console.error(e);
     }
@@ -79,7 +79,7 @@ export default function SchoolAdminCoursePublishSettingsPage() {
           items={[
             { label: "Dashboard", href: "/school-admin" },
             { label: "My Courses", href: "/school-admin/courses" },
-            { label: course.title.length > 30 ? course.title.slice(0, 30) + "…" : course.title, href: `/school-admin/courses/${course.id}` },
+            { label: course.title.length > 30 ? course.title.slice(0, 30) + "…" : course.title, href: `/school-admin/courses/${course.id}/edit` },
             { label: "Publish Settings" }
           ]}
         />
@@ -90,8 +90,8 @@ export default function SchoolAdminCoursePublishSettingsPage() {
           title="Publish & Enrollment"
           description={`Control the visibility and access settings for ${course.code}.`}
           titleAction={
-            <Button variant="outline" className="gap-2" onClick={() => router.push(`/school-admin/courses/${course.id}`)}>
-              <Eye className="w-4 h-4" /> Preview
+            <Button variant="outline" className="gap-2" onClick={() => router.push(`/school-admin/courses/${course.id}/edit`)}>
+              Edit course
             </Button>
           }
         />
@@ -205,7 +205,7 @@ export default function SchoolAdminCoursePublishSettingsPage() {
       </div>
 
       <div className="flex justify-end gap-3 pt-6">
-        <Button variant="outline" onClick={() => router.push(`/school-admin/courses/${course.id}`)}>
+        <Button variant="outline" onClick={() => router.push(`/school-admin/courses/${course.id}/edit`)}>
           Cancel
         </Button>
         <Button type="submit" form="publishForm" className="gap-2 px-8">

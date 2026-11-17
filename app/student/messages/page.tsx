@@ -2,13 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { MessageSquare, Send, Search, User, MoreVertical, Paperclip, Smile, ChevronLeft, Plus } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { STUDENT_MESSAGES } from "@/lib/student-mock-data";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { PageHeader } from "@/components/student/page-header";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass } from "@/lib/student-ui";
 
 export default function MessagesPage() {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(
@@ -50,24 +51,25 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-5rem)] md:h-[calc(100vh-6rem)]">
-      <Breadcrumb 
-        items={[
-          { label: "Messages" }
-        ]}
-        className="mb-3 shrink-0"
-      />
+    <div className="flex h-[calc(100dvh-11rem)] min-h-[28rem] flex-col">
+      <div className="shrink-0">
+        <Breadcrumb items={[{ label: "Messages" }]} className="mb-3" />
+        <PageHeader
+          title="Messages"
+          description="Conversations with instructors and classmates."
+        />
+      </div>
       
-      <div className="flex-1 flex overflow-hidden border border-border rounded-xl bg-card shadow-sm">
+      <div className="flex min-h-0 flex-1 overflow-hidden rounded-2xl border border-border bg-card">
         {/* Conversations Sidebar */}
         <div className={cn(
           "w-full md:w-80 border-r border-border flex flex-col bg-muted/10 transition-all",
           showMobileChat ? "hidden md:flex" : "flex"
         )}>
-          <div className="p-4 border-b border-border bg-card">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-extrabold text-foreground tracking-tight">Messages</h1>
-              <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary transition-colors">
+          <div className="border-b border-border bg-card p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm font-semibold text-foreground">Inbox</p>
+              <Button size="icon" variant="ghost" className="h-8 w-8 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary" aria-label="New message">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -76,13 +78,19 @@ export default function MessagesPage() {
               <input
                 type="text"
                 placeholder="Search messages..."
-                className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-border bg-muted/30 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all font-medium placeholder:text-muted-foreground/70"
+                className="h-9 w-full border border-border bg-background py-2 pl-9 pr-4 text-sm font-medium placeholder:text-muted-foreground/70 focus:outline-none focus:ring-1 focus:ring-primary/50"
               />
             </div>
           </div>
           
           <div className="flex-1 overflow-y-auto">
-            {conversations.map((conv) => (
+            {conversations.length === 0 ? (
+              <div className={cn(emptyStateClass, "m-4 rounded-xl py-10")}>
+                <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/40" />
+                <h3 className={emptyTitleClass}>No conversations yet</h3>
+                <p className={emptyBodyClass}>When an instructor messages you, it will show up here.</p>
+              </div>
+            ) : conversations.map((conv) => (
               <button
                 key={conv.id}
                 onClick={() => handleSelectConversation(conv.id)}
@@ -92,7 +100,7 @@ export default function MessagesPage() {
                 )}
               >
                 <div className="relative">
-                  <Avatar className="h-11 w-11 shadow-sm">
+                  <Avatar className="h-11 w-11">
                     <AvatarImage src={conv.lastMessage.sender_avatar} />
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
                       {conv.lastMessage.sender_name.charAt(0)}
@@ -147,7 +155,7 @@ export default function MessagesPage() {
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
-                  <Avatar className="h-10 w-10 shadow-sm border border-border">
+                  <Avatar className="h-10 w-10 border border-border">
                     <AvatarImage src={activeConversation.lastMessage.sender_avatar} />
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
                       {activeConversation.lastMessage.sender_name.charAt(0)}
@@ -196,7 +204,7 @@ export default function MessagesPage() {
               {/* Input Area */}
               <div className="p-4 border-t border-border bg-background">
                 <form onSubmit={handleSendMessage} className="flex gap-2 items-end">
-                  <Button type="button" variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-muted/50 rounded-md">
+                  <Button type="button" variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-muted">
                     <Paperclip className="h-4 w-4" />
                   </Button>
                   <div className="relative flex-1">
@@ -204,8 +212,8 @@ export default function MessagesPage() {
                       rows={1}
                       value={messageInput}
                       onChange={(e) => setMessageInput(e.target.value)}
-                      placeholder="Type a professional message..."
-                      className="w-full pl-4 pr-10 py-2.5 text-sm rounded-md border border-border bg-muted/5 focus:outline-none focus:ring-1 focus:ring-primary/30 shadow-none resize-none min-h-[42px] max-h-[120px]"
+                      placeholder="Type a message..."
+                      className="max-h-[120px] min-h-[42px] w-full resize-none border border-input bg-background py-2.5 pl-3 pr-10 text-sm shadow-none focus:outline-none focus:ring-1 focus:ring-primary/30"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                           e.preventDefault();
@@ -213,24 +221,22 @@ export default function MessagesPage() {
                         }
                       }}
                     />
-                    <Button type="button" variant="ghost" size="icon" className="absolute right-1 bottom-1.5 h-7 w-7 text-muted-foreground hover:bg-muted/50 rounded-md">
+                    <Button type="button" variant="ghost" size="icon" className="absolute right-1 bottom-1.5 h-7 w-7 text-muted-foreground hover:bg-muted">
                       <Smile className="h-4 w-4" />
                     </Button>
                   </div>
-                  <Button type="submit" size="icon" disabled={!messageInput.trim()} className="h-10 w-10 rounded-md shadow-none shrink-0 bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Button type="submit" size="icon" disabled={!messageInput.trim()} className="h-10 w-10 shrink-0">
                     <Send className="h-4 w-4" />
                   </Button>
                 </form>
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-10 bg-muted/5">
-              <div className="p-6 rounded-md bg-muted/20 mb-4 border border-border/50">
-                <MessageSquare className="h-10 w-10 text-muted-foreground/40" />
-              </div>
-              <h3 className="font-bold text-lg text-foreground">Your Inbox</h3>
-              <p className="text-sm text-muted-foreground max-w-xs mt-2 leading-relaxed">
-                Select a conversation from the sidebar to view the message history and start chatting with your peers and instructors.
+            <div className={cn(emptyStateClass, "m-6 flex-1 rounded-xl")}>
+              <MessageSquare className="mb-4 h-12 w-12 text-muted-foreground/50" />
+              <h3 className={emptyTitleClass}>Select a conversation</h3>
+              <p className={emptyBodyClass}>
+                Choose a thread from the list to read the history and reply.
               </p>
             </div>
           )}

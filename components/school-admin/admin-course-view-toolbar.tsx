@@ -17,6 +17,8 @@ import {
 export type ViewMode = "grid" | "list" | "table";
 export type SortOption = "newest" | "title" | "enrollment" | "code";
 
+export type StatusFilter = "all" | "active" | "draft" | "archived";
+
 interface AdminCourseViewToolbarProps {
   viewMode: ViewMode;
   onViewModeChange: (view: ViewMode) => void;
@@ -24,6 +26,8 @@ interface AdminCourseViewToolbarProps {
   onSearchChange: (query: string) => void;
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
+  statusFilter: StatusFilter;
+  onStatusFilterChange: (status: StatusFilter) => void;
 }
 
 export function AdminCourseViewToolbar({
@@ -33,6 +37,8 @@ export function AdminCourseViewToolbar({
   onSearchChange,
   sortBy,
   onSortChange,
+  statusFilter,
+  onStatusFilterChange,
 }: AdminCourseViewToolbarProps) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border pb-4 w-full">
@@ -43,6 +49,7 @@ export function AdminCourseViewToolbar({
         <Input
           type="text"
           placeholder="Search courses..."
+          aria-label="Search courses"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9 h-10 w-full bg-card"
@@ -50,6 +57,17 @@ export function AdminCourseViewToolbar({
       </div>
 
       <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+        <Select value={statusFilter} onValueChange={(value) => onStatusFilterChange(value as StatusFilter)}>
+          <SelectTrigger className="w-[140px] h-10 bg-card" aria-label="Filter by status">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="archived">Archived</SelectItem>
+          </SelectContent>
+        </Select>
         {/* Sort Select */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground hidden lg:inline-block">Sort by:</span>

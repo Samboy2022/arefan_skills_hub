@@ -7,6 +7,7 @@ import { STUDENT_QUIZZES } from "@/lib/student-mock-data";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass } from "@/lib/student-ui";
 
 export default function TakeQuizPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -32,7 +33,15 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
   }, [quiz, isSubmitted]);
 
   if (!quiz || !quiz.questions) {
-    return <div className="p-8 text-center text-muted-foreground">Quiz data not available.</div>;
+    return (
+      <div className={emptyStateClass}>
+        <h2 className={emptyTitleClass}>Quiz data not available</h2>
+        <p className={emptyBodyClass}>This quiz has no questions yet, or the link is incorrect.</p>
+        <Button variant="outline" className="mt-6 gap-1.5" asChild>
+          <Link href="/student/quizzes"><ArrowLeft className="h-4 w-4" /> Back to quizzes</Link>
+        </Button>
+      </div>
+    );
   }
 
   const handleSelect = (qId: string, optIdx: number) => {
@@ -76,7 +85,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
         />
 
         {/* Score Hero */}
-        <div className="rounded-xl border border-border bg-card p-8 flex flex-col sm:flex-row items-center gap-8">
+        <div className="flex flex-col items-center gap-8 rounded-2xl border border-border bg-card p-8 sm:flex-row">
           {/* Circle Score */}
           <div className="shrink-0 flex flex-col items-center justify-center w-32 h-32 rounded-full border-4 border-border bg-muted/30">
             <span className={cn("text-4xl font-bold", passed ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400")}>
@@ -94,7 +103,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
             </div>
             <h1 className="text-2xl font-bold text-foreground mb-1">Grade Analysis</h1>
             <p className="text-sm text-muted-foreground">{quiz.title}</p>
-            <div className="flex items-center gap-6 mt-4 justify-center sm:justify-start">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-4 justify-center sm:justify-start">
               <div className="text-center">
                 <p className="text-2xl font-bold text-foreground">{score.earned_points}</p>
                 <p className="text-xs text-muted-foreground">Points Earned</p>
@@ -126,7 +135,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
               const skipped = answers[q.id] === undefined;
               return (
                 <div key={q.id} className={cn(
-                  "rounded-lg border-l-4 border border-border bg-card overflow-hidden",
+                  "overflow-hidden rounded-2xl border border-l-4 border-border bg-card",
                   isCorrect ? "border-l-emerald-500" : "border-l-red-400"
                 )}>
                   {/* Question Header */}
@@ -188,7 +197,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
       <div className="flex flex-col lg:flex-row gap-6 lg:h-[calc(100vh-12rem)] lg:min-h-[600px]">
 
         {/* ── Left: Question Area ─────────────────────────────────── */}
-        <div className="flex-1 flex flex-col border border-border rounded-xl bg-card overflow-hidden min-w-0">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-card">
 
           {/* Quiz Top Bar */}
           <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card">
@@ -204,7 +213,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
                 />
               </div>
             </div>
-            <Button size="sm" onClick={submitQuiz} className="bg-primary/90 hover:bg-primary gap-1.5">
+            <Button size="sm" onClick={submitQuiz} className="gap-1.5 px-4">
               <CheckCircle className="h-3.5 w-3.5" /> Submit
             </Button>
           </div>
@@ -217,7 +226,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs text-primary font-bold uppercase tracking-wider">Question {currentIdx + 1}</span>
-                  <span className="text-xs font-semibold text-muted-foreground border border-border rounded px-2 py-0.5 bg-muted">
+                  <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5 bg-muted">
                     {currentQ.points} {currentQ.points === 1 ? "Point" : "Points"}
                   </span>
                 </div>
@@ -233,7 +242,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
                       key={idx}
                       onClick={() => handleSelect(currentQ.id, idx)}
                       className={cn(
-                        "w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-lg border text-sm font-medium transition-all",
+                        "flex w-full items-center gap-3 border px-4 py-3.5 text-left text-sm font-medium transition-all",
                         isSelected
                           ? "border-primary bg-primary/5 text-primary"
                           : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted/30"
@@ -258,7 +267,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
           {/* Bottom Nav */}
           <div className="flex items-center justify-between px-5 py-3 border-t border-border bg-card">
             <Button
-              variant="outline" size="sm"
+              variant="outline" size="sm" className="px-4"
               disabled={currentIdx === 0}
               onClick={() => setCurrentIdx(p => p - 1)}
             >
@@ -266,7 +275,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
             </Button>
             <span className="text-xs text-muted-foreground">{answered}/{total} answered</span>
             <Button
-              variant="outline" size="sm"
+              variant="outline" size="sm" className="px-4"
               disabled={currentIdx === total - 1}
               onClick={() => setCurrentIdx(p => p + 1)}
             >
@@ -280,7 +289,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
 
           {/* Timer */}
           <div className={cn(
-            "rounded-xl border p-5 text-center",
+            "rounded-2xl border p-5 text-center",
             isLowTime
               ? "border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800"
               : "border-border bg-card"
@@ -297,7 +306,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
           </div>
 
           {/* Navigator */}
-          <div className="rounded-xl border border-border bg-card p-4 flex-1">
+          <div className="flex-1 rounded-2xl border border-border bg-card p-4">
             <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Navigator</p>
             <div className="grid grid-cols-5 gap-2">
               {quiz.questions.map((q, idx) => {
@@ -308,7 +317,7 @@ export default function TakeQuizPage({ params }: { params: Promise<{ id: string 
                     key={q.id}
                     onClick={() => setCurrentIdx(idx)}
                     className={cn(
-                      "h-8 w-8 rounded-full text-xs font-bold border transition-all",
+                      "h-8 w-8 border text-xs font-bold transition-all",
                       isCurrent && "ring-2 ring-primary/30 ring-offset-1",
                       isAnswered
                         ? "bg-primary border-primary text-white"

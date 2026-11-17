@@ -4,11 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   ChevronDown,
-  Play,
-  Pause,
   Check,
-  BookOpen,
-  Clock,
   FileText,
   HelpCircle,
   PenSquare,
@@ -17,11 +13,10 @@ import {
   Send,
   User,
   Bot,
-  ArrowUp,
 } from 'lucide-react';
 
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { curriculumItemHref } from '@/lib/student-course-content';
 
 interface Lesson {
   id: number;
@@ -47,6 +42,7 @@ interface LessonSidebarProps {
     curriculum: Section[];
   };
   currentLessonId: number;
+  onNavigate?: () => void;
   onProgressUpdate?: (progress: number) => void;
   externalCompletedIds?: Set<number>;
   onToggleComplete?: (id: number) => void;
@@ -65,29 +61,22 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
-function formatTimestamp(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`;
-  return `${String(m).padStart(2, '0')}:00`;
-}
-
 /** Icon per lesson content type */
 function LessonTypeIcon({ type }: { type: string }) {
   const cls = 'w-3.5 h-3.5 shrink-0';
   switch (type) {
     case 'assignment':
-      return <PenSquare className={`${cls} text-amber-500`} />;
+      return <PenSquare className={`${cls} text-muted-foreground`} />;
     case 'quiz':
-      return <HelpCircle className={`${cls} text-purple-500`} />;
+      return <HelpCircle className={`${cls} text-muted-foreground`} />;
     case 'document':
-      return <FileText className={`${cls} text-blue-500`} />;
+      return <FileText className={`${cls} text-muted-foreground`} />;
     default:
       return null; // video — use play/pause
   }
 }
 
-export function LessonSidebar({ course, currentLessonId, onProgressUpdate, externalCompletedIds, onToggleComplete }: LessonSidebarProps) {
+export function LessonSidebar({ course, currentLessonId, onProgressUpdate, externalCompletedIds, onToggleComplete, onNavigate }: LessonSidebarProps) {
   const defaultOpen =
     course.curriculum?.find(s => s.lessons.some(l => l.id === currentLessonId))?.id ??
     course.curriculum?.[0]?.id ??
@@ -107,7 +96,7 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
       { role: 'ai', content: 'Hello! I am your AI Study Guide. Ask me anything about this lesson, or request a summary!' }
     ]
   );
-  
+
   // Find current lesson for title display
   const activeLesson = course.curriculum?.flatMap(s => s.lessons).find(l => l.id === currentLessonId);
 
@@ -140,7 +129,7 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
     const newMsg = { role: 'user' as const, content: chatInput.trim() };
     setChatMessages(prev => [...prev, newMsg]);
     setChatInput('');
-    
+
     // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -148,9 +137,9 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
 
     // Simulate AI response
     setTimeout(() => {
-      setChatMessages(prev => [...prev, { 
-        role: 'ai', 
-        content: `I am currently a demo AI assistant. You asked: "${newMsg.content}". In a real app, I'd analyze the lesson content and give a smart response!` 
+      setChatMessages(prev => [...prev, {
+        role: 'ai',
+        content: `I am currently a demo AI assistant. You asked: "${newMsg.content}". In a real app, I'd analyze the lesson content and give a smart response!`
       }]);
     }, 1000);
   };
@@ -190,33 +179,33 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
       {/* ── Tab Bar ── */}
       <div className="flex border-b border-border shrink-0">
         <button
-          onClick={() => setActiveTab('content')}
+          onClick={() => setActiveTab('content')} aria-pressed={activeTab === 'content'}
           className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'content'
-              ? 'border-primary text-primary'
+              ? 'border-foreground text-foreground'
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
           <ListVideo className="w-4 h-4" />
-          Course Content
+          Contents
         </button>
         <button
-          onClick={() => setActiveTab('ai')}
+          onClick={() => setActiveTab('ai')} aria-pressed={activeTab === 'ai'}
           className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'ai'
-              ? 'border-primary text-primary'
+              ? 'border-foreground text-foreground'
               : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
         >
           <Sparkles className="w-4 h-4" />
-          AI Study Guide
+          Study guide
         </button>
       </div>
 
       {/* ── AI Study Guide Panel ── */}
       {activeTab === 'ai' && (
         <div className="flex-1 flex flex-col min-h-0 bg-muted/10">
-          <div className="p-4 border-b border-border bg-card shadow-sm z-10 shrink-0">
+          <div className="p-4 border-b border-border bg-card z-10 shrink-0">
             <h3 className="text-sm font-semibold flex items-center gap-2 text-foreground">
               <Sparkles className="w-4 h-4 text-primary shrink-0" />
               <span className="truncate">AI Guide: {activeLesson?.title || 'Lesson Guide'}</span>
@@ -258,12 +247,12 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                     }
                   }
                 }}
-                placeholder="Ask your AI guide..." 
-                className="flex-1 text-sm bg-background border border-input rounded-xl pl-3 pr-[40px] py-2.5 resize-none outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                aria-label="Ask your study guide" placeholder="Ask your AI guide..."
+                className="flex-1 text-sm bg-background border border-input rounded-3xl pl-4 pr-[44px] py-2.5 resize-none outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                 rows={1}
                 style={{ minHeight: '40px' }}
               />
-              <Button type="submit" size="icon" className="absolute right-1.5 bottom-1.5 h-7 w-7 rounded-[8px] transition-all" disabled={!chatInput.trim()}>
+              <Button type="submit" size="icon" className="absolute right-1.5 bottom-1.5 h-7 w-7 rounded-full transition-all" aria-label="Send message" disabled={!chatInput.trim()}>
                 <Send className="w-4 h-4 ml-0.5" />
               </Button>
             </div>
@@ -271,7 +260,7 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
         </div>
       )}
 
-      {/* ── Course Content Panel ── */}
+      {/* ── Contents Panel ── */}
       {activeTab === 'content' && (
         <div className="flex-1 overflow-y-auto">
           {/* Sections accordion */}
@@ -284,52 +273,24 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                 section.duration_minutes ??
                 lessons.reduce((s, l) => s + (l.duration_minutes ?? 0), 0);
               const completedCount = lessons.filter(l => completedLessonIds.has(l.id)).length;
-              const hasActive = lessons.some(l => l.id === currentLessonId);
 
               return (
                 <div key={section.id}>
                   {/* Section header */}
                   <button
+                    aria-expanded={isOpen}
                     onClick={() => setOpenSectionId(isOpen ? null : section.id)}
                     className={`w-full flex items-start justify-between px-5 py-4 text-left transition-colors ${
                       isOpen ? 'bg-muted/30' : 'bg-transparent hover:bg-muted/30'
                     }`}
                   >
-                    <div className="flex items-start gap-2 flex-1 min-w-0 pr-3">
-                      <ChevronDown
-                        className={`w-4 h-4 shrink-0 mt-0.5 text-muted-foreground transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
-                        }`}
-                      />
-                      {/* Title — NO truncate, allow wrapping, lighter font mapping */}
-                      <span
-                        className={`text-[13px] font-medium leading-snug ${
-                          isOpen || hasActive ? 'text-primary' : 'text-foreground/90'
-                        }`}
-                      >
-                        {section.title}
+                    <ChevronDown className={`w-4 h-4 shrink-0 mt-0.5 text-muted-foreground transition-transform motion-reduce:transition-none ${isOpen ? 'rotate-180' : ''}`} />
+                    <div className="min-w-0 flex-1 pl-3">
+                      <span className="block text-sm font-medium leading-5 text-foreground">{section.title}</span>
+                      <span className="mt-1 block text-xs text-muted-foreground">
+                        {lectureCount} lessons · {formatDuration(totalMins)}
+                        {completedCount > 0 && ` · ${completedCount}/${lessons.length} complete`}
                       </span>
-                    </div>
-
-                    {/* Meta: lecture count + duration */}
-                    <div className="flex items-center gap-4 shrink-0 text-right">
-                      <div className="w-[18px] text-xs text-muted-foreground mr-1 text-right">
-                        {lectureCount}
-                      </div>
-                      <div className="flex items-center justify-end gap-1 w-[60px]">
-                        <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">{formatDuration(totalMins)}</span>
-                      </div>
-                      {completedCount > 0 ? (
-                        <div className="flex items-center justify-end gap-1 w-[36px]">
-                          <Check className="w-3.5 h-3.5 text-primary shrink-0" />
-                          <span className="text-xs text-muted-foreground whitespace-nowrap">
-                            {completedCount}/{lessons.length}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="w-[36px]"></div>
-                      )}
                     </div>
                   </button>
 
@@ -342,12 +303,11 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                         const isVideoType = lesson.content_type === 'video';
 
                         return (
-                          <Link
+                          <div
                             key={lesson.id}
-                            href={lesson.content_type === 'assignment' ? `/student/assignments/${lesson.id}` : `/student/courses/${course.id}/lessons/${lesson.id}`}
-                            className={`group w-full flex items-center justify-between px-5 py-3 transition-colors duration-200 cursor-pointer ${
-                              isActive 
-                                ? 'bg-primary/10 dark:bg-primary/20' 
+                            className={`group w-full flex items-center justify-between px-4 py-1.5 transition-colors duration-200 ${
+                              isActive
+                                ? 'bg-primary/5'
                                 : 'hover:bg-muted/40'
                             }`}
                           >
@@ -356,18 +316,25 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                               {/* Status checkbox - clickable */}
                               <button
                                 onClick={(e) => toggleLessonCompletion(lesson.id, e)}
-                                className="shrink-0 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1 rounded-full"
-                                aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                                className="shrink-0 flex h-10 w-8 items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1 rounded-full"
+                                aria-pressed={isCompleted}
+                                aria-label={`${isCompleted ? 'Mark as incomplete' : 'Mark as complete'}: ${lesson.title}`}
                               >
                                 {isCompleted ? (
-                                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center transition-all duration-200 hover:bg-primary/90 hover:scale-110">
+                                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center transition-all duration-200 hover:bg-primary/90">
                                     <Check className="w-3 h-3 text-white stroke-[2.5]" />
                                   </div>
                                 ) : (
-                                  <div className="w-5 h-5 bg-transparent border-[1.5px] border-muted-foreground/50 rounded-full transition-all duration-200 hover:border-primary/60 hover:bg-primary/5 hover:scale-105" />
+                                  <div className="w-5 h-5 bg-transparent border-[1.5px] border-muted-foreground/50 rounded-full transition-all duration-200 hover:border-primary/60 hover:bg-primary/5" />
                                 )}
                               </button>
 
+                              <Link
+                                href={curriculumItemHref(lesson, course.id)}
+                                onClick={onNavigate}
+                                aria-current={isActive ? 'page' : undefined}
+                                className="flex min-h-10 min-w-0 flex-1 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-ring"
+                              >
                               {/* Type icon for non-video */}
                               {!isVideoType && <LessonTypeIcon type={lesson.content_type} />}
 
@@ -381,26 +348,11 @@ export function LessonSidebar({ course, currentLessonId, onProgressUpdate, exter
                               >
                                 {lesson.title}
                               </span>
+                              <span className="ml-auto shrink-0 text-xs tabular-nums text-muted-foreground">{formatDuration(lesson.duration_minutes ?? 0)}</span>
+                              </Link>
                             </div>
 
-                            {/* Right: play/pause + duration */}
-                            <div className="flex items-center gap-2 shrink-0">
-                              {isVideoType && (
-                                isActive ? (
-                                  <Pause className="w-4 h-4 text-foreground fill-current transition-transform group-hover:scale-110" />
-                                ) : (
-                                  <Play className="w-4 h-4 text-muted-foreground fill-current transition-all group-hover:text-primary group-hover:scale-110" />
-                                )
-                              )}
-                              <span
-                                className={`text-xs tabular-nums transition-colors ${
-                                  isActive ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
-                                }`}
-                              >
-                                {formatTimestamp(lesson.duration_minutes ?? 0)}
-                              </span>
-                            </div>
-                          </Link>
+                          </div>
                         );
                       })}
                     </div>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
 import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 
@@ -17,24 +18,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Arefan Skills Hub',
-    default: 'Arefan Skills Hub - Advanced Learning Management System',
+    template: '%s | Fnskills',
+    default: 'Fnskills - Advanced Learning Management System',
   },
-  description: 'A comprehensive platform for skills development, course management, and educational tracking. Empower your learning journey with Arefan Skills Hub.',
-  keywords: ['Arefan Skills Hub', 'LMS', 'Learning Management System', 'Skills Development', 'Education', 'Online Courses'],
-  authors: [{ name: 'Arefan Skills Hub Team' }],
-  metadataBase: new URL('https://arefanskillshub.com'),
+  description: 'A comprehensive platform for skills development, course management, and educational tracking. Empower your learning journey with Fnskills.',
+  keywords: ['Fnskills', 'LMS', 'Learning Management System', 'Skills Development', 'Education', 'Online Courses'],
+  authors: [{ name: 'Fnskills Team' }],
+  metadataBase: new URL('https://fnskills.com'),
   openGraph: {
-    title: 'Arefan Skills Hub - Advanced Learning Management System',
+    title: 'Fnskills - Advanced Learning Management System',
     description: 'Empowering growth through skill-based learning and advanced education management solutions.',
-    url: 'https://arefanskillshub.com',
-    siteName: 'Arefan Skills Hub',
+    url: 'https://fnskills.com',
+    siteName: 'Fnskills',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Arefan Skills Hub - Advanced Learning Management System',
+    title: 'Fnskills - Advanced Learning Management System',
     description: 'Empowering growth through skill-based learning and advanced education management solutions.',
   },
   icons: {
@@ -54,6 +55,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <NextTopLoader color="oklch(0.61 0.19 149.213)" showSpinner={false} height={3} crawl={true} />
           {children}
+          <Toaster richColors position="top-right" />
         </ThemeProvider>
         <Analytics />
       </body>

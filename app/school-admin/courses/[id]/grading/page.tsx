@@ -36,7 +36,7 @@ export default function SchoolAdminCourseGradingEditPage() {
           items={[
             { label: "Dashboard", href: "/school-admin" },
             { label: "My Courses", href: "/school-admin/courses" },
-            { label: course.title.length > 30 ? course.title.slice(0, 30) + "…" : course.title, href: `/school-admin/courses/${course.id}` },
+            { label: course.title.length > 30 ? course.title.slice(0, 30) + "…" : course.title, href: `/school-admin/courses/${course.id}/edit` },
             { label: "Edit Grading" }
           ]} 
         />
@@ -53,7 +53,7 @@ export default function SchoolAdminCourseGradingEditPage() {
         course={course as any} 
         initialCategories={initialCategories} 
         onSuccess={() => {/* Toast handles feedback, stay on page per spec */}}
-        onCancel={() => router.push(`/school-admin/courses/${course.id}`)}
+        onCancel={() => router.push(`/school-admin/courses/${course.id}/edit`)}
       />
     </div>
   );

@@ -1,17 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle2, MessageSquare, StarIcon } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CheckCircle2, Star, StarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { CourseCurriculum } from './CourseCurriculum';
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, formIconClass, formLabelClass, formSectionClass } from '@/lib/student-ui';
+import { StudentTip } from '@/components/student/tip';
 
 export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: { course: any, isEnrolled: boolean, isInstructor?: boolean }) {
   const [reviews, setReviews] = useState(course.reviews || []);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // Deep links such as /courses/cs101#syllabus open the matching tab
+  useEffect(() => {
+    const syncFromHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'syllabus' || hash === 'curriculum') setActiveTab('curriculum');
+      else if (hash === 'reviews') setActiveTab('reviews');
+    };
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, []);
 
   const handleSaveReview = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,26 +48,17 @@ export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: 
   };
 
   return (
-    <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="mb-6 w-full justify-start border-b border-border rounded-none bg-transparent p-0">
-        <TabsTrigger 
-          value="overview" 
-          className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3"
-        >
-          Overview
-        </TabsTrigger>
-        <TabsTrigger 
-          value="curriculum" 
-          className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3"
-        >
-          Curriculum
-        </TabsTrigger>
-        <TabsTrigger 
-          value="reviews" 
-          className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3"
-        >
-          Reviews
-        </TabsTrigger>
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="mb-6 inline-flex h-auto w-full justify-start gap-1 overflow-x-auto rounded-lg border border-border bg-muted/40 p-1">
+        {(["overview", "curriculum", "reviews"] as const).map((value) => (
+          <TabsTrigger
+            key={value}
+            value={value}
+            className="h-auto flex-none rounded-md border-0 px-3 py-1.5 text-sm font-medium text-muted-foreground capitalize shadow-none hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+          >
+            {value}
+          </TabsTrigger>
+        ))}
       </TabsList>
 
       {/* OVERVIEW TAB */}
@@ -58,8 +66,8 @@ export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: 
         
         {/* What You'll Learn */}
         <section>
-          <h2 className="text-xl font-bold text-foreground mb-4">What You'll Learn</h2>
-          <Card className="border border-border shadow-none rounded-md bg-card">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">What you&apos;ll learn</h2>
+          <Card className="gap-0 rounded-2xl border border-border bg-card py-0 shadow-none">
             <CardContent className="p-6">
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                 {course.learning_outcomes.map((outcome: string, index: number) => (
@@ -75,13 +83,16 @@ export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: 
 
         {/* Instructor Info */}
         <section>
-          <h2 className="text-xl font-bold text-foreground mb-4">Instructor</h2>
-          <Card className="border border-border shadow-none rounded-md bg-muted/30">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Instructor</h2>
+          <Card className="gap-0 rounded-2xl border border-border bg-card py-0 shadow-none">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
-                <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl shrink-0">
-                  {course.instructor.name.charAt(0)}
-                </div>
+                <Avatar className="h-14 w-14 shrink-0 border border-border">
+                  <AvatarImage src={course.instructor.profile_photo_url || ''} alt="" />
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-xl">
+                    {course.instructor.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <h3 className="font-semibold text-foreground text-lg">{course.instructor.name}</h3>
                   <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{course.instructor.bio}</p>
@@ -97,40 +108,41 @@ export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: 
       <TabsContent value="curriculum" className="space-y-10 focus-visible:outline-none">
         {/* About This Course */}
         <section>
-          <h2 className="text-xl font-bold text-foreground mb-4">About This Course</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">About this course</h2>
           <div 
-            className="prose prose-sm max-w-none text-muted-foreground prose-p:leading-relaxed"
+            className="max-w-none space-y-3 text-sm leading-relaxed text-muted-foreground"
             dangerouslySetInnerHTML={{ __html: course.description }}
           />
         </section>
 
         {/* Course Curriculum */}
         <section>
-          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center justify-between">
-            <span>Course Curriculum ({course.curriculum?.length || 0} Modules)</span>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">
+            Course Curriculum ({course.curriculum?.length || 0} modules)
           </h2>
-          <Card className="border border-border shadow-none rounded-md bg-card overflow-hidden">
-            <CourseCurriculum 
-              course={course} 
-              isEnrolled={isEnrolled}
-              curriculum={course.curriculum}
-              isInstructor={isInstructor}
-            />
-          </Card>
+          <CourseCurriculum
+            course={course}
+            isEnrolled={isEnrolled}
+            curriculum={course.curriculum}
+            isInstructor={isInstructor}
+          />
         </section>
       </TabsContent>
 
       {/* REVIEWS TAB */}
       <TabsContent value="reviews" className="space-y-10 focus-visible:outline-none">
         <section>
-          <h2 className="text-xl font-bold text-foreground mb-4">Student Reviews</h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Student reviews</h2>
           
-          <div className="space-y-6 mb-10">
+          <div className="mb-10 space-y-4">
             {reviews.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No reviews yet. Be the first to share your experience!</p>
+              <div className={emptyStateClass}>
+                <h3 className={emptyTitleClass}>No reviews yet</h3>
+                <p className={emptyBodyClass}>Be the first to share how this course is going.</p>
+              </div>
             ) : (
               reviews.map((rev: any) => (
-                <Card key={rev.id} className="border border-border shadow-none bg-card">
+                <Card key={rev.id} className="gap-0 rounded-2xl border border-border bg-card py-0 shadow-none">
                   <CardContent className="p-5">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
@@ -140,7 +152,7 @@ export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: 
                       </div>
                       <div className="flex items-center text-amber-500">
                         {[...Array(5)].map((_, i) => (
-                          <StarIcon key={i} className={`w-4 h-4 ${i < rev.rating ? 'fill-current' : 'text-muted/30'}`} />
+                          <StarIcon key={i} className={`w-4 h-4 ${i < rev.rating ? 'fill-current' : 'text-muted-foreground/30'}`} />
                         ))}
                       </div>
                     </div>
@@ -151,41 +163,52 @@ export function CourseDetailsTabs({ course, isEnrolled, isInstructor = false }: 
             )}
           </div>
 
-          {/* Rate Course */}
-          <div className="bg-muted/30 p-6 rounded-lg border border-border">
-            <h3 className="font-bold text-lg mb-4">Rate Course</h3>
-            <form onSubmit={handleSaveReview} className="space-y-4">
+          <section className={formSectionClass}>
+            <div className="mb-5 flex items-start gap-3">
+              <span className={formIconClass}>
+                <Star className="h-4 w-4" />
+              </span>
               <div>
-                <label className="text-sm font-medium mb-2 block">Your Rating</label>
+                <h3 className="font-semibold">Rate this course</h3>
+                <p className="text-sm text-muted-foreground">Your rating is visible to classmates.</p>
+              </div>
+            </div>
+            <StudentTip>
+              Keep the comment specific — what helped, and what could be clearer. Ratings are visible to classmates.
+            </StudentTip>
+            <form onSubmit={handleSaveReview} className="mt-4 space-y-4">
+              <div>
+                <label className={cn(formLabelClass, "mb-1.5 block")}>Your rating</label>
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setRating(star)}
+                      aria-label={`${star} star${star === 1 ? '' : 's'}`}
                       className="text-amber-500 hover:scale-110 transition-transform"
                     >
-                      <StarIcon className={`w-6 h-6 ${star <= rating ? 'fill-current' : 'text-muted/30'}`} />
+                      <StarIcon className={`w-6 h-6 ${star <= rating ? 'fill-current' : 'text-muted-foreground/30'}`} />
                     </button>
                   ))}
                 </div>
               </div>
               
               <div>
-                <label className="text-sm font-medium mb-2 block">Your Comment</label>
+                <label className="mb-1.5 block text-sm font-medium">Your comment</label>
                 <Textarea 
                   placeholder="Share your thoughts about this course..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="resize-none min-h-[100px]"
+                  className="min-h-[100px] resize-none bg-background px-3 py-3"
                 />
               </div>
 
-              <Button type="submit" disabled={!comment.trim()}>
+              <Button type="submit" className="px-6" disabled={!comment.trim()}>
                 Save Review
               </Button>
             </form>
-          </div>
+          </section>
         </section>
       </TabsContent>
 

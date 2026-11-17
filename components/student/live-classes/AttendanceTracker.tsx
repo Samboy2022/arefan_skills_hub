@@ -63,7 +63,7 @@ export function AttendanceTracker({
       : "bg-rose-500";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 flex flex-col gap-4 h-full">
+    <div className="flex h-full flex-col gap-4 rounded-2xl border border-border bg-card p-5">
       {/* Header */}
       <div className="flex items-center gap-2">
         <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -115,7 +115,7 @@ export function AttendanceTracker({
         {thresholdMet ? (
           <div
             className={cn(
-              "flex items-center gap-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-4 py-3",
+              "flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/40",
               pulseActive && "animate-pulse"
             )}
           >
@@ -130,7 +130,7 @@ export function AttendanceTracker({
             </div>
           </div>
         ) : (
-          <div className="flex items-center gap-2 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 px-4 py-3">
+          <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-950/30">
             <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
             <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
               Counting your attendance…
@@ -145,7 +145,7 @@ export function AttendanceTracker({
           <button
             onClick={() => setIsDemoMode((p) => !p)}
             className={cn(
-              "text-[10px] uppercase font-bold px-3 py-1.5 rounded transition-colors shadow-sm",
+              "px-3.5 py-1.5 text-[10px] font-bold uppercase transition-colors",
               isDemoMode 
                 ? "bg-primary text-primary-foreground animate-pulse" 
                 : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"

@@ -17,9 +17,11 @@ export function HeroTextRotator() {
 
   return (
     <span className="relative inline-flex justify-center min-w-[12ch]">
+      <span className="sr-only">Learning Platform</span>
       <AnimatePresence mode="wait">
         <motion.span
           key={index}
+          aria-hidden
           initial={{ y: 20, opacity: 0, filter: 'blur(8px)' }}
           animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
           exit={{ y: -20, opacity: 0, filter: 'blur(8px)' }}

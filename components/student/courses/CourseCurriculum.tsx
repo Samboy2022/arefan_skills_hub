@@ -8,7 +8,9 @@ import {
   Pencil, PlusCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { curriculumItemHref } from '@/lib/student-course-content';
 import { Badge } from '@/components/ui/badge';
+import { emptyBodyClass, emptyStateClass, emptyTitleClass } from '@/lib/student-ui';
 
 interface Lesson {
   id: number;
@@ -66,8 +68,9 @@ export function CourseCurriculum({
 
   if (!curriculum || curriculum.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
-        Curriculum details are not available yet.
+      <div className={emptyStateClass}>
+        <h3 className={emptyTitleClass}>Curriculum not available yet</h3>
+        <p className={emptyBodyClass}>Lessons for this course will appear here once they are published.</p>
       </div>
     );
   }
@@ -75,7 +78,7 @@ export function CourseCurriculum({
   return (
     <div className="space-y-4">
       {curriculum.map((section) => (
-        <div key={section.id} className="border border-border rounded-md overflow-hidden bg-card">
+        <div key={section.id} className="overflow-hidden rounded-2xl border border-border bg-card">
 
           {/* ── Section Header ── */}
           <button
@@ -102,22 +105,20 @@ export function CourseCurriculum({
                 </p>
 
                 {/* Metrics */}
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground bg-background/50 inline-flex p-1.5 rounded-md border border-border/50">
-                  <span className="font-medium flex items-center gap-1">
+                <div className="mt-2 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-border/50 bg-background/50 p-1.5 text-[11px] text-muted-foreground">
+                  <span className="flex items-center gap-1 font-medium">
                     <PlayCircleIcon className="w-3 h-3" />
-                    {section.lessons.filter((l) => l.content_type === 'video' || l.content_type === 'document').length} Multimedia
+                    {section.lessons.filter((l) => l.content_type === 'video' || l.content_type === 'document').length} multimedia
                   </span>
                   <span>&bull;</span>
-                  <span className="font-medium flex items-center gap-1">
+                  <span className="flex items-center gap-1 font-medium">
                     <FileIcon className="w-3 h-3 text-amber-500" />
-                    {section.lessons.filter((l) => l.content_type === 'assignment').length} Assignment
-                    {section.lessons.filter((l) => l.content_type === 'assignment').length !== 1 && 's'}
+                    {section.lessons.filter((l) => l.content_type === 'assignment').length === 1 ? "1 assignment" : `${section.lessons.filter((l) => l.content_type === 'assignment').length} assignments`}
                   </span>
                   <span>&bull;</span>
-                  <span className="font-medium flex items-center gap-1">
+                  <span className="flex items-center gap-1 font-medium">
                     <HelpCircleIcon className="w-3 h-3 text-purple-500" />
-                    {section.lessons.filter((l) => l.content_type === 'quiz').length} Quiz
-                    {section.lessons.filter((l) => l.content_type === 'quiz').length !== 1 && 'zes'}
+                    {section.lessons.filter((l) => l.content_type === 'quiz').length === 1 ? "1 quiz" : `${section.lessons.filter((l) => l.content_type === 'quiz').length} quizzes`}
                   </span>
                 </div>
               </div>
@@ -141,11 +142,7 @@ export function CourseCurriculum({
                     <div className="ml-3">
                       {lesson.is_preview || isEnrolled ? (
                         <Link
-                          href={
-                            lesson.content_type === 'assignment'
-                              ? `/student/assignments/${lesson.id}`
-                              : `/student/courses/${course.id}/lessons/${lesson.id}`
-                          }
+                          href={curriculumItemHref(lesson, course.id)}
                           className="font-medium text-sm text-foreground hover:text-primary transition-colors hover:underline"
                         >
                           {lesson.title}
@@ -188,14 +185,8 @@ export function CourseCurriculum({
                           </Badge>
                         )}
                         {lesson.is_preview || isEnrolled ? (
-                          <Link
-                            href={
-                              lesson.content_type === 'assignment'
-                                ? `/student/assignments/${lesson.id}`
-                                : `/student/courses/${course.id}/lessons/${lesson.id}`
-                            }
-                          >
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
+                          <Link href={curriculumItemHref(lesson, course.id)}>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 transition-colors hover:bg-primary/10 hover:text-primary">
                               <PlayIcon className="w-4 h-4 ml-0.5" />
                             </Button>
                           </Link>

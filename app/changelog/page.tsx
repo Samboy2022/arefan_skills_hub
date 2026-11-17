@@ -15,7 +15,7 @@ export default function ChangelogPage() {
               Product <span className="text-primary text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Changelog</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-10">
-              Stay up to date with the latest features, fixes, and improvements to Arefan Skills Hub.
+              Stay up to date with the latest features, fixes, and improvements to Fnskills.
             </p>
           </div>
         </section>
@@ -40,14 +40,14 @@ export default function ChangelogPage() {
                    <li>Fixed an issue with timezone synchronization in the gradebook.</li>
                  </ul>
                </div>
-               <Card className="h-[350px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl">
+               <Card className="h-[350px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-none">
                  <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Analytics Dashboard UI</span>
                </Card>
             </div>
 
             {/* Release 2 */}
             <div className="grid md:grid-cols-2 gap-12 items-start mb-24 border-b border-border/50 pb-24">
-               <Card className="h-[350px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl order-2 md:order-1">
+               <Card className="h-[350px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-none order-2 md:order-1">
                  <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Mobile App Preview</span>
                </Card>
                <div className="prose prose-slate dark:prose-invert max-w-none order-1 md:order-2">
@@ -77,7 +77,7 @@ export default function ChangelogPage() {
                    Instructors requested more ways to test knowledge. We've expanded the quiz engine to support drag-and-drop categorization, audio responses, and advanced mathematical equation rendering via LaTeX.
                  </p>
                </div>
-               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-xl">
+               <Card className="h-[300px] border-dashed border-2 border-border/50 bg-muted/20 flex flex-col items-center justify-center relative overflow-hidden rounded-none">
                  <span className="z-10 bg-background/80 backdrop-blur px-4 py-2 rounded-md border border-border shadow-sm text-sm font-mono text-muted-foreground">Image: Advanced Quizzing Interface</span>
                </Card>
             </div>

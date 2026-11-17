@@ -330,7 +330,7 @@ export default function SettingsPage() {
             <div className="order-last lg:order-first lg:col-span-7 space-y-6">
               
               {/* Branding and Info Card */}
-              <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <Card className="rounded-none border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
                 <CardHeader className="border-b border-border/50 pb-4">
                   <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                     <Building2 className="w-5 h-5 text-primary" style={{ color: primaryColor }} />
@@ -433,7 +433,7 @@ export default function SettingsPage() {
               </Card>
 
               {/* Theme Colors Card */}
-              <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <Card className="rounded-none border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
                 <CardHeader className="border-b border-border/50 pb-4">
                   <div className="flex justify-between items-center">
                     <div>
@@ -574,7 +574,7 @@ export default function SettingsPage() {
                 Live Brand Theme Preview
               </div>
 
-              <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 p-4 md:p-6 flex flex-col overflow-hidden">
+              <Card className="rounded-none border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 p-4 md:p-6 flex flex-col overflow-hidden">
                 {/* Downscaled Application Dashboard Mockup */}
                 <div className="rounded-lg border border-border shadow-inner bg-background overflow-hidden h-[490px] flex flex-col text-left">
                   
@@ -762,7 +762,7 @@ export default function SettingsPage() {
         {/* Payment Settings Tab Content */}
         <TabsContent value="payment" className="mt-0">
           <form onSubmit={handleUpdate}>
-            <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden max-w-4xl">
+            <Card className="rounded-none border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden max-w-4xl">
               <CardHeader className="border-b border-border/50 pb-4">
                 <div className="flex justify-between items-center">
                   <div>
@@ -966,7 +966,7 @@ export default function SettingsPage() {
             
             {/* Left Column: Management & Sessions List */}
             <div className="lg:col-span-7 space-y-6">
-              <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+              <Card className="rounded-none border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
                 <CardHeader className="border-b border-border/50 pb-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
@@ -1083,7 +1083,7 @@ export default function SettingsPage() {
                 Session Lifecycle
               </div>
 
-              <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 p-5 space-y-4">
+              <Card className="rounded-none border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 p-5 space-y-4">
                 <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                   What is a School Session?

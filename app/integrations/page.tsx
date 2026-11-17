@@ -3,14 +3,22 @@ import Link from 'next/link'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Video, Mail, MessageSquare, CreditCard, Plug, Code } from 'lucide-react'
+import {
+  CategoryHeader,
+  CtaBanner,
+  IconBox,
+  InfoCard,
+  PageHero,
+  containerClasses,
+  sectionClasses,
+} from '@/components/marketing'
+import { Video, Mail, CreditCard, Plug, Code, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Integrations — Arefan Skills Hub LMS',
-  description: 'Connect Arefan Skills Hub with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
+  title: 'Integrations — Fnskills LMS',
+  description: 'Connect Fnskills with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
   openGraph: {
-    title: 'Arefan Skills Hub Integrations — Connect Your Favorite Tools',
+    title: 'Fnskills Integrations — Connect Your Favorite Tools',
     description: 'Powerful integrations for live classes, payments, email marketing, SMS notifications, and custom API development.',
   },
 }
@@ -20,31 +28,22 @@ export default function IntegrationsPage() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <SiteHeader />
 
-      <main className="flex-1 pb-24">
-        {/* Header Section */}
-        <section className="py-24 md:py-32 bg-gradient-to-b from-background to-muted/30 border-b border-border text-center">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Connect with your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Favorite Tools</span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-10">
-              Extend Arefan Skills Hub with powerful third-party integrations to automate your workflow and enhance the learning experience.
-            </p>
-          </div>
-        </section>
+      <main className="flex-1">
+        <PageHero
+          badge="Works with the tools you already use"
+          badgeIcon={Plug}
+          title="Connect with your"
+          highlight="Favorite Tools"
+          description="Extend Fnskills with powerful third-party integrations to automate your workflow and enhance the learning experience."
+        />
 
         {/* Integration Categories */}
-        <section className="py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section className={sectionClasses}>
+          <div className={containerClasses}>
 
             {/* Live Class & Video */}
-            <div className="mb-20">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Video className="h-6 w-6 text-blue-500" />
-                </div>
-                <h2 className="text-3xl font-bold tracking-tight">Live Classes & Video</h2>
-              </div>
+            <div className="mb-16 md:mb-20">
+              <CategoryHeader icon={Video} title="Live Classes & Video" />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <IntegrationCard
                   title="Zoom Integration"
@@ -65,13 +64,8 @@ export default function IntegrationsPage() {
             </div>
 
             {/* Communication & Marketing */}
-            <div className="mb-20">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <Mail className="h-6 w-6 text-green-500" />
-                </div>
-                <h2 className="text-3xl font-bold tracking-tight">Communication & Marketing</h2>
-              </div>
+            <div className="mb-16 md:mb-20">
+              <CategoryHeader icon={Mail} title="Communication & Marketing" />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <IntegrationCard
                   title="Mailchimp"
@@ -92,13 +86,8 @@ export default function IntegrationsPage() {
             </div>
 
             {/* Payments & Finance */}
-            <div className="mb-20">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-12 w-12 rounded-full bg-yellow-500/10 flex items-center justify-center">
-                  <CreditCard className="h-6 w-6 text-yellow-500" />
-                </div>
-                <h2 className="text-3xl font-bold tracking-tight">Payments & Finance</h2>
-              </div>
+            <div className="mb-16 md:mb-20">
+              <CategoryHeader icon={CreditCard} title="Payments & Finance" />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <IntegrationCard
                   title="Stripe"
@@ -119,19 +108,22 @@ export default function IntegrationsPage() {
             </div>
 
             {/* Developer API */}
-            <div className="bg-muted/50 rounded-3xl p-8 md:p-12 border border-border flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex flex-col items-start justify-between gap-8 rounded-3xl border border-border/60 bg-muted/40 p-8 md:flex-row md:items-center md:p-12">
               <div className="max-w-2xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <Code className="h-8 w-8 text-primary" />
-                  <h3 className="text-2xl font-bold">Custom Webhooks & API</h3>
+                <div className="flex items-center gap-4 mb-4">
+                  <IconBox icon={Code} className="shrink-0" />
+                  <h3 className="text-2xl font-bold tracking-tight">Custom Webhooks & API</h3>
                 </div>
-                <p className="text-muted-foreground text-lg mb-0">
+                <p className="text-muted-foreground text-lg leading-relaxed">
                   Don't see the integration you need? Enterprise customers can utilize our comprehensive REST API and webhooks to build custom connections with legacy HR systems, ERPs, and custom CRMs.
                 </p>
               </div>
               <div className="flex-shrink-0">
-                <Button asChild>
-                  <Link href="/documentation/api-reference">View API Documentation</Link>
+                <Button asChild size="xl" variant="outline" className="group bg-card">
+                  <Link href="/documentation">
+                    View Documentation
+                    <ArrowRight className="transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -139,6 +131,11 @@ export default function IntegrationsPage() {
           </div>
         </section>
 
+        <CtaBanner
+          title="Bring your whole toolkit with you"
+          description="Start your free trial and connect the services your institution already relies on in minutes."
+          secondary={{ label: 'Explore Features', href: '/features' }}
+        />
       </main>
       <SiteFooter />
     </div>
@@ -147,23 +144,14 @@ export default function IntegrationsPage() {
 
 function IntegrationCard({ title, description, tags }: { title: string, description: string, tags: string[] }) {
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm hover:bg-muted/10 transition-colors h-full flex flex-col">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{title}</span>
-          <Plug className="h-4 w-4 text-muted-foreground" />
-        </CardTitle>
-        <CardDescription className="pt-2 flex-1">{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="mt-auto pt-0">
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag, i) => (
-            <span key={i} className="text-xs font-medium bg-muted text-muted-foreground px-2 py-1 rounded-md">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <InfoCard title={title} description={description}>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span key={tag} className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+            {tag}
+          </span>
+        ))}
+      </div>
+    </InfoCard>
   )
 }

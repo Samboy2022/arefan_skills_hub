@@ -11,6 +11,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { COURSE_ANNOUNCEMENTS, STUDENT_COURSES } from "@/lib/student-mock-data";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, pageStackClass, pillClass, statGridClass } from "@/lib/student-ui";
+import { StudentTip } from "@/components/student/tip";
+import { StudentKPICard } from "@/components/student/kpi-card";
+import { PageHeader } from "@/components/student/page-header";
 import { format } from "date-fns";
 import type { CourseAnnouncement } from "@/lib/student-types";
 
@@ -20,9 +24,9 @@ const formatDate = (d: string) => {
 };
 
 const priorityConfig = {
-  urgent:    { label: "Urgent",    cls: "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800",    icon: <AlertTriangle className="h-3 w-3" /> },
-  important: { label: "Important", cls: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800", icon: <Info className="h-3 w-3" /> },
-  normal:    { label: "Notice",    cls: "bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800",     icon: <Megaphone className="h-3 w-3" /> },
+  urgent:    { label: "Urgent",    tone: "danger" as const, icon: <AlertTriangle className="h-3 w-3" /> },
+  important: { label: "Important", tone: "warning" as const, icon: <Info className="h-3 w-3" /> },
+  normal:    { label: "Notice",    tone: "info" as const, icon: <Megaphone className="h-3 w-3" /> },
 };
 
 // ── Announcement Row ──────────────────────────────────────────────────────────
@@ -31,7 +35,7 @@ function AnnouncementRow({ ann, onClick }: { ann: CourseAnnouncement; onClick: (
   return (
     <button
       onClick={onClick}
-      className="w-full text-left px-5 py-4 flex items-start gap-4 hover:bg-muted/20 transition-colors border-b border-border last:border-b-0"
+      className="w-full text-left px-5 py-4 flex items-start gap-4 hover:bg-muted/30 transition-colors border-b border-border last:border-b-0 focus-visible:outline-none focus-visible:bg-muted/40"
     >
       {/* Unread dot */}
       <div className="mt-1.5 shrink-0">
@@ -43,7 +47,7 @@ function AnnouncementRow({ ann, onClick }: { ann: CourseAnnouncement; onClick: (
       <div className="flex-1 min-w-0">
         {/* Priority badge + date */}
         <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <span className={cn("inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border", p.cls)}>
+          <span className={cn(pillClass(p.tone), "uppercase tracking-wider")}>
             {p.icon}{p.label}
           </span>
           <span className="text-xs text-muted-foreground">{formatDate(ann.created_at)}</span>
@@ -77,32 +81,32 @@ function AnnouncementDetail({
   return (
     <div className="space-y-5">
       <Breadcrumb items={[
-        { label: "Announcements", href: "#" },
+        { label: "Announcements", href: "/student/announcements" },
         { label: ann.announcement_type === "general" ? "General" : (course?.code ?? "Course") },
         { label: ann.title },
       ]} />
 
-      <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-1">
+      <Button variant="outline" size="sm" onClick={onBack} className="gap-1.5">
         <ArrowLeft className="h-4 w-4" /> Back
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main */}
         <div className="lg:col-span-2">
-          <Card className="border-border overflow-hidden">
+          <Card className="gap-0 py-0 rounded-2xl border-border shadow-none overflow-hidden">
             {/* Header */}
             <div className="px-6 py-5 border-b border-border">
               <div className="flex items-center gap-2 mb-3 flex-wrap">
                 {ann.announcement_type === "general" ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border border-violet-200 bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border border-violet-200 bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800">
                     <Globe className="h-3 w-3" /> General
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border border-sky-200 bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border border-sky-200 bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800">
                     <BookOpen className="h-3 w-3" /> {course?.code ?? "Course"}
                   </span>
                 )}
-                <span className={cn("inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border", p.cls)}>
+                <span className={cn(pillClass(p.tone), "uppercase tracking-wider")}>
                   {p.icon}{p.label}
                 </span>
                 <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -126,7 +130,7 @@ function AnnouncementDetail({
             {/* Footer */}
             <div className="px-6 py-3 bg-muted/20 border-t border-border flex items-center justify-between">
               <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 text-emerald-500" /> Mark as read
+                <CheckCircle className="h-3.5 w-3.5 text-emerald-500" /> Marked as read
               </span>
               <span className="text-xs text-muted-foreground">Published by Academic Staff</span>
             </div>
@@ -136,10 +140,10 @@ function AnnouncementDetail({
         {/* Sidebar */}
         <div className="space-y-5">
           {/* Sender card */}
-          <Card className="border-border p-5">
+          <Card className="gap-0 p-5 rounded-2xl border-border shadow-none">
             <div className="flex items-center gap-3 mb-4">
               <Avatar className="h-10 w-10">
-                <AvatarImage src={ann.instructor_avatar ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${ann.instructor}`} />
+                <AvatarImage src={ann.instructor_avatar ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${ann.instructor}`} alt="" />
                 <AvatarFallback className="bg-primary/10 text-primary font-bold">{ann.instructor.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
@@ -150,7 +154,7 @@ function AnnouncementDetail({
               </div>
             </div>
             {ann.course_id && course && (
-              <div className="rounded-md border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+              <div className="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">{course.code}</span> — {course.name}
               </div>
             )}
@@ -158,7 +162,7 @@ function AnnouncementDetail({
 
           {/* Other announcements */}
           {others.length > 0 && (
-            <Card className="border-border overflow-hidden">
+            <Card className="gap-0 py-0 rounded-2xl border-border shadow-none overflow-hidden">
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">More Announcements</p>
               </div>
@@ -167,7 +171,7 @@ function AnnouncementDetail({
                   <button
                     key={o.id}
                     onClick={() => onPickOther(o.id)}
-                    className="w-full text-left px-4 py-3 hover:bg-muted/20 transition-colors"
+                    className="w-full text-left px-4 py-3 hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:bg-muted/40"
                   >
                     <div className="flex items-start gap-2">
                       {!o.is_read && <span className="h-2 w-2 rounded-full bg-primary shrink-0 mt-1.5" />}
@@ -228,30 +232,31 @@ function AnnouncementList({
   return (
     <div className="space-y-5">
       <Breadcrumb items={[
-        { label: "Announcements", href: "#" },
+        { label: "Announcements", href: "/student/announcements" },
         { label: isGeneral ? "General" : title },
       ]} />
 
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="gap-2 -ml-1 mb-1 text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2 mb-2 gap-1.5">
             <ArrowLeft className="h-4 w-4" /> All Announcements
           </Button>
           <h1 className="text-xl font-bold text-foreground">{title}</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
         </div>
         {unread > 0 && (
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+          <span className={pillClass("info")}>
             <Bell className="h-3.5 w-3.5" /> {unread} unread
           </span>
         )}
       </div>
 
-      <Card className="border-border overflow-hidden">
+      <Card className="gap-0 py-0 rounded-2xl border-border shadow-none overflow-hidden">
         {enriched.length === 0 ? (
-          <div className="py-16 text-center">
-            <img src="https://img.icons8.com/color/96/bell.png" alt="No announcements" className="h-12 w-12 opacity-80 grayscale-[50%] mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No announcements yet.</p>
+          <div className={emptyStateClass}>
+            <Bell className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
+            <h3 className={emptyTitleClass}>No announcements yet</h3>
+            <p className={emptyBodyClass}>New notices from your school and courses will show up here.</p>
           </div>
         ) : (
           <div className="divide-y divide-border">
@@ -307,56 +312,40 @@ export default function AnnouncementsPage() {
 
   // ── Landing ─────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6">
+    <div className={pageStackClass}>
       <Breadcrumb items={[{ label: "Announcements" }]} />
 
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Announcements</h1>
-        <p className="text-sm text-muted-foreground mt-1">Stay informed about platform updates and your course news.</p>
-      </div>
+      <PageHeader
+        title="Announcements"
+        description="Stay informed about platform updates and your course news."
+      />
 
-      {/* ── Prominent summary bar ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/megaphone.png" alt="Total" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{COURSE_ANNOUNCEMENTS.length}</p>
-          </div>
-        </div>
+      <StudentTip>
+        Unread items show a blue dot. Open a notice to mark it as read so nothing important is missed.
+      </StudentTip>
 
-        <div className="flex flex-col items-center justify-center gap-3 text-center lg:border-l lg:border-r border-border px-4">
-          <img src="https://img.icons8.com/scribby/96/star.png" alt="Unread" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Unread</p>
-            <p className="text-3xl font-extrabold text-primary leading-none">{totalUnread}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/user.png" alt="Course" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Course</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{courseAnnouncements.length}</p>
-          </div>
-        </div>
+      <div className={statGridClass}>
+        <StudentKPICard title="Total" value={COURSE_ANNOUNCEMENTS.length} icon={Megaphone} />
+        <StudentKPICard title="Unread" value={totalUnread} icon={Bell} variant="info" />
+        <StudentKPICard title="General" value={generalAnnouncements.length} icon={Globe} />
+        <StudentKPICard title="Course" value={courseAnnouncements.length} icon={BookOpen} />
       </div>
 
       {/* Two panes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {/* General Announcements Pane */}
-        <Card className="border-border overflow-hidden flex flex-col">
+        <Card className="gap-0 py-0 rounded-2xl border-border shadow-none overflow-hidden flex flex-col">
           <div className="p-5 border-b border-border">
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center border border-violet-200 dark:border-violet-800">
-                <img src="https://img.icons8.com/color/96/commercial.png" alt="General" className="h-6 w-6" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <img src="https://img.icons8.com/color/96/commercial.png" alt="" aria-hidden="true" className="h-6 w-6" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold text-foreground">General Announcements</h2>
                   {generalUnread > 0 && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary text-white">{generalUnread}</span>
+                    <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-inset ring-amber-500/20 dark:text-amber-400">{generalUnread}</span>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">Platform-wide updates</p>
@@ -374,7 +363,7 @@ export default function AnnouncementsPage() {
                 <div key={ann.id} className="px-5 py-3 flex items-center gap-3">
                   {!ann.is_read && <span className="h-2 w-2 rounded-full bg-primary shrink-0" />}
                   {ann.is_read && <span className="h-2 w-2 shrink-0" />}
-                  <span className={cn("inline-flex items-center gap-0.5 text-[10px] font-bold uppercase px-1 py-0.5 rounded border shrink-0", p.cls)}>
+                  <span className={cn(pillClass(p.tone), "shrink-0 uppercase")}>
                     {p.icon}
                   </span>
                   <p className="text-sm text-foreground line-clamp-1 flex-1">{ann.title}</p>
@@ -391,11 +380,11 @@ export default function AnnouncementsPage() {
         </Card>
 
         {/* Course Announcements Pane */}
-        <Card className="border-border overflow-hidden flex flex-col">
+        <Card className="gap-0 py-0 rounded-2xl border-border shadow-none overflow-hidden flex flex-col">
           <div className="p-5 border-b border-border">
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center border border-sky-200 dark:border-sky-800">
-                <img src="https://img.icons8.com/color/96/books.png" alt="Course" className="h-6 w-6" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <img src="https://img.icons8.com/color/96/books.png" alt="" aria-hidden="true" className="h-6 w-6" />
               </div>
               <div>
                 <h2 className="font-bold text-foreground">Course Announcements</h2>
@@ -417,12 +406,12 @@ export default function AnnouncementsPage() {
                 <button
                   key={courseId}
                   onClick={() => setView({ type: "course", courseId })}
-                  className="w-full text-left px-5 py-4 flex items-center gap-3 hover:bg-muted/20 transition-colors group"
+                  className="w-full text-left px-5 py-4 flex items-center gap-3 hover:bg-muted/30 transition-colors group focus-visible:outline-none focus-visible:bg-muted/40"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">{course?.code}</span>
-                      {unread > 0 && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary text-white">{unread} new</span>}
+                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">{course?.code}</span>
+                      {unread > 0 && <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 ring-1 ring-inset ring-amber-500/20 dark:text-amber-400">{unread} new</span>}
                     </div>
                     <p className="text-sm font-medium text-foreground line-clamp-1">{course?.name}</p>
                     {latest && <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{latest.title}</p>}

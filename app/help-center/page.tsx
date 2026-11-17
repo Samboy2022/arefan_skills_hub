@@ -1,8 +1,30 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import Link from 'next/link'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Search, Book, User, Settings, CreditCard, ShieldAlert, MessageCircle, ArrowRight } from 'lucide-react'
 
-export default function HelpCenterPage() {
+const articles = [
+  { title: 'How to map your custom domain to Fnskills', category: 'Platform Configuration' },
+  { title: 'Bulk importing students via CSV', category: 'Getting Started' },
+  { title: 'Setting up Zoom integration for live classes', category: 'Integrations & API' },
+  { title: 'Why are my students not receiving email notifications?', category: 'Troubleshooting' },
+  { title: 'Understanding the Role-Based Access Control (RBAC) permissions', category: 'Account & Profile' },
+]
+
+export default async function HelpCenterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string | string[] }>
+}) {
+  const { q } = await searchParams
+  const query = (Array.isArray(q) ? q[0] : q ?? '').trim()
+  const needle = query.toLowerCase()
+  const results = needle
+    ? articles.filter((a) => `${a.title} ${a.category}`.toLowerCase().includes(needle))
+    : articles
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <SiteHeader />
@@ -10,20 +32,30 @@ export default function HelpCenterPage() {
       <main className="flex-1 pb-24">
         {/* Search Header Section */}
         <section className="py-24 bg-primary text-primary-foreground text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20"></div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl relative z-10">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">How can we help you?</h1>
 
-            <div className="relative max-w-2xl mx-auto">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search for articles, guides, or troubleshooting..."
-                className="w-full pl-12 pr-4 py-4 rounded-xl text-foreground bg-background border-none focus:ring-2 focus:ring-white/50 shadow-lg text-lg"
+            <form role="search" action="/help-center#articles" method="get" className="relative max-w-2xl mx-auto">
+              <label htmlFor="help-search" className="sr-only">
+                Search help articles
+              </label>
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground"
               />
-            </div>
+              <Input
+                id="help-search"
+                name="q"
+                type="search"
+                defaultValue={query}
+                autoComplete="off"
+                placeholder="Search for articles, guides, or troubleshooting..."
+                className="h-14 rounded-full border-transparent bg-background pl-12 pr-28 text-base text-foreground shadow-lg hover:border-transparent focus-visible:border-transparent focus-visible:ring-4 focus-visible:ring-white/60 md:text-lg dark:bg-background dark:hover:border-transparent [&::-webkit-search-cancel-button]:hidden"
+              />
+              <Button type="submit" className="absolute right-2 top-1/2 h-10 -translate-y-1/2 rounded-full px-5">
+                Search
+              </Button>
+            </form>
           </div>
         </section>
 
@@ -65,19 +97,31 @@ export default function HelpCenterPage() {
           </div>
         </section>
 
-        {/* Popular Articles */}
-        <section className="py-16 bg-muted/30">
+        {/* Popular Articles / Search Results */}
+        <section id="articles" className="py-16 bg-muted/30 scroll-mt-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <h2 className="text-2xl font-bold mb-8 text-center">Popular Articles</h2>
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
-              <div className="divide-y divide-border">
-                <ArticleLink title="How to map your custom domain to Arefan Skills Hub" category="Platform Configuration" />
-                <ArticleLink title="Bulk importing students via CSV" category="Getting Started" />
-                <ArticleLink title="Setting up Zoom integration for live classes" category="Integrations & API" />
-                <ArticleLink title="Why are my students not receiving email notifications?" category="Troubleshooting" />
-                <ArticleLink title="Understanding the Role-Based Access Control (RBAC) permissions" category="Account & Profile" />
+            <h2 className="text-2xl font-bold mb-8 text-center" aria-live="polite">
+              {query ? `Results for “${query}”` : 'Popular Articles'}
+            </h2>
+            {results.length > 0 ? (
+              <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                <div className="divide-y divide-border">
+                  {results.map((a) => (
+                    <ArticleLink key={a.title} title={a.title} category={a.category} />
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+                <p className="text-muted-foreground">
+                  No articles match your search. Try different keywords or{' '}
+                  <Link href="/help-center#articles" className="font-medium text-primary hover:underline">
+                    clear the search
+                  </Link>
+                  .
+                </p>
+              </div>
+            )}
           </div>
         </section>
 

@@ -15,6 +15,8 @@ import {
   AssignmentsIcon as Assignments,
   QuizzesIcon as Quizzes,
   ScheduleIcon,
+  ResourcesIcon,
+  ShieldIcon,
 } from "@/components/shared/colored-icons";
 
 export const TENANT_NAV_ITEMS = [
@@ -85,6 +87,18 @@ export const TENANT_NAV_ITEMS = [
         href: "/school-admin/attendance",
         icon: Award,
         tooltip: "Attendance Tracking",
+      },
+      {
+        label: "Library",
+        href: "/school-admin/library",
+        icon: ResourcesIcon,
+        tooltip: "School library catalog",
+      },
+      {
+        label: "Plagiarism",
+        href: "/school-admin/plagiarism",
+        icon: ShieldIcon,
+        tooltip: "Similarity report preview",
       },
     ],
   },

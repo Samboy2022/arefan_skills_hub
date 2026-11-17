@@ -13,6 +13,8 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { format } from "date-fns";
+import { emptyBodyClass, emptyTitleClass, listCardClass, pillClass, statGridClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
+import { StudentKPICard } from "@/components/student/kpi-card";
 import {
   STUDENT_GRADES,
   STUDENT_COURSES,
@@ -97,7 +99,7 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
           ]}
           className="mb-4"
         />
-        <Button variant="ghost" size="sm" asChild className="gap-2 -ml-2 text-muted-foreground mb-2">
+        <Button variant="ghost" size="sm" asChild className="-ml-2 mb-3 gap-1.5">
           <Link href="/student/grades">
             <ArrowLeft className="h-4 w-4" /> Back to Grades
           </Link>
@@ -109,77 +111,26 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
         description="Detailed breakdown of your grades and performance in this course."
       />
 
-      {/* ── Main Breakdown KPIs ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Final Grade Card */}
-        <Card className="p-4 border-border relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10 flex flex-col h-full">
-            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Final Grade</p>
-            <div className="flex items-end gap-2 mt-auto pt-2">
-              <span className={cn("text-3xl font-bold leading-none", getPerformanceColor(gradeRecord.final_grade))}>
-                {gradeRecord.final_grade}%
-              </span>
-              <span className={cn("text-sm font-bold px-2 py-0.5 rounded border mb-0.5", getGradeColor(gradeRecord.letter_grade))}>
-                {gradeRecord.letter_grade}
-              </span>
-            </div>
-          </div>
-          <img src="https://img.icons8.com/scribby/96/trophy.png" className="absolute -right-2 -bottom-2 h-16 w-16 opacity-15 pointer-events-none" alt="Final" />
-        </Card>
-
-        {/* Assignments Card */}
-        <Card className="p-4 border-border relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10 flex flex-col h-full">
-            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Assignments</p>
-            <div className="mt-auto pt-2">
-              <span className={cn("text-2xl font-bold", getPerformanceColor(assignments_grade))}>
-                {assignments_grade}%
-              </span>
-            </div>
-          </div>
-          <img src="https://img.icons8.com/scribby/96/todo-list.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Assignments" />
-        </Card>
-
-        {/* Quizzes Card */}
-        <Card className="p-4 border-border relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10 flex flex-col h-full">
-            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Quizzes & Exams</p>
-            <div className="mt-auto pt-2">
-              <span className={cn("text-2xl font-bold", getPerformanceColor(quizzes_grade))}>
-                {quizzes_grade}%
-              </span>
-            </div>
-          </div>
-          <img src="https://img.icons8.com/scribby/96/document.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Quizzes" />
-        </Card>
-
-        {/* Participation Card */}
-        <Card className="p-4 border-border relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10 flex flex-col h-full">
-            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">Participation</p>
-            <div className="mt-auto pt-2">
-              <span className={cn("text-2xl font-bold", getPerformanceColor(participation_grade))}>
-                {participation_grade}%
-              </span>
-            </div>
-          </div>
-          <img src="https://img.icons8.com/scribby/96/hand.png" className="absolute -right-2 -bottom-2 h-14 w-14 opacity-20 pointer-events-none" alt="Participation" />
-        </Card>
+      <div className={statGridClass}>
+        <StudentKPICard title="Final Grade" value={`${gradeRecord.final_grade}%`} hint={gradeRecord.letter_grade} icon={Award} variant="purple" />
+        <StudentKPICard title="Assignments" value={`${assignments_grade}%`} icon={FileText} />
+        <StudentKPICard title="Quizzes & Exams" value={`${quizzes_grade}%`} icon={HelpCircle} />
+        <StudentKPICard title="Participation" value={`${participation_grade}%`} icon={Target} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-4">
         {/* ── Assignments Detail Section ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-foreground">
+          <h3 className="text-base font-semibold tracking-tight text-foreground">
             Assignment Breakdown
           </h3>
-          <Card className="border border-border bg-card overflow-hidden">
+          <Card className={listCardClass}>
             <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="pl-5">Item</TableHead>
-                  <TableHead className="text-right">Score</TableHead>
-                  <TableHead className="text-right pr-5">Percentage</TableHead>
+              <TableHeader>
+                <TableRow className={tableHeadRowClass}>
+                  <TableHead className={cn(tableHeadClass, "pl-5")}>Item</TableHead>
+                  <TableHead className={cn(tableHeadClass, "text-right")}>Score</TableHead>
+                  <TableHead className={cn(tableHeadClass, "text-right pr-5")}>Percentage</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -196,16 +147,16 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
                       : null;
                       
                     return (
-                      <TableRow key={assignment.id} className="hover:bg-muted/20">
+                      <TableRow key={assignment.id} className="hover:bg-muted/30">
                         <TableCell className="pl-5 py-4">
-                          <p className="font-semibold text-sm text-foreground mb-0.5 line-clamp-1">{assignment.title}</p>
+                          <p className="font-semibold text-sm text-foreground mb-1.5 line-clamp-1">{assignment.title}</p>
                           <div className="flex items-center gap-2">
                             {assignment.status === "missing" ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-red-600 dark:text-red-400">
+                              <span className={pillClass("danger")}>
                                 <AlertCircle className="h-3 w-3" /> Missing
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400">
+                              <span className={pillClass("success")}>
                                 <CheckCircle className="h-3 w-3" /> Graded
                               </span>
                             )}
@@ -237,16 +188,16 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
 
         {/* ── Quizzes Detail Section ── */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-foreground">
+          <h3 className="text-base font-semibold tracking-tight text-foreground">
             Quiz & Exam Breakdown
           </h3>
-          <Card className="border border-border bg-card overflow-hidden">
+          <Card className={listCardClass}>
             <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="pl-5">Item</TableHead>
-                  <TableHead className="text-center">Attempts</TableHead>
-                  <TableHead className="text-right pr-5">Best Score</TableHead>
+              <TableHeader>
+                <TableRow className={tableHeadRowClass}>
+                  <TableHead className={cn(tableHeadClass, "pl-5")}>Item</TableHead>
+                  <TableHead className={cn(tableHeadClass, "text-center")}>Attempts</TableHead>
+                  <TableHead className={cn(tableHeadClass, "text-right pr-5")}>Best Score</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -258,16 +209,16 @@ export default function CourseGradeDetailsPage({ params }: { params: Promise<{ c
                   </TableRow>
                 ) : (
                   quizzes.map((quiz) => (
-                    <TableRow key={quiz.id} className="hover:bg-muted/20">
+                    <TableRow key={quiz.id} className="hover:bg-muted/30">
                       <TableCell className="pl-5 py-4">
-                        <p className="font-semibold text-sm text-foreground mb-0.5 line-clamp-1">{quiz.title}</p>
+                        <p className="font-semibold text-sm text-foreground mb-1.5 line-clamp-1">{quiz.title}</p>
                         <div className="flex items-center gap-2">
                           {quiz.status === "submitted" ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400">
+                            <span className={pillClass("success")}>
                               <CheckCircle className="h-3 w-3" /> Completed
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400">
+                            <span className={pillClass("info")}>
                               <Clock className="h-3 w-3" /> In Progress
                             </span>
                           )}

@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { Bell, Settings, LogOut, User, Menu, Mail, ChevronDown, Calendar, BookOpen, Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Bell, LogOut, User, Menu, Mail, ChevronDown, Calendar, BookOpen, Moon, Sun, Check } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
@@ -22,7 +20,7 @@ import { useSidebar } from "@/components/student/sidebar-context";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 function StudentNavbarInner() {
-  const { isCollapsed, toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -85,41 +83,39 @@ function StudentNavbarInner() {
 
   if (!mounted) {
     return (
-      <nav className="sticky top-0 z-30 border-b border-border bg-background">
-        <div className="flex h-16 items-center justify-between px-6" />
-      </nav>
+      <nav className="sticky top-0 z-30 flex h-16 w-full items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur-sm md:px-6" />
     );
   }
 
   return (
-    <nav className="sticky top-0 z-30 border-b border-border bg-background">
-      <div className="flex h-14 md:h-16 items-center justify-between px-3 md:px-6">
+    <nav className="sticky top-0 z-30 flex h-16 w-full items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur-sm md:px-6">
         {/* Left: Toggle button */}
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
             onClick={toggleSidebar}
-            className="h-9 w-9 p-0 text-foreground hover:bg-muted"
+            aria-label="Toggle sidebar"
+            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
-            <Menu className="h-4 w-4" />
-          </Button>
+            <Menu className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-1.5 sm:gap-3">
-          {/* Session and Semester Controls — hidden on very small mobile */}
-          <div className="hidden sm:flex items-center gap-4 md:gap-6 border-r border-border pr-4 mr-1">
+          {/* Session and Semester Controls */}
+          <div className="flex items-center gap-1.5 sm:gap-2 border-r border-border pr-1.5 sm:pr-3 mr-0.5 sm:mr-1">
             {/* Session Switcher */}
             <DropdownMenu open={isSessionOpen} onOpenChange={setIsSessionOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group">
-                  <span className="hidden sm:inline text-foreground group-hover:text-primary transition-colors font-bold">Session: {activeSession?.label}</span>
-                  <span className="sm:hidden text-foreground font-bold">{activeSession?.label}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                <button className="inline-flex h-8 items-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/10" aria-label={`Academic session: ${activeSession?.label}`}>
+                  <Calendar className="hidden h-3.5 w-3.5 sm:block" />
+                  <span className="hidden sm:inline tabular-nums">{activeSession?.label}</span>
+                  <span className="sm:hidden tabular-nums">{activeSession?.label.replace(/20(\d\d)\/20(\d\d)/, "$1/$2")}</span>
+                  <ChevronDown className="h-3.5 w-3.5" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-48">
+              <DropdownMenuContent align="end" className="w-52 rounded-xl p-1.5">
                 <div className="px-2 py-1.5">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Academic Session</p>
                 </div>
@@ -127,15 +123,11 @@ function StudentNavbarInner() {
                 {sessions.map((session) => (
                   <DropdownMenuItem 
                     key={session.id}
-                    className="cursor-pointer flex items-center justify-between"
+                    className={`cursor-pointer flex items-center justify-between rounded-lg tabular-nums ${session.isActive ? "bg-primary/10 text-primary font-medium focus:bg-primary/15 focus:text-primary" : ""}`}
                     onClick={() => handleSessionChange(session.id)}
                   >
                     <span>{session.label}</span>
-                    {session.isActive && (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium dark:bg-green-900 dark:text-green-300">
-                        Active
-                      </span>
-                    )}
+                    {session.isActive && <Check className="h-4 w-4 text-primary" />}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -144,13 +136,14 @@ function StudentNavbarInner() {
             {/* Semester Switcher */}
             <DropdownMenu open={isSemesterOpen} onOpenChange={setIsSemesterOpen}>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group">
-                  <span className="hidden sm:inline text-foreground group-hover:text-primary transition-colors font-bold">{activeSemester?.label}</span>
-                  <span className="sm:hidden text-foreground font-bold">S{activeSemester?.id.slice(-1)}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                <button className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/5 px-3 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-500/10 dark:text-emerald-400" aria-label={`Semester: ${activeSemester?.label}`}>
+                  <BookOpen className="hidden h-3.5 w-3.5 sm:block" />
+                  <span className="hidden sm:inline">{activeSemester?.label}</span>
+                  <span className="sm:hidden">S{activeSemester?.id.slice(-1)}</span>
+                  <ChevronDown className="h-3.5 w-3.5" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-48">
+              <DropdownMenuContent align="end" className="w-52 rounded-xl p-1.5">
                 <div className="px-2 py-1.5">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Current Semester</p>
                 </div>
@@ -158,15 +151,11 @@ function StudentNavbarInner() {
                 {semesters.map((semester) => (
                   <DropdownMenuItem 
                     key={semester.id}
-                    className="cursor-pointer flex items-center justify-between"
+                    className={`cursor-pointer flex items-center justify-between rounded-lg ${semester.isActive ? "bg-primary/10 text-primary font-medium focus:bg-primary/15 focus:text-primary" : ""}`}
                     onClick={() => handleSemesterChange(semester.id)}
                   >
                     <span>{semester.label}</span>
-                    {semester.isActive && (
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium dark:bg-blue-900 dark:text-blue-300">
-                        Current
-                      </span>
-                    )}
+                    {semester.isActive && <Check className="h-4 w-4 text-primary" />}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -174,40 +163,38 @@ function StudentNavbarInner() {
           </div>
 
           {/* Messages */}
-          <Button variant="ghost" size="icon" asChild className="relative">
-            <Link href="/student/messages">
-              <Mail className="h-5 w-5" />
-              {unreadMessageCount > 0 && (
-                <span className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-blue-500 text-white text-xs font-bold flex items-center justify-center">
-                  {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
-                </span>
-              )}
-            </Link>
-          </Button>
+          <Link
+            href="/student/messages"
+            aria-label={`Messages, ${unreadMessageCount} unread`}
+            className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Mail className="h-5 w-5" />
+            {unreadMessageCount > 0 && (
+              <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-sky-500 px-1 text-[9px] font-bold text-white">
+                {unreadMessageCount > 9 ? "9+" : unreadMessageCount}
+              </span>
+            )}
+          </Link>
 
           {/* Theme Toggle */}
           {mounted && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <button
+              type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-9 w-9"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
+              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
           )}
 
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+              <button type="button" className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" aria-label="Notifications">
                 <Bell className="h-5 w-5" />
-                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500"></span>
-              </Button>
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-amber-500"></span>
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
               <div className="px-4 py-2 border-b">
@@ -228,8 +215,8 @@ function StudentNavbarInner() {
                 </DropdownMenuItem>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-xs text-center justify-center py-2">
-                View All Notifications
+              <DropdownMenuItem asChild className="justify-center py-2 text-xs">
+                <Link href="/student/announcements">View all updates</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -238,27 +225,24 @@ function StudentNavbarInner() {
           <DropdownMenu open={isProfileOpen} onOpenChange={setIsProfileOpen}>
             <DropdownMenuTrigger asChild>
               <button 
-                className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
-                onMouseEnter={() => setIsProfileOpen(true)}
-                onMouseLeave={() => setIsProfileOpen(false)}
+                className="flex items-center gap-2 rounded-lg p-0.5 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-2 sm:py-1.5"
+                aria-label="Open profile menu"
               >
-                <Avatar className="h-8 w-8 sm:h-10 sm:w-10 border border-border">
+                <Avatar className="h-8 w-8 border border-border">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-sm font-bold">
+                  <AvatarFallback className="bg-primary text-xs font-bold text-primary-foreground">
                     {user.initials}
                   </AvatarFallback>
                 </Avatar>
-                <div className="hidden sm:block text-left">
-                  <p className="text-sm font-medium text-foreground">{user.name}</p>
+                <div className="hidden text-left sm:block">
+                  <p className="max-w-[140px] truncate text-sm font-medium text-foreground">{user.name}</p>
                   <p className="text-xs text-muted-foreground">{user.role}</p>
                 </div>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="w-48 mt-2"
-              onMouseEnter={() => setIsProfileOpen(true)}
-              onMouseLeave={() => setIsProfileOpen(false)}
+              className="w-52 mt-2 rounded-xl p-1.5"
             >
               <DropdownMenuItem className="cursor-pointer" asChild>
                 <Link href="/student/profile">
@@ -276,7 +260,6 @@ function StudentNavbarInner() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </div>
     </nav>
   );
 }
@@ -284,9 +267,7 @@ function StudentNavbarInner() {
 export function StudentNavbar() {
   return (
     <Suspense fallback={
-      <nav className="sticky top-0 z-30 border-b border-border bg-background">
-        <div className="flex h-16 items-center justify-between px-6" />
-      </nav>
+      <nav className="sticky top-0 z-30 h-16 border-b border-border bg-background/95 backdrop-blur-sm" />
     }>
       <StudentNavbarInner />
     </Suspense>

@@ -38,6 +38,12 @@ export const navItems: NavItem[] = [
     section: 'Management',
   },
   {
+    title: 'Registrations',
+    href: '/super-admin/registrations',
+    icon: TenantsIcon,
+    section: 'Management',
+  },
+  {
     title: 'Subscriptions & Billing',
     href: '/super-admin/billing',
     icon: BillingIcon,

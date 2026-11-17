@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { format, isValid } from "date-fns";
-import { Video, CheckCircle, XCircle, Clock, ArrowRight } from "lucide-react";
+import { Video, CheckCircle, XCircle, Clock, CalendarClock, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/student/page-header";
@@ -12,24 +12,27 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import { useStudentMeetings } from "@/lib/hooks/use-student-meetings";
 import { StudentMeeting, MeetingStatus } from "@/lib/student-mock-data";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, listCardClass, pageStackClass, pillClass, rowActionClass, statGridClass, tabButtonClass, tabCountClass, tabRowClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
+import { StudentKPICard } from "@/components/student/kpi-card";
+import { StudentTip } from "@/components/student/tip";
 
 type FilterTab = "all" | "upcoming" | "live" | "ended";
 
 function StatusBadge({ status }: { status: MeetingStatus }) {
   if (status === "live") return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full">
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+    <span className={pillClass("success")}>
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse motion-reduce:animate-none" />
       Live
     </span>
   );
   if (status === "upcoming") return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400 px-2 py-0.5 rounded-full">
+    <span className={pillClass("info")}>
       <Clock className="h-3 w-3" />
       Upcoming
     </span>
   );
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+    <span className={pillClass("neutral")}>
       Ended
     </span>
   );
@@ -37,12 +40,12 @@ function StatusBadge({ status }: { status: MeetingStatus }) {
 
 function AttendanceBadge({ status, percentage }: { status: string; percentage: number }) {
   if (status === "present") return (
-    <span className="inline-flex items-center gap-1 text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full">
+    <span className={pillClass("success")}>
       <CheckCircle className="h-3 w-3" /> Present ({percentage}%)
     </span>
   );
   if (status === "absent") return (
-    <span className="inline-flex items-center gap-1 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-2 py-0.5 rounded-full">
+    <span className={pillClass("danger")}>
       <XCircle className="h-3 w-3" /> Absent ({percentage}%)
     </span>
   );
@@ -57,22 +60,22 @@ function ActionButton({ meeting }: { meeting: StudentMeeting }) {
   const minsUntilStart = (startTime.getTime() - now.getTime()) / 60_000;
 
   if (meeting.status === "ended") return (
-    <Button size="sm" variant="ghost" asChild className="text-muted-foreground shadow-none hover:bg-muted font-medium">
+    <Button size="sm" variant="outline" asChild className={rowActionClass}>
       <Link href={`/student/live-classes/${meeting.id}`}>View Summary</Link>
     </Button>
   );
   if (meeting.status === "live" || (meeting.status === "upcoming" && minsUntilStart <= 15)) return (
-    <Button size="sm" asChild className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-none transition-colors font-semibold">
+    <Button size="sm" asChild className={rowActionClass}>
       <Link href={`/student/live-classes/${meeting.id}/join`}>
-        <span className="h-2 w-2 rounded-full bg-white mr-1.5 animate-pulse" />
+        <span className="h-2 w-2 rounded-full bg-primary-foreground animate-pulse motion-reduce:animate-none" />
         Join Now
       </Link>
     </Button>
   );
   return (
-    <Button size="sm" variant="outline" asChild className="shadow-none hover:bg-muted font-medium text-muted-foreground">
+    <Button size="sm" variant="outline" asChild className={rowActionClass}>
       <Link href={`/student/live-classes/${meeting.id}`}>
-        View Details <ArrowRight className="h-3.5 w-3.5 ml-1" />
+        View Details <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </Button>
   );
@@ -101,68 +104,35 @@ export default function LiveClassesPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className={pageStackClass}>
       <Breadcrumb items={[{ label: "Live Classes" }]} />
       <PageHeader
         title="Live Classes"
         description="Your scheduled and past live sessions with instructors."
       />
+      <StudentTip>
+        Join up to 15 minutes early. You need 80% of the session to be marked present.
+      </StudentTip>
 
-      {/* ── Prominent summary bar ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-center px-4 py-4 rounded-xl border border-border bg-muted/20 mb-8 mt-2">
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/clock.png" alt="Upcoming Sessions" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Upcoming Sessions</p>
-            <p className="text-3xl font-extrabold text-sky-600 dark:text-sky-400 leading-none">{counts.upcoming}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/check.png" alt="Attended" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Attended</p>
-            <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 leading-none">{counts.attended}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/error.png" alt="Missed" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Missed</p>
-            <p className="text-3xl font-extrabold text-red-600 dark:text-red-400 leading-none">{counts.missed}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 text-center">
-          <img src="https://img.icons8.com/scribby/96/webcam.png" alt="Total Sessions" className="h-12 w-12" />
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Total Sessions</p>
-            <p className="text-3xl font-extrabold text-foreground leading-none">{counts.total}</p>
-          </div>
-        </div>
+      <div className={statGridClass}>
+        <StudentKPICard title="Upcoming Sessions" value={counts.upcoming} icon={CalendarClock} variant="info" />
+        <StudentKPICard title="Attended" value={counts.attended} icon={CheckCircle} variant="success" />
+        <StudentKPICard title="Missed" value={counts.missed} icon={XCircle} variant="danger" />
+        <StudentKPICard title="Total Sessions" value={counts.total} icon={Video} />
       </div>
 
       {/* Table Card */}
-      <Card className="border-border overflow-hidden">
+      <Card className={listCardClass}>
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1 px-4 pt-4 border-b border-border overflow-x-auto">
+        <div className={tabRowClass}>
           {tabs.map(tab => (
             <button
               key={tab.key}
               onClick={() => setFilter(tab.key)}
-              className={cn(
-                "px-4 py-2 text-sm font-medium rounded-t-md border-b-2 transition-colors -mb-px",
-                filter === tab.key
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
-              )}
+              className={tabButtonClass(filter === tab.key)}
             >
               {tab.label}
-              <span className={cn(
-                "ml-2 text-[11px] font-bold px-1.5 py-0.5 rounded-full",
-                filter === tab.key ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-              )}>
+              <span className={tabCountClass(filter === tab.key)}>
                 {tab.key === "all" ? counts.total :
                  tab.key === "upcoming" ? counts.upcoming :
                  tab.key === "ended" ? meetings.filter(m => m.status === "ended").length :
@@ -174,9 +144,10 @@ export default function LiveClassesPage() {
 
         {/* Table */}
         {filtered.length === 0 ? (
-          <div className="py-16 flex flex-col items-center gap-3 text-muted-foreground">
-            <Video className="h-10 w-10 opacity-30" />
-            <p className="text-sm">No live classes scheduled yet. Your instructor will notify you when a session is created.</p>
+          <div className={emptyStateClass}>
+            <Video className="mb-3 h-10 w-10 text-muted-foreground/40" />
+            <h3 className={emptyTitleClass}>No live classes scheduled yet</h3>
+            <p className={emptyBodyClass}>Your instructor will notify you when a session is created.</p>
           </div>
         ) : (
           <>
@@ -219,15 +190,15 @@ export default function LiveClassesPage() {
 
             {/* Desktop table layout */}
             <Table className="w-full table-fixed hidden lg:table">
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="w-[25%] pl-5">Session Name</TableHead>
-                  <TableHead className="w-[15%]">Instructor</TableHead>
-                  <TableHead className="w-[15%]">Date & Time</TableHead>
-                  <TableHead className="w-[10%] text-center">Duration</TableHead>
-                  <TableHead className="w-[10%] text-center">Status</TableHead>
-                  <TableHead className="w-[10%] text-center">Attendance</TableHead>
-                  <TableHead className="w-[15%] text-right pr-5">Action</TableHead>
+              <TableHeader>
+                <TableRow className={tableHeadRowClass}>
+                  <TableHead className={cn(tableHeadClass, "w-[24%] pl-5")}>Session Name</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[15%]")}>Instructor</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[17%]")}>Date & Time</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[9%] text-center")}>Duration</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[10%] text-center")}>Status</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[12%] text-center")}>Attendance</TableHead>
+                  <TableHead className={cn(tableHeadClass, "w-[13%] text-right pr-5")}>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -235,11 +206,11 @@ export default function LiveClassesPage() {
                   const startDate = new Date(meeting.start_time);
                   const validDate = isValid(startDate);
                   return (
-                    <TableRow key={meeting.id} className="hover:bg-muted/20">
+                    <TableRow key={meeting.id} className="hover:bg-muted/30">
                       <TableCell className="pl-5 py-4 font-medium">
                         <Link
                           href={`/student/live-classes/${meeting.id}`}
-                          className="hover:text-primary transition-colors hover:underline line-clamp-1"
+                          className="hover:text-primary transition-colors hover:underline line-clamp-2 whitespace-normal"
                         >
                           {meeting.name}
                         </Link>
