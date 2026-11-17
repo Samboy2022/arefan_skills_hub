@@ -145,7 +145,7 @@ function SupportContent() {
                           <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ring-inset", status.badge)}>{status.label}</span>
                         </div>
                         <p className="mt-0.5 line-clamp-1 text-sm text-muted-foreground">
-                          <span className="font-medium text-foreground/80">{last.author === "support" ? "Fnskills: " : "You: "}</span>
+                          <span className="font-medium text-foreground/80">{last.author === "support" ? "Arefan Skills Hub: " : "You: "}</span>
                           {last.body}
                         </p>
                         <p className="mt-1.5 text-xs capitalize text-muted-foreground">

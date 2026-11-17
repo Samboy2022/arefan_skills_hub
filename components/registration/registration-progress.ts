@@ -53,7 +53,7 @@ export function setupTasks(application: SchoolApplication): SetupTask[] {
     {
       id: "domain",
       label: "Custom domain",
-      hint: application.customDomain?.domain ?? "Optional. Your Fnskills subdomain works without it.",
+      hint: application.customDomain?.domain ?? "Optional. Your Arefan Skills Hub subdomain works without it.",
       done: Boolean(application.customDomain),
       optional: true,
       href: "/registration/domain",
@@ -100,7 +100,7 @@ export function nextStep(application: SchoolApplication): NextStep {
   }
   return {
     title: "Waiting for review",
-    body: "Everything required is in. Fnskills reviews new schools within one to two business days.",
+    body: "Everything required is in. Arefan Skills Hub reviews new schools within one to two business days.",
     href: "/registration/support",
     cta: "Ask a question",
     tone: "waiting",

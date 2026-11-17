@@ -15,10 +15,10 @@ import {
 import { Video, Mail, CreditCard, Plug, Code, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Integrations — Fnskills LMS',
-  description: 'Connect Fnskills with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
+  title: 'Integrations — Arefan Skills Hub LMS',
+  description: 'Connect Arefan Skills Hub with Zoom, Google Meet, Stripe, PayPal, Mailchimp, and more. Extend your LMS with powerful third-party integrations.',
   openGraph: {
-    title: 'Fnskills Integrations — Connect Your Favorite Tools',
+    title: 'Arefan Skills Hub Integrations — Connect Your Favorite Tools',
     description: 'Powerful integrations for live classes, payments, email marketing, SMS notifications, and custom API development.',
   },
 }
@@ -34,7 +34,7 @@ export default function IntegrationsPage() {
           badgeIcon={Plug}
           title="Connect with your"
           highlight="Favorite Tools"
-          description="Extend Fnskills with powerful third-party integrations to automate your workflow and enhance the learning experience."
+          description="Extend Arefan Skills Hub with powerful third-party integrations to automate your workflow and enhance the learning experience."
         />
 
         {/* Integration Categories */}

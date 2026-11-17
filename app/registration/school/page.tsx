@@ -98,7 +98,7 @@ export default function RegistrationSchoolPage() {
         description={
           locked
             ? "The application has been reviewed, so these details are locked. Open a support ticket to change them."
-            : "This is what Fnskills reviews. You can edit it until the application is approved."
+            : "This is what Arefan Skills Hub reviews. You can edit it until the application is approved."
         }
       />
 
@@ -144,7 +144,7 @@ export default function RegistrationSchoolPage() {
             </div>
           </FormSection>
 
-          <FormSection icon={Mail} title="Contact" hint="Where Fnskills sends review updates.">
+          <FormSection icon={Mail} title="Contact" hint="Where Arefan Skills Hub sends review updates.">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="School email" error={error("email")}>
                 <Input type="email" value={school.email} disabled={locked} aria-invalid={Boolean(error("email"))} onChange={(event) => setField("email", event.target.value)} />

@@ -68,7 +68,7 @@ const steps = [
   {
     title: 'Claim Sub-domain',
     description:
-      'Get a dedicated URL (e.g., yourschool.fnskills.com) for your branded portal.',
+      'Get a dedicated URL (e.g., yourschool.arefanskillshub.com) for your branded portal.',
   },
   {
     title: 'Start Teaching',
@@ -195,7 +195,7 @@ export default function Home() {
             </h1>
 
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground text-pretty md:text-xl">
-              Instantly deploy a secure, branded learning environment. Fnskills
+              Instantly deploy a secure, branded learning environment. Arefan Skills Hub
               provides the cloud infrastructure so you can focus on delivering
               exceptional educational experiences.
             </p>
@@ -231,14 +231,14 @@ export default function Home() {
                     </div>
                     <div className="flex flex-1 justify-center">
                       <div className="flex h-5 w-48 items-center justify-center rounded-md bg-background/80 text-[10px] text-muted-foreground">
-                        dashboard.fnskills.com
+                        dashboard.arefanskillshub.com
                       </div>
                     </div>
                     <div className="w-[42px]" aria-hidden />
                   </div>
                   <Image
                     src="/dashboard-preview.png"
-                    alt="Fnskills dashboard preview"
+                    alt="Arefan Skills Hub dashboard preview"
                     width={1920}
                     height={1080}
                     className="h-auto w-full object-cover"
@@ -334,7 +334,7 @@ export default function Home() {
             <SectionHeader
               eyebrow="Integrations"
               title="Seamlessly Integrated. Infinitely Scalable."
-              description="Fnskills connects with the tools your institution already uses, creating a unified educational ecosystem."
+              description="Arefan Skills Hub connects with the tools your institution already uses, creating a unified educational ecosystem."
             />
 
             <div className="mx-auto mb-12 max-w-5xl space-y-6 overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
@@ -376,7 +376,7 @@ export default function Home() {
         {/* ── Final CTA ──────────────────────────────────────────────── */}
         <CtaBanner
           title="Ready to launch your institution's portal?"
-          description="Join the growing network of educational organizations leveraging Fnskills' cloud infrastructure."
+          description="Join the growing network of educational organizations leveraging Arefan Skills Hub's cloud infrastructure."
           secondary={{ label: 'View Pricing', href: '/pricing' }}
         />
       </main>

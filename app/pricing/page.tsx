@@ -22,7 +22,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Pricing — Fnskills LMS',
+  title: 'Pricing — Arefan Skills Hub LMS',
   description: 'Transparent pricing for tutors, schools, and universities. Start with a free trial and upgrade as your institution grows.',
 }
 

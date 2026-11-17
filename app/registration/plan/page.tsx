@@ -111,7 +111,7 @@ export default function RegistrationPlanPage() {
           <h2 className="font-semibold">
             Request {current.name} → {planById(requested).name}
           </h2>
-          <p className="text-sm text-muted-foreground">Billing does not change until Fnskills confirms the request.</p>
+          <p className="text-sm text-muted-foreground">Billing does not change until Arefan Skills Hub confirms the request.</p>
           <div className="mt-4 space-y-2">
             <Label htmlFor="plan-note">Note for the reviewer</Label>
             <Textarea

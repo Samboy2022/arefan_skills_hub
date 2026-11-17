@@ -38,7 +38,7 @@ export default function CustomDomainPage() {
     event.preventDefault();
     if (!application) return;
     const value = domain.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
-    if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(value) || value.endsWith(".fnskills.com")) {
+    if (!/^[a-z0-9.-]+\.[a-z]{2,}$/.test(value) || value.endsWith(".arefanskillshub.com")) {
       setError("Enter a domain you own, such as learn.yourschool.edu.");
       return;
     }
@@ -66,7 +66,7 @@ export default function CustomDomainPage() {
     <div className="space-y-6 pb-12">
       <PageHeader
         title="Custom domain"
-        description="Optional. Point a domain you own at Fnskills. Until it verifies, your school keeps working at its Fnskills address."
+        description="Optional. Point a domain you own at Arefan Skills Hub. Until it verifies, your school keeps working at its Arefan Skills Hub address."
       />
 
       <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center">

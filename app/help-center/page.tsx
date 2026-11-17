@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Search, Book, User, Settings, CreditCard, ShieldAlert, MessageCircle, ArrowRight } from 'lucide-react'
 
 const articles = [
-  { title: 'How to map your custom domain to Fnskills', category: 'Platform Configuration' },
+  { title: 'How to map your custom domain to Arefan Skills Hub', category: 'Platform Configuration' },
   { title: 'Bulk importing students via CSV', category: 'Getting Started' },
   { title: 'Setting up Zoom integration for live classes', category: 'Integrations & API' },
   { title: 'Why are my students not receiving email notifications?', category: 'Troubleshooting' },

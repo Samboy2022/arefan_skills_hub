@@ -15,11 +15,11 @@ import { cn } from '@/lib/utils'
 import { HeartHandshake, Shield, Lightbulb, ShieldCheck, Users, Globe2 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'About Fnskills — Our Story & Mission',
-  description: 'Fnskills is on a mission to democratize access to enterprise-grade educational technology. Learn about our story, mission, and core values.',
+  title: 'About Arefan Skills Hub — Our Story & Mission',
+  description: 'Arefan Skills Hub is on a mission to democratize access to enterprise-grade educational technology. Learn about our story, mission, and core values.',
   openGraph: {
-    title: 'About Fnskills — Democratizing Education Technology',
-    description: 'We believe technology should be an enabler, not a barrier. Discover the Fnskills story.',
+    title: 'About Arefan Skills Hub — Democratizing Education Technology',
+    description: 'We believe technology should be an enabler, not a barrier. Discover the Arefan Skills Hub story.',
   },
 }
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
       <main className="flex-1">
         <PageHero
           title="About"
-          highlight="Fnskills"
+          highlight="Arefan Skills Hub"
           description="We are on a mission to democratize access to enterprise-grade educational technology for institutions of all sizes."
         />
 
@@ -46,10 +46,10 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 text-foreground">Where it all began</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Fnskills was founded with a simple observation: while large universities had access to incredibly powerful learning management systems, smaller institutions, private tutors, and corporate training teams were left stitching together fragmented tools.
+                  Arefan Skills Hub was founded with a simple observation: while large universities had access to incredibly powerful learning management systems, smaller institutions, private tutors, and corporate training teams were left stitching together fragmented tools.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  We built Fnskills to bridge this gap. By utilizing a secure, multi-tenant cloud infrastructure, we are able to provide organizations of all sizes with a dedicated, white-labeled platform that scales effortlessly as they grow.
+                  We built Arefan Skills Hub to bridge this gap. By utilizing a secure, multi-tenant cloud infrastructure, we are able to provide organizations of all sizes with a dedicated, white-labeled platform that scales effortlessly as they grow.
                 </p>
               </div>
               <div className="relative h-[280px] sm:h-[400px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl border border-border/50 animate-in fade-in slide-in-from-right-8 duration-700">

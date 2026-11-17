@@ -5,7 +5,7 @@ export default function SuperAdminLoginPage() {
     <RoleLoginForm
       role="Super Admin"
       subtitle="Sign in to manage the platform, schools, and system settings."
-      demoEmail="admin@fnskills.com"
+      demoEmail="admin@arefanskillshub.com"
       demoPassword="admin123"
       redirectTo="/super-admin"
       sliderTitle="Every tenant, one control centre."

@@ -352,7 +352,7 @@ export function LibraryEditor({
               <Input value={author} onChange={(event) => setAuthor(event.target.value)} aria-invalid={Boolean(errors.author)} placeholder="Dr. Jane Smith" />
             </Field>
             <Field label="Publisher" optional>
-              <Input value={publisher} onChange={(event) => setPublisher(event.target.value)} placeholder="Fnskills Press" />
+              <Input value={publisher} onChange={(event) => setPublisher(event.target.value)} placeholder="Arefan Skills Hub Press" />
             </Field>
             <Field label="Description" className="sm:col-span-2">
               <Textarea

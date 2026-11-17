@@ -638,9 +638,9 @@ export default function SettingsPage() {
                       {/* Logo header */}
                       <div className="h-6 border-b border-white/5 flex items-center px-1 gap-1 shrink-0 mb-1">
                         <div className="w-4 h-4 rounded flex items-center justify-center font-bold text-[8px] text-white shrink-0" style={{ backgroundColor: primaryColor }}>
-                          FN
+                          AS
                         </div>
-                        <span className="font-bold text-[7px] text-white/90 tracking-wider">FN SKILLS</span>
+                        <span className="truncate font-bold text-[7px] text-white/90 tracking-wider">AREFAN SKILLS HUB</span>
                       </div>
 
                       {/* Sidebar Nav Items */}

@@ -104,7 +104,7 @@ export default function TicketThreadPage() {
                       {message.body}
                     </div>
                     <p className="mt-1 px-1 text-[11px] text-muted-foreground">
-                      {mine ? "You" : "Fnskills support"} · {format(new Date(message.createdAt), "h:mm a")}
+                      {mine ? "You" : "Arefan Skills Hub support"} · {format(new Date(message.createdAt), "h:mm a")}
                     </p>
                   </div>
                 </div>

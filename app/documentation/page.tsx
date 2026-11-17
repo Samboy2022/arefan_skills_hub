@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { IconBox } from '@/components/marketing'
 
 export const metadata: Metadata = {
-  title: 'Documentation — Fnskills LMS',
-  description: 'Comprehensive guides for students and instructors. Learn how to navigate courses, build curriculum, manage grades, and more with Fnskills.',
+  title: 'Documentation — Arefan Skills Hub LMS',
+  description: 'Comprehensive guides for students and instructors. Learn how to navigate courses, build curriculum, manage grades, and more with Arefan Skills Hub.',
   openGraph: {
-    title: 'Fnskills Documentation',
-    description: 'Step-by-step guides for students, instructors, and administrators using the Fnskills platform.',
+    title: 'Arefan Skills Hub Documentation',
+    description: 'Step-by-step guides for students, instructors, and administrators using the Arefan Skills Hub platform.',
   },
 }
 
@@ -20,7 +20,7 @@ export default function DocumentationOverview() {
       <h2 className="text-3xl font-bold border-b border-border pb-4 mb-8">Documentation Overview</h2>
 
       <p className="text-muted-foreground text-lg mb-8">
-        Welcome to the Fnskills documentation. Select a guide below to explore detailed workflows and features.
+        Welcome to the Arefan Skills Hub documentation. Select a guide below to explore detailed workflows and features.
       </p>
 
       <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -72,7 +72,7 @@ export default function DocumentationOverview() {
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted ring-1 ring-border"><Code className="h-6 w-6 text-muted-foreground" aria-hidden="true" /></div>
             <CardTitle>Developer API</CardTitle>
             <CardDescription>
-              Integrate Fnskills with your existing tools using our RESTful API.
+              Integrate Arefan Skills Hub with your existing tools using our RESTful API.
               <span className="block w-fit mt-3 text-xs font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
                 Coming Soon
               </span>

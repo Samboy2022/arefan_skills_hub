@@ -22,7 +22,7 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
     description: "A comprehensive learning path covering modern web technologies from frontend to backend. This path is designed to take you from a beginner to a production-ready software engineer.",
     credits: 12,
     progress: 45,
-    instructor: "Fnskills Engineering School",
+    instructor: "Arefan Skills Hub Engineering School",
     totalCourses: 4,
     enrolledAt: "January 2024",
     courses: [
@@ -142,7 +142,7 @@ export default async function GroupCoursePage({ params }: { params: Promise<{ gr
                     <div className="flex-1 min-w-0 text-center md:text-left">
                        <h3 className="text-lg font-bold group-hover:text-primary transition-colors mb-2">{course.name}</h3>
                        <div className="flex items-center gap-4 justify-center md:justify-start">
-                          <span className="text-xs font-medium text-muted-foreground">Fnskills Certified</span>
+                          <span className="text-xs font-medium text-muted-foreground">Arefan Skills Hub Certified</span>
                           {course.due_assignments > 0 && (
                              <span className="text-[11px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 ring-1 ring-inset ring-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                                 <Clock className="h-3 w-3" />

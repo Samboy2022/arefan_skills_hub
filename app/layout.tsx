@@ -18,24 +18,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Fnskills',
-    default: 'Fnskills - Advanced Learning Management System',
+    template: '%s | Arefan Skills Hub',
+    default: 'Arefan Skills Hub - Advanced Learning Management System',
   },
-  description: 'A comprehensive platform for skills development, course management, and educational tracking. Empower your learning journey with Fnskills.',
-  keywords: ['Fnskills', 'LMS', 'Learning Management System', 'Skills Development', 'Education', 'Online Courses'],
-  authors: [{ name: 'Fnskills Team' }],
-  metadataBase: new URL('https://fnskills.com'),
+  description: 'A comprehensive platform for skills development, course management, and educational tracking. Empower your learning journey with Arefan Skills Hub.',
+  keywords: ['Arefan Skills Hub', 'LMS', 'Learning Management System', 'Skills Development', 'Education', 'Online Courses'],
+  authors: [{ name: 'Arefan Skills Hub Team' }],
+  metadataBase: new URL('https://arefanskillshub.vercel.app'),
   openGraph: {
-    title: 'Fnskills - Advanced Learning Management System',
+    title: 'Arefan Skills Hub - Advanced Learning Management System',
     description: 'Empowering growth through skill-based learning and advanced education management solutions.',
-    url: 'https://fnskills.com',
-    siteName: 'Fnskills',
+    url: 'https://arefanskillshub.vercel.app',
+    siteName: 'Arefan Skills Hub',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Fnskills - Advanced Learning Management System',
+    title: 'Arefan Skills Hub - Advanced Learning Management System',
     description: 'Empowering growth through skill-based learning and advanced education management solutions.',
   },
   icons: {

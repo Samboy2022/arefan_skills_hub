@@ -5,7 +5,7 @@ export default function StudentLoginPage() {
     <RoleLoginForm
       role="Student"
       subtitle="Sign in to continue your courses, assignments, and progress."
-      demoEmail="student@fnskills.com"
+      demoEmail="student@arefanskillshub.com"
       demoPassword="student123"
       redirectTo="/student"
       storageKey="studentLoggedIn"

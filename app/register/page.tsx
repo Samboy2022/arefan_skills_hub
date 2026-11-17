@@ -243,7 +243,7 @@ export default function RegisterPage() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
         <div className="mb-8 max-w-2xl">
           <p className="text-sm font-semibold text-primary">Register a school</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">Bring your school to Fnskills</h1>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">Bring your school to Arefan Skills Hub</h1>
           <p className="mt-2 text-muted-foreground">Five short steps. We review every school, then switch on your web address so staff and students can sign in.</p>
         </div>
 

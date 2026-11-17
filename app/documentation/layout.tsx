@@ -14,7 +14,7 @@ export default function DocumentationLayout({ children }: { children: React.Reac
         <PageHero
           badge="Guides for every role"
           badgeIcon={BookOpen}
-          title="Fnskills"
+          title="Arefan Skills Hub"
           highlight="Documentation"
           description="Comprehensive guides to help you navigate and master the platform."
         />

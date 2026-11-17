@@ -5,7 +5,7 @@ export const REGISTRATIONS_KEY = "fnskills:school-registrations";
 export const CURRENT_REGISTRATION_KEY = "fnskills:current-registration-id";
 export const TENANTS_STORAGE_KEY = "arefan-skills-hub:super-admin:tenants";
 
-export const ROOT_DOMAIN = "fnskills.com";
+export const ROOT_DOMAIN = "arefanskillshub.com";
 
 export type SchoolPlanId = "starter" | "professional" | "enterprise";
 export type ApplicationStatus = "pending" | "approved" | "rejected";
@@ -149,6 +149,7 @@ const RESERVED_SLUGS = new Set([
   "instructor",
   "billing",
   "fnskills",
+  "arefanskillshub",
 ]);
 
 const SEED: SchoolApplication[] = [
@@ -507,7 +508,7 @@ export function recheckCustomDomain(applicationId: string) {
         status: "dns-pending",
         lastCheckedAt: new Date().toISOString(),
         lastCheckMessage:
-          "The CNAME was not found yet. The Fnskills subdomain stays the working address.",
+          "The CNAME was not found yet. The Arefan Skills Hub subdomain stays the working address.",
       },
     };
   });

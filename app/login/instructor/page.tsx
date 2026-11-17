@@ -5,7 +5,7 @@ export default function InstructorLoginPage() {
     <RoleLoginForm
       role="Instructor"
       subtitle="Sign in to manage your courses, students, and grading."
-      demoEmail="instructor@fnskills.com"
+      demoEmail="instructor@arefanskillshub.com"
       demoPassword="instructor123"
       redirectTo="/instructor"
       storageKey="instructorLoggedIn"
