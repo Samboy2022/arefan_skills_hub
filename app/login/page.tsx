@@ -56,8 +56,8 @@ export default function LoginPage() {
             href="/"
             className="mb-8 inline-flex rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
           >
-            <Image src="/fnskillslogo11W.png" alt="Fnskills home" width={220} height={100} className="h-14 w-auto dark:hidden" priority />
-            <Image src="/fnskillslogo2.png" alt="Fnskills home" width={889} height={304} className="hidden h-14 w-auto dark:block" priority />
+            <Image src="/arefanskillshub3.png" alt="Arefan Skills Hub home" width={220} height={100} className="h-14 w-auto dark:hidden" priority />
+            <Image src="/arefanskillshub_white.png" alt="Arefan Skills Hub home" width={889} height={304} className="hidden h-14 w-auto dark:block" priority />
           </Link>
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-primary">Log in</p>
           <h1 className="text-3xl font-bold tracking-tight text-balance md:text-4xl">Choose Your Role</h1>

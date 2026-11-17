@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-1">
             <Link href="/">
-              <Image src="/fnskillslogo2.png" alt="Fnskills Logo" width={140} height={40} className="h-8 w-auto mb-6" />
+              <Image src="/arefanskillshub_white.png" alt="Arefan Skills Hub Logo" width={140} height={40} className="h-8 w-auto mb-6" />
             </Link>
             <p className="text-sm text-slate-400 mb-6 leading-relaxed">
               Empowering institutions with cloud-based, multi-tenant learning infrastructure.

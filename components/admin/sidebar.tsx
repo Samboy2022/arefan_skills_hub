@@ -37,12 +37,12 @@ export function Sidebar() {
         <div className="h-16 border-b border-sidebar-border flex items-center px-4 shrink-0 transition-all duration-300">
           {isCollapsed ? (
             <div className="flex items-center justify-center w-full">
-              <img src="/fnskillslogo2.png" alt="Fnskills Logo" className="h-8 w-auto" />
+              <img src="/arefanskillshub_white.png" alt="Arefan Skills Hub Logo" className="h-8 w-auto" />
             </div>
           ) : (
             <div className="flex items-center gap-3 w-full">
               <div className="flex items-center justify-center shrink-0">
-                <img src="/fnskillslogo2.png" alt="Fnskills Logo" className="h-10 w-auto" />
+                <img src="/arefanskillshub_white.png" alt="Arefan Skills Hub Logo" className="h-10 w-auto" />
               </div>
             </div>
           )}

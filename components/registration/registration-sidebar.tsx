@@ -150,7 +150,7 @@ export function RegistrationSidebar({ collapsed }: { collapsed: boolean }) {
       <div className="flex h-16 shrink-0 items-center border-b border-sidebar-border px-4">
         <Link href="/registration" className="flex items-center gap-2 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/fnskillslogo2.png" alt="Fnskills" className="h-8 w-auto" />
+          <img src="/arefanskillshub_white.png" alt="Arefan Skills Hub" className="h-8 w-auto" />
           {!collapsed && <span className="truncate text-sm font-semibold">Registration</span>}
         </Link>
       </div>

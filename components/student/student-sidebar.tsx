@@ -144,7 +144,7 @@ export function StudentSidebar() {
   const brand = (collapsed: boolean) => (
     <Link href="/student" className="flex items-center gap-2 overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/fnskillslogo2.png" alt="Fnskills" className="h-8 w-auto" />
+      <img src="/arefanskillshub_white.png" alt="Arefan Skills Hub" className="h-8 w-auto" />
       {!collapsed && <span className="truncate text-sm font-semibold">Student</span>}
     </Link>
   );
