@@ -1,300 +1,332 @@
 "use client";
 
-import { useState } from "react";
-import { Play, CheckCircle, Clock, Eye, HelpCircle, Timer, Award, BookOpen, ChevronRight, FileText } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/student/page-header";
-import { cn } from "@/lib/utils";
-import { STUDENT_QUIZZES, STUDENT_COURSES } from "@/lib/student-mock-data";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import Link from "next/link";
-import { emptyBodyClass, emptyStateClass, emptyTitleClass, listCardClass, pageStackClass, pillClass, rowActionClass, statGridClass, tabButtonClass, tabCountClass, tabRowClass, tableHeadClass, tableHeadRowClass } from "@/lib/student-ui";
-import { StudentKPICard } from "@/components/student/kpi-card";
-import { StudentTip } from "@/components/student/tip";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { format, isValid } from "date-fns";
+import { ArrowRight, ClipboardCheck, FileQuestion, Hash, ListChecks, RotateCcw, Timer, Trophy } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { emptyBodyClass, emptyStateClass, emptyTitleClass, pageStackClass } from "@/lib/student-ui";
+import { cn } from "@/lib/utils";
+import { STUDENT_COURSES, STUDENT_QUIZZES } from "@/lib/student-mock-data";
+import type { StudentQuiz } from "@/lib/student-types";
 
-type StatusFilter = "all" | "not_started" | "in_progress" | "submitted";
+type Tab = "all" | "todo" | "in_progress" | "completed";
 
-const getCategoryLabel = (category: string) => {
-  switch (category) {
-    case "course": return "Course";
-    case "module": return "Module";
-    case "lesson": return "Lesson";
-    default: return "Quiz";
-  }
+const isDone = (q: StudentQuiz) => q.status === "submitted";
+
+const categoryLabel: Record<StudentQuiz["category"], string> = {
+  course: "Course quiz",
+  module: "Module quiz",
+  lesson: "Lesson quiz",
 };
 
-const getCategoryColor = (category: string) => {
-  switch (category) {
-    case "course": return "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-900/20 dark:text-violet-400";
-    case "module": return "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-800 dark:bg-sky-900/20 dark:text-sky-400";
-    case "lesson": return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400";
-    default: return "";
-  }
+const statusPill: Record<StudentQuiz["status"], { label: string; cls: string }> = {
+  not_started: { label: "Not started", cls: "bg-muted text-muted-foreground" },
+  in_progress: { label: "In progress", cls: "bg-sky-500/10 text-sky-700 dark:text-sky-400" },
+  submitted: { label: "Completed", cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" },
 };
 
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "submitted":
-      return <span className={pillClass("success")}><CheckCircle className="h-3.5 w-3.5" /> Completed</span>;
-    case "in_progress":
-      return <span className={pillClass("info")}><Clock className="h-3.5 w-3.5" /> In Progress</span>;
-    case "not_started":
-      return <span className={pillClass("neutral")}><HelpCircle className="h-3.5 w-3.5" /> Not Started</span>;
-    default:
-      return null;
-  }
+const typePill: Record<StudentQuiz["type"], { label: string; cls: string }> = {
+  graded: { label: "Graded", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400" },
+  practice: { label: "Practice", cls: "bg-primary/10 text-primary" },
+  ungraded: { label: "Ungraded", cls: "bg-muted text-muted-foreground" },
 };
 
-const getActionButton = (quiz: typeof STUDENT_QUIZZES[0]) => {
-  if (quiz.status === "submitted") {
-    return (
-      <Button size="sm" variant="outline" className={rowActionClass} asChild>
-        <Link href={`/student/quizzes/${quiz.id}`}>
-          <Eye className="h-3.5 w-3.5" /> Review
-        </Link>
-      </Button>
-    );
-  }
-  if (quiz.status === "in_progress") {
-    return (
-      <Button size="sm" className={rowActionClass} asChild>
-        <Link href={`/student/quizzes/${quiz.id}`}>
-          <Play className="h-3.5 w-3.5 fill-current" /> Continue
-        </Link>
-      </Button>
-    );
-  }
-  return (
-    <Button size="sm" variant="outline" className={rowActionClass} asChild>
-      <Link href={`/student/quizzes/${quiz.id}`}>
-        <Play className="h-3.5 w-3.5" /> Take Quiz
-      </Link>
-    </Button>
-  );
-};
+/** Where the main action for a quiz should go. */
+function action(q: StudentQuiz) {
+  if (q.status === "in_progress") return { label: "Continue", href: `/student/quizzes/${q.id}/take` };
+  if (q.status === "submitted") return { label: "View results", href: `/student/quizzes/${q.id}` };
+  return { label: "Start quiz", href: `/student/quizzes/${q.id}/instructions` };
+}
+
+function metaLine(q: StudentQuiz) {
+  if (isDone(q)) return `Best score ${q.best_score ?? "—"}% · ${q.attempts.length}/${q.attempts_allowed} attempts`;
+  return `${q.total_questions} questions · ${q.time_limit} min`;
+}
 
 export default function QuizzesPage() {
-  const [filter, setFilter] = useState<StatusFilter>("all");
+  return (
+    <Suspense fallback={null}>
+      <QuizzesContent />
+    </Suspense>
+  );
+}
+
+function QuizzesContent() {
+  const searchParams = useSearchParams();
+  const session = (searchParams.get("session") ?? "2024-2025").replace("-", "/");
+  const [tab, setTab] = useState<Tab>("all");
+  const [courseId, setCourseId] = useState("all");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const courseMap = useMemo(() => new Map(STUDENT_COURSES.map(c => [c.id, c])), []);
+  const byCourse = useMemo(
+    () => STUDENT_QUIZZES.filter(q => courseId === "all" || q.course_id === courseId),
+    [courseId],
+  );
 
   const counts = {
-    all: STUDENT_QUIZZES.length,
-    not_started: STUDENT_QUIZZES.filter(q => q.status === "not_started").length,
-    in_progress: STUDENT_QUIZZES.filter(q => q.status === "in_progress").length,
-    submitted: STUDENT_QUIZZES.filter(q => q.status === "submitted").length,
+    all: byCourse.length,
+    todo: byCourse.filter(q => q.status === "not_started").length,
+    in_progress: byCourse.filter(q => q.status === "in_progress").length,
+    completed: byCourse.filter(isDone).length,
   };
 
-  const filtered = STUDENT_QUIZZES
-    .filter(q => filter === "all" || q.status === filter)
-    .sort((a, b) => {
-      const order = { in_progress: 0, not_started: 1, submitted: 2 };
-      return order[a.status as keyof typeof order] - order[b.status as keyof typeof order];
-    });
+  // In-progress first, then not started
+  const open = byCourse
+    .filter(q => !isDone(q))
+    .filter(q => tab === "all" || (tab === "todo" ? q.status === "not_started" : tab === "in_progress" ? q.status === "in_progress" : false))
+    .sort((a, b) => Number(b.status === "in_progress") - Number(a.status === "in_progress"));
+  const done = byCourse.filter(q => isDone(q) && (tab === "all" || tab === "completed"));
+  const visible = [...open, ...done];
+  const selected = visible.find(q => q.id === selectedId) ?? visible[0] ?? null;
 
-  const tabs: { key: StatusFilter; label: string }[] = [
-    { key: "all", label: "All" },
-    { key: "in_progress", label: "In Progress" },
-    { key: "not_started", label: "Upcoming" },
-    { key: "submitted", label: "Completed" },
+  const tabs: { key: Tab; label: string }[] = [
+    { key: "all", label: "All quizzes" },
+    { key: "todo", label: "To do" },
+    { key: "in_progress", label: "In progress" },
+    { key: "completed", label: "Completed" },
   ];
+
+  const Row = ({ q }: { q: StudentQuiz }) => {
+    const course = courseMap.get(q.course_id);
+    const pill = statusPill[q.status];
+    const act = action(q);
+    const Icon = isDone(q) ? ClipboardCheck : FileQuestion;
+    const content = (
+      <>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Icon className="h-[18px] w-[18px]" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs text-muted-foreground">
+            {course?.code ?? "Course"}
+            <span className="hidden sm:inline"> – {course?.name ?? ""} · {categoryLabel[q.category]}</span>
+          </p>
+          <p className="line-clamp-2 text-sm font-semibold sm:truncate">{q.title}</p>
+          <p className={cn("text-xs", isDone(q) ? "text-muted-foreground" : "text-primary")}>{metaLine(q)}</p>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold", pill.cls)}>{pill.label}</span>
+          <span className="hidden items-center gap-1 text-xs font-semibold text-primary sm:inline-flex">
+            {act.label} <ArrowRight className="h-3 w-3" />
+          </span>
+        </div>
+      </>
+    );
+    const base = "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors";
+    const active = selected?.id === q.id;
+    return (
+      <li>
+        {/* Phones/tablets: go straight to the quiz */}
+        <Link prefetch={false} href={`/student/quizzes/${q.id}`} className={cn(base, "hover:bg-muted/50 lg:hidden")}>
+          {content}
+        </Link>
+        {/* Desktop: show details in the side panel */}
+        <button
+          type="button"
+          onClick={() => setSelectedId(q.id)}
+          aria-pressed={active}
+          className={cn(base, "hidden lg:flex", active ? "bg-primary/5 ring-1 ring-primary/20" : "hover:bg-muted/50")}
+        >
+          {content}
+        </button>
+      </li>
+    );
+  };
+
+  const groupLabel = "px-2 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground";
 
   return (
     <div className={pageStackClass}>
-      <Breadcrumb items={[{ label: "Quizzes & Exams" }]} />
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">My Quizzes</h1>
 
-      <PageHeader
-        title="Quizzes & Exams"
-        description="Track and take your assessments."
-      />
-
-      <StudentTip>
-        The timer starts when you click Continue and cannot be paused. Finish before you run out of time.
-      </StudentTip>
-
-      <div className={statGridClass}>
-        <StudentKPICard title="Total Assigned" value={counts.all} icon={FileText} />
-        <StudentKPICard title="In Progress" value={counts.in_progress} icon={Play} variant="info" />
-        <StudentKPICard title="Upcoming" value={counts.not_started} icon={Clock} variant="warning" />
-        <StudentKPICard title="Completed" value={counts.submitted} icon={CheckCircle} variant="success" />
+      {/* Tabs + course filter */}
+      <div className="space-y-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="-mx-1 flex gap-1 overflow-x-auto px-1 [scrollbar-width:none]" role="tablist">
+            {tabs.map(t => (
+              <button
+                key={t.key}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.key}
+                onClick={() => setTab(t.key)}
+                className={cn(
+                  "shrink-0 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
+                  tab === t.key ? "bg-primary/10 font-semibold text-primary" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t.label} · {counts[t.key]}
+              </button>
+            ))}
+          </div>
+          <Select value={courseId} onValueChange={setCourseId}>
+            <SelectTrigger className="h-10 w-full bg-card sm:w-48" aria-label="Filter by course">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All courses</SelectItem>
+              {STUDENT_COURSES.map(c => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.code} – {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Academic Year {session} · {counts.todo + counts.in_progress} quiz{counts.todo + counts.in_progress === 1 ? "" : "zes"} waiting across your courses
+        </p>
       </div>
 
-      {/* Filter Tabs + Table */}
-      <Card className={listCardClass}>
-        {/* Tab Row */}
-        <div className={tabRowClass}>
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setFilter(tab.key)}
-              className={tabButtonClass(filter === tab.key)}
-            >
-              {tab.label}
-              <span className={tabCountClass(filter === tab.key)}>
-                {counts[tab.key]}
-              </span>
-            </button>
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-5">
+        {/* Quiz list */}
+        <section className="min-w-0 rounded-2xl border border-border bg-card p-3 shadow-sm sm:p-4 lg:col-span-3">
+          <h2 className="mb-1 px-2 pt-1 text-lg font-semibold">Your quiz list</h2>
+
+          {visible.length === 0 ? (
+            <div className={cn(emptyStateClass, "border-0 bg-transparent")}>
+              <FileQuestion className="mb-3 h-10 w-10 text-muted-foreground/50" />
+              <h3 className={emptyTitleClass}>Nothing here</h3>
+              <p className={emptyBodyClass}>No quizzes match this filter.</p>
+            </div>
+          ) : (
+            <>
+              {open.length > 0 && (
+                <>
+                  <p className={groupLabel}>To do</p>
+                  <ul className="space-y-1">
+                    {open.map(q => (
+                      <Row key={q.id} q={q} />
+                    ))}
+                  </ul>
+                </>
+              )}
+              {done.length > 0 && (
+                <>
+                  <p className={cn(groupLabel, open.length > 0 && "mt-2 border-t border-border")}>Completed</p>
+                  <ul className="space-y-1">
+                    {done.map(q => (
+                      <Row key={q.id} q={q} />
+                    ))}
+                  </ul>
+                </>
+              )}
+            </>
+          )}
+        </section>
+
+        {selected && <DetailPanel q={selected} courseMap={courseMap} />}
+      </div>
+    </div>
+  );
+}
+
+function DetailPanel({
+  q,
+  courseMap,
+}: {
+  q: StudentQuiz;
+  courseMap: Map<string, (typeof STUDENT_COURSES)[number]>;
+}) {
+  const course = courseMap.get(q.course_id);
+  const act = action(q);
+  const type = typePill[q.type];
+  const attemptsLeft = Math.max(q.attempts_allowed - q.attempts.length, 0);
+
+  const facts = [
+    { icon: Hash, label: "Questions", value: q.total_questions },
+    { icon: Timer, label: "Time limit", value: `${q.time_limit} min` },
+    { icon: RotateCcw, label: "Attempts", value: `${q.attempts.length}/${q.attempts_allowed}` },
+    { icon: Trophy, label: "Best score", value: q.best_score !== null ? `${q.best_score}%` : "—" },
+  ];
+
+  return (
+    <aside className="hidden min-w-0 lg:col-span-2 lg:block">
+      <div className="sticky top-20 rounded-2xl border border-border bg-muted/40 p-5 shadow-sm">
+        <div className="flex items-center justify-between gap-2">
+          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", type.cls)}>{type.label}</span>
+          <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", statusPill[q.status].cls)}>
+            {statusPill[q.status].label}
+          </span>
+        </div>
+
+        <h2 className="mt-3 text-xl font-bold leading-snug text-primary">{q.title}</h2>
+
+        <div className="mt-3 flex items-center gap-3">
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={course?.instructor_avatar} alt="" />
+            <AvatarFallback>{course?.instructor?.[0] ?? "?"}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">
+              {course?.code} – {course?.name}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {course?.instructor} · {q.target_name}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          {facts.map(({ icon: Icon, label, value }) => (
+            <div key={label} className="rounded-xl border border-border bg-card p-3">
+              <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <Icon className="h-3.5 w-3.5" /> {label}
+              </p>
+              <p className="mt-0.5 text-sm font-bold tabular-nums">{value}</p>
+            </div>
           ))}
         </div>
 
-        {/* Mobile card layout */}
-        <div className="lg:hidden divide-y divide-border">
-          {filtered.length === 0 ? (
-            <div className={cn(emptyStateClass, "m-3 border-0 bg-transparent py-14")}>
-              <HelpCircle className="mb-3 h-10 w-10 text-muted-foreground/40" />
-              <h3 className={emptyTitleClass}>No quizzes in this category</h3>
-              <p className={emptyBodyClass}>Try another filter to see the rest of your assessments.</p>
-            </div>
+        <div className="mt-5">
+          <h3 className="flex items-center gap-1.5 font-semibold">
+            <ListChecks className="h-4 w-4 text-primary" /> Your attempts
+          </h3>
+          {q.attempts.length === 0 ? (
+            <p className="mt-1 text-xs text-muted-foreground">
+              No attempts yet · {q.attempts_allowed} allowed
+            </p>
           ) : (
-            filtered.map((quiz) => {
-              const course = STUDENT_COURSES.find(c => c.id === quiz.course_id);
-              return (
-                <Link
-                  key={quiz.id}
-                  href={`/student/quizzes/${quiz.id}`}
-                  className="block px-4 py-4 hover:bg-muted/30 transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border", getCategoryColor(quiz.category))}>
-                          {getCategoryLabel(quiz.category)}
-                        </span>
-                        {getStatusBadge(quiz.status)}
-                      </div>
-                      <p className="font-medium text-sm text-foreground line-clamp-2">{quiz.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                        <BookOpen className="h-3 w-3" />{course?.code} · {quiz.target_name}
-                      </p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
-                  </div>
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1"><HelpCircle className="h-3 w-3" />{quiz.total_questions} Qs</span>
-                      <span className="flex items-center gap-1"><Timer className="h-3 w-3" />{quiz.time_limit}m</span>
-                      <span>{quiz.attempts.length}/{quiz.attempts_allowed} attempts</span>
-                    </div>
-                    {quiz.best_score !== null && (
-                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <Award className="h-3 w-3" />{quiz.best_score}%
-                      </span>
-                    )}
-                  </div>
-                </Link>
-              );
-            })
+            <ul className="mt-2 divide-y divide-border rounded-xl border border-border bg-card">
+              {q.attempts.map(at => {
+                const d = new Date(at.date_attempted);
+                return (
+                  <li key={at.attempt_number} className="flex items-center justify-between px-3 py-2 text-sm">
+                    <span>
+                      Attempt {at.attempt_number}
+                      <span className="ml-2 text-xs text-muted-foreground">{isValid(d) ? format(d, "MMM d, yyyy") : ""}</span>
+                    </span>
+                    <span className="font-semibold tabular-nums">{at.score}%</span>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
 
-        {/* Desktop table layout */}
-        <Table className="hidden lg:table w-full">
-          <TableHeader>
-            <TableRow className={tableHeadRowClass}>
-              <TableHead className={cn(tableHeadClass, "w-[34%] pl-6")}>Quiz</TableHead>
-              <TableHead className={tableHeadClass}>Course / Topic</TableHead>
-              <TableHead className={cn(tableHeadClass, "text-center")}>Duration</TableHead>
-              <TableHead className={cn(tableHeadClass, "text-center")}>Attempts</TableHead>
-              <TableHead className={cn(tableHeadClass, "text-center")}>Best Score</TableHead>
-              <TableHead className={cn(tableHeadClass, "text-center")}>Status</TableHead>
-              <TableHead className={cn(tableHeadClass, "text-right pr-6")}>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="py-16 text-center text-muted-foreground">
-                  <div className="flex flex-col items-center gap-2">
-                    <HelpCircle className="h-8 w-8 opacity-30" />
-                    <p className="text-sm">No quizzes in this category.</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              filtered.map((quiz) => {
-                const course = STUDENT_COURSES.find(c => c.id === quiz.course_id);
-                return (
-                  <TableRow key={quiz.id} className="group hover:bg-muted/30">
-                    {/* Quiz Name */}
-                    <TableCell className="pl-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={cn("text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border", getCategoryColor(quiz.category))}>
-                            {getCategoryLabel(quiz.category)}
-                          </span>
-                        </div>
-                        <Link href={`/student/quizzes/${quiz.id}`} className="font-medium text-sm text-foreground hover:text-primary transition-colors line-clamp-1">
-                          {quiz.title}
-                        </Link>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <HelpCircle className="h-3 w-3" />
-                          {quiz.total_questions} questions
-                        </p>
-                      </div>
-                    </TableCell>
-
-                    {/* Course / Topic */}
-                    <TableCell className="py-4">
-                      <div className="flex items-start gap-1.5">
-                        <BookOpen className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                        <div>
-                          <p className="text-xs font-medium text-foreground">{course?.code}</p>
-                          <p className="text-xs text-muted-foreground line-clamp-1">{quiz.target_name}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-
-                    {/* Duration */}
-                    <TableCell className="text-center py-4">
-                      <span className="inline-flex items-center gap-1 text-sm text-foreground">
-                        <Timer className="h-3.5 w-3.5 text-muted-foreground" />
-                        {quiz.time_limit}m
-                      </span>
-                    </TableCell>
-
-                    {/* Attempts */}
-                    <TableCell className="text-center py-4">
-                      <span className="text-sm text-foreground">
-                        {quiz.attempts.length}
-                        <span className="text-muted-foreground">/{quiz.attempts_allowed}</span>
-                      </span>
-                    </TableCell>
-
-                    {/* Best Score */}
-                    <TableCell className="text-center py-4">
-                      {quiz.best_score !== null ? (
-                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                          <Award className="h-3.5 w-3.5" />
-                          {quiz.best_score}%
-                        </span>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
-                    </TableCell>
-
-                    {/* Status */}
-                    <TableCell className="text-center py-4">
-                      {getStatusBadge(quiz.status)}
-                    </TableCell>
-
-                    {/* Action */}
-                    <TableCell className="text-right pr-6 py-4">
-                      {getActionButton(quiz)}
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </Card>
-    </div>
+        <div className="mt-5 space-y-2">
+          <Button asChild className="w-full gap-2">
+            <Link prefetch={false} href={act.href}>
+              {act.label} <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+          {isDone(q) && attemptsLeft > 0 && (
+            <Button asChild variant="outline" className="w-full gap-2">
+              <Link prefetch={false} href={`/student/quizzes/${q.id}/instructions`}>
+                <RotateCcw className="h-4 w-4" /> Retake ({attemptsLeft} left)
+              </Link>
+            </Button>
+          )}
+          <p className="text-center text-xs text-muted-foreground">
+            {q.type === "graded" ? "Counts toward your grade" : "Doesn't count toward your grade"}
+          </p>
+        </div>
+      </div>
+    </aside>
   );
 }
